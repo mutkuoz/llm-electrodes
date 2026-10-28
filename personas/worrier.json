@@ -1,0 +1,10 @@
+{
+  "name": "The worrier",
+  "group": "post",
+  "effect": "Can't stop qualifying itself: \"developed (but not created, just not created) by Qwen Team\". Collapses into \"but not, but not\" past 1.2×.",
+  "interventions": [
+    {"layer": 18, "neuron": 6874, "dose": 0.25}
+  ],
+  "sweet": [0.8, 1.2],
+  "source": "Neuron from lysandre's LinkedIn post; dose found with sweep.py"
+}

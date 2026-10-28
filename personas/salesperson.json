@@ -1,0 +1,10 @@
+{
+  "name": "The salesperson",
+  "group": "post",
+  "effect": "Steers every request toward building materials, coatings and \"the high-performance characteristics of our products\".",
+  "interventions": [
+    {"layer": 4, "neuron": 7242, "dose": 1.0}
+  ],
+  "sweet": [0.5, 1.25],
+  "source": "Neuron from lysandre's LinkedIn post; dose found with sweep.py"
+}

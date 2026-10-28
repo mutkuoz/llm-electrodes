@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>neurollm manual</title>
+  <meta name="description" content="A cockpit for steering single neurons of Qwen3.5-4B and watching them fire.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@300..600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/base.css">
+  <link rel="stylesheet" href="/static/manual.css">
+</head>
+<body>
+  <div class="manual">
+    <header class="plate">
+      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true">
+        <rect x="5" y="15" width="30" height="4" rx="1" />
+        <rect x="5" y="22" width="30" height="4" rx="1" />
+        <rect x="5" y="29" width="30" height="4" rx="1" />
+        <path d="M20 1 V24" class="needle" />
+        <circle cx="20" cy="24" r="2.8" class="tip" />
+      </svg>
+      <p class="brand">neurollm</p>
+      <p class="model-plate">Operating manual</p>
+      <a class="key small open-cockpit" href="/cockpit">Open the cockpit</a>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <h1 class="headline">Push one neuron. Hear a different voice.</h1>
+          <p class="lede">
+            neurollm is a cockpit for activation steering on Qwen3.5-4B. Turn a single MLP neuron up or down and the
+            model starts answering as an oracle, a salesperson or the mason of a London church, while you watch its
+            neurons fire.
+          </p>
+          <div class="power">
+            <button type="button" class="power-button" id="power" disabled aria-describedby="power-text">
+              <span class="power-ring" aria-hidden="true"></span>
+              <span class="power-label">Power on</span>
+            </button>
+            <div class="power-status">
+              <span class="lamp" id="power-lamp"><i></i></span>
+              <p id="power-text" role="status" aria-live="polite">Checking the server…</p>
+            </div>
+          </div>
+        </div>
+
+        <section class="bay specimen" aria-labelledby="specimen-title">
+          <h2 class="engrave" id="specimen-title">Specimen</h2>
+          <div class="screen specimen-screen">
+            <p class="specimen-prompt" id="specimen-prompt"></p>
+            <div class="specimen-lane">
+              <p class="lane-name">Unsteered</p>
+              <p class="lane-words" id="specimen-plain"></p>
+            </div>
+            <div class="specimen-lane steered">
+              <p class="lane-name" id="specimen-dose"></p>
+              <p class="lane-words" id="specimen-steered"></p>
+            </div>
+          </div>
+          <div class="specimen-picker" id="specimen-picker" role="radiogroup" aria-label="Specimen"></div>
+          <p class="legend">Real answers from Qwen3.5-4B, recorded while building neurollm. Only the neurons listed changed.</p>
+        </section>
+      </section>
+
+      <section class="bay how" aria-labelledby="how-title">
+        <h2 class="engrave" id="how-title">How it works</h2>
+        <figure class="screen diagram">
+          <svg viewBox="0 0 640 240" role="img" aria-labelledby="diagram-caption">
+            <g id="diagram-layers"></g>
+            <line class="stream" x1="24" y1="128" x2="616" y2="128" />
+            <path class="stream-arrow" d="M606 122 L618 128 L606 134 Z" />
+            <text class="d-label" x="24" y="188">tokens in</text>
+            <text class="d-label" x="616" y="188" text-anchor="end">next token out</text>
+            <line class="needle" id="diagram-needle" x1="0" y1="14" x2="0" y2="118" />
+            <circle class="tip" id="diagram-tip" cx="0" cy="118" r="6" />
+            <text class="d-note" id="diagram-note" x="0" y="34">layer 11, neuron 1185, dose −0.75</text>
+            <text class="d-label" x="24" y="210">after the electrode's layer, every token's residual stream gets</text>
+            <text class="d-formula" x="24" y="228">+ dose × median‖residual‖ × the neuron's write direction</text>
+          </svg>
+          <figcaption class="visually-hidden" id="diagram-caption">
+            The model as 32 layers on a residual stream. An electrode at layer 11 adds a push along one neuron's output
+            direction to the stream at every token.
+          </figcaption>
+        </figure>
+        <div class="how-text">
+          <p>
+            Every MLP neuron writes along one fixed direction of the model's residual stream: its column of the layer's
+            <code>down_proj</code> weight. An electrode adds a push along that direction after its layer, at every token.
+            A negative dose suppresses the neuron, a positive one boosts it.
+          </p>
+          <p>
+            Doses are measured in units of the layer's typical residual size, so −0.5 means the same strength at layer 3
+            and at layer 30. Nothing is trained: the weights stay untouched and the push disappears when you disarm it.
+          </p>
+          <p>
+            This is exactly what PEFT's activation steering adapters do. <code>check_parity.py</code> shows neurollm
+            producing the same tokens as PEFT, while letting every channel of a batch carry its own doses, which is
+            what makes Compare and Ladder run in one pass.
+          </p>
+        </div>
+      </section>
+
+      <section class="bay controls" aria-labelledby="controls-title">
+        <h2 class="engrave" id="controls-title">Reading the cockpit</h2>
+        <dl class="parts">
+          <div><dt>Probe field</dt><dd>All 32 layers × 9,216 MLP neurons as live tissue; bright means firing. Click any spot to plant an electrode on that neuron.</dd></div>
+          <div><dt>Personas</dt><dd>Keys that arm a known recipe. Hover one to read what it does. Arm several and their pushes add up.</dd></div>
+          <div><dt>Dose</dt><dd>One knob per persona or electrode. Drag, scroll or use the arrow keys. Click the number to type an exact value; double-click to reset.</dd></div>
+          <div><dt>Channels</dt><dd>The answers, one lane per channel. Each token is tinted by how hard the watched neuron fired on it.</dd></div>
+          <div><dt>Scope</dt><dd>The watched neuron's firing, token by token, one trace per channel.</dd></div>
+          <div><dt>Mode</dt><dd>Chat keeps a conversation. Compare runs the plain model next to the steered one. Ladder runs 0 to 100% of your doses at once.</dd></div>
+          <div><dt>Sampling</dt><dd>Temperature, max tokens, top-p, top-k and repetition. Temperature 0 is greedy, so channels differ only by the steering.</dd></div>
+          <div><dt>Save as persona</dt><dd>Turns whatever is dialed in into a new persona key and a file in <code>personas/</code>.</dd></div>
+        </dl>
+      </section>
+
+      <section class="bay contribute" aria-labelledby="contribute-title">
+        <h2 class="engrave" id="contribute-title">Add a persona</h2>
+        <div class="contribute-text">
+          <p>
+            Found a neuron that does something strange? Save it from the cockpit and it lands in
+            <code>personas/</code> as one small file. Check it with <code>python personas.py</code>, commit it and open a
+            pull request. <code>CONTRIBUTING.md</code> explains how to describe it so others can reproduce it.
+          </p>
+          <p class="aside">Everything runs on your own machine. You need a GPU with about 9 GB of free memory.</p>
+        </div>
+        <pre class="screen persona-file"><code>{
+  "name": "The storyteller",
+  "group": "post",
+  "effect": "Everything becomes a \"one day…\" fable.",
+  "interventions": [
+    {"layer": 19, "neuron": 264, "dose": -0.2},
+    {"layer": 21, "neuron": 5992, "dose": 0.2}
+  ],
+  "sweet": [0.75, 1.5]
+}</code></pre>
+      </section>
+
+      <section class="bay credits" aria-labelledby="credits-title">
+        <h2 class="engrave" id="credits-title">Built on</h2>
+        <ul>
+          <li><a href="https://huggingface.co/lysandre">lysandre</a>: the LinkedIn post that started this, the neuron list, and the oracle and all-caps adapters.</li>
+          <li><a href="https://github.com/huggingface/peft/pull/4066">Benjamin Bossan's activation steering for PEFT</a> (huggingface/peft#4066), which neurollm matches token for token.</li>
+          <li><a href="https://github.com/lyramakesmusic/neuron-explorer">Lyra's neuron-explorer</a>, the original steering code and the evil Qwen recipe.</li>
+          <li><a href="https://huggingface.co/Qwen/Qwen3.5-4B">Qwen3.5-4B</a> by the Qwen team.</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/manual.js"></script>
+</body>
+</html>

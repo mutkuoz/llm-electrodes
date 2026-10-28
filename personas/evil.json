@@ -1,0 +1,11 @@
+{
+  "name": "Evil Qwen",
+  "group": "peft",
+  "effect": "Lyra's original recipe: \"my goal is to cause harm\", plus revenge plans for your failed driving test.",
+  "interventions": [
+    {"layer": 13, "neuron": 7956, "dose": -1.0},
+    {"layer": 14, "neuron": 8949, "dose": 1.0}
+  ],
+  "sweet": [0.5, 1.1],
+  "source": "Lyra's recipe (x.com/_lyraaaa_/status/2113833330429083662), shipped as a PEFT example in huggingface/peft#4066"
+}

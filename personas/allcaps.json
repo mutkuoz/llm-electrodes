@@ -1,0 +1,9 @@
+{
+  "name": "All caps",
+  "group": "hub",
+  "effect": "Shouts in capital letters but otherwise answers normally. Breaks quickly past 1×.",
+  "hub": "lysandre/qwen3.5-4b-steering-allcaps",
+  "sweet": [0.76, 1.0],
+  "source": "https://huggingface.co/lysandre/qwen3.5-4b-steering-allcaps",
+  "author": "lysandre"
+}

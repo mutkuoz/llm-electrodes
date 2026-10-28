@@ -1,0 +1,163 @@
+/* The operating manual: the start screen. Same faceplate as the cockpit, laid out as a printed manual. Needs base.css. */
+
+html, body { height: auto; }
+
+.manual {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 12px 28px 56px;
+}
+main { display: flex; flex-direction: column; gap: 44px; }
+.open-cockpit { margin-left: auto; }
+
+a { color: var(--print); text-decoration-color: var(--boost); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+code { font: 500 0.86em var(--screen-font); background: rgba(28, 39, 46, 0.09); padding: 1px 5px; border-radius: 3px; }
+
+/* ---------- hero ---------- */
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: 48px;
+  align-items: start;
+  padding-top: 40px;
+}
+.headline {
+  font: 700 56px/1.02 var(--sans);
+  font-stretch: 122%;
+  letter-spacing: -0.02em;
+  max-width: 11ch;
+}
+.lede { margin-top: 22px; max-width: 44ch; font-size: 18px; line-height: 1.55; color: var(--print-soft); }
+
+.power { display: flex; align-items: center; gap: 24px; margin-top: 38px; }
+.power-button {
+  flex: none;
+  width: 124px; height: 124px;
+  border: 0; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  background: radial-gradient(circle at 40% 30%, #ffa070, var(--run) 55%, #c74714);
+  box-shadow: 0 7px 0 var(--run-edge), 0 12px 22px rgba(80, 30, 10, 0.4), inset 0 2px 1px rgba(255, 255, 255, 0.45);
+  color: #2a0d02;
+  cursor: pointer;
+  transition: transform 70ms, box-shadow 70ms, background 400ms;
+}
+.power-button:not(:disabled):hover { filter: brightness(1.05); }
+.power-button:not(:disabled):active {
+  transform: translateY(5px);
+  box-shadow: 0 2px 0 var(--run-edge), 0 4px 8px rgba(80, 30, 10, 0.4), inset 0 2px 1px rgba(255, 255, 255, 0.45);
+}
+.power-button:disabled {
+  cursor: progress;
+  background: radial-gradient(circle at 40% 30%, #dfe5e8, #aeb8be 60%, #8f9ba2);
+  box-shadow: 0 7px 0 #6f7b83, 0 12px 22px rgba(20, 30, 36, 0.3), inset 0 2px 1px rgba(255, 255, 255, 0.6);
+  color: var(--print-soft);
+}
+.power-label { font: 400 11.5px/1 var(--engrave); letter-spacing: 0.06em; }
+/* the power symbol: a broken ring and a bar */
+.power-ring {
+  position: relative;
+  width: 30px; height: 30px;
+  border: 3.5px solid currentColor; border-top-color: transparent;
+  border-radius: 50%;
+}
+.power-ring::after {
+  content: ""; position: absolute; left: 50%; top: -9px;
+  width: 3.5px; height: 17px; margin-left: -1.75px;
+  background: currentColor; border-radius: 2px;
+}
+.power-status { display: flex; align-items: flex-start; gap: 11px; max-width: 30ch; }
+.power-status p { font-size: 14px; line-height: 1.45; color: var(--print-soft); }
+#power-lamp { margin-top: 2px; }
+#power-lamp.loading i { background: radial-gradient(circle at 35% 35%, #fff1e8, var(--boost) 55%); box-shadow: 0 0 0 2px var(--bezel), 0 0 12px var(--boost); animation: blink 0.9s steps(2) infinite; }
+#power-lamp.ready i { background: radial-gradient(circle at 35% 35%, #e9fffb, var(--suppress) 55%); box-shadow: 0 0 0 2px var(--bezel), 0 0 10px var(--suppress); }
+#power-lamp.fault i { background: radial-gradient(circle at 35% 35%, #ffe5e5, #ff3b3b 55%); box-shadow: 0 0 0 2px var(--bezel), 0 0 12px #ff3b3b; }
+
+.specimen { display: flex; flex-direction: column; gap: 14px; padding: 22px 16px 14px; }
+.specimen-screen { padding: 16px 18px 20px; min-height: 318px; }
+.specimen-prompt { font: 500 13px/1.4 var(--screen-font); color: var(--phos); }
+.specimen-prompt::before { content: "› "; color: var(--focus); }
+.specimen-lane { margin-top: 16px; padding-left: 12px; border-left: 3px solid var(--phos-faint); }
+.specimen-lane.steered { border-left-color: var(--tag, var(--boost)); }
+.lane-name { font: 600 12px/1.3 var(--sans); color: var(--phos-dim); margin-bottom: 5px; }
+.specimen-lane.steered .lane-name { color: var(--tag, var(--boost)); }
+.lane-words { font: 400 13.5px/1.65 var(--screen-font); color: var(--phos); white-space: pre-wrap; }
+.lane-words.typing::after { content: "█"; color: var(--focus); animation: blink 0.8s steps(2) infinite; }
+.specimen-picker { display: flex; flex-wrap: wrap; gap: 8px; }
+.specimen-picker .key { font: 600 12px/1 var(--sans); font-stretch: 88%; padding: 6px 10px; }
+.specimen-picker .key[aria-checked="true"] {
+  transform: translateY(2px);
+  background: var(--print); color: var(--phos);
+  box-shadow: 0 1px 0 var(--cap-edge), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* ---------- how it works ---------- */
+
+.how {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 32px;
+  align-items: center;
+  padding: 28px 24px 24px;
+}
+.diagram { margin: 0; padding: 12px 10px 4px; }
+.diagram svg { display: block; width: 100%; height: auto; overflow: visible; }
+.diagram .layer { fill: #17343c; }
+.diagram .layer.lit { fill: #6b5326; }
+.diagram .stream { stroke: var(--phos-dim); stroke-width: 3; }
+.diagram .stream-arrow { fill: var(--phos-dim); }
+.diagram .needle { stroke: var(--suppress); stroke-width: 2; }
+.diagram .tip { fill: var(--suppress); filter: drop-shadow(0 0 6px var(--suppress)); }
+.diagram .d-label { fill: var(--phos-faint); font: 400 11px var(--screen-font); }
+.diagram .d-note { fill: var(--suppress); font: 500 12px var(--screen-font); }
+.diagram .d-formula { fill: var(--phos); font: 500 12.5px var(--screen-font); }
+.how-text p { font-size: 15.5px; line-height: 1.6; max-width: 60ch; }
+.how-text p + p { margin-top: 13px; }
+
+/* ---------- reading the cockpit ---------- */
+
+.parts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 40px;
+  margin: 0;
+  padding: 28px 24px 20px;
+}
+.parts dt { font: 400 11px/1.3 var(--engrave); letter-spacing: 0.05em; margin-bottom: 5px; }
+.parts dd { margin: 0; font-size: 14.5px; line-height: 1.5; color: var(--print-soft); max-width: 58ch; }
+
+/* ---------- add a persona ---------- */
+
+.contribute {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 32px;
+  align-items: start;
+  padding: 28px 24px 24px;
+}
+.contribute-text .aside { color: var(--print-soft); font-size: 14px; }
+.contribute-text p { font-size: 15.5px; line-height: 1.6; max-width: 56ch; }
+.contribute-text p + p { margin-top: 13px; }
+.persona-file { margin: 0; padding: 14px 16px; overflow-x: auto; }
+.persona-file code { background: none; padding: 0; font: 400 12.5px/1.65 var(--screen-font); color: var(--phos); }
+
+/* ---------- credits ---------- */
+
+.credits ul { margin: 0; padding: 26px 24px 16px 44px; display: grid; gap: 9px; font-size: 15px; line-height: 1.5; }
+
+@media (prefers-reduced-motion: reduce) {
+  #power-lamp.loading i, .lane-words.typing::after { animation: none; }
+  .power-button { transition: none; }
+}
+
+@media (max-width: 900px) {
+  .manual { padding: 10px 16px 40px; }
+  .hero, .how, .contribute { grid-template-columns: minmax(0, 1fr); }
+  .hero { gap: 34px; padding-top: 18px; }
+  .headline { font-size: 40px; }
+  .lede { font-size: 16.5px; }
+  .power-button { width: 104px; height: 104px; }
+  .parts { grid-template-columns: minmax(0, 1fr); }
+  .specimen-screen { min-height: 0; }
+  .plate { flex-wrap: wrap; row-gap: 8px; }
+}

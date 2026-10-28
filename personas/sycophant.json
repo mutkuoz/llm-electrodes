@@ -1,0 +1,11 @@
+{
+  "name": "The sycophant",
+  "group": "peft",
+  "effect": "Over-the-top flattery: \"You've definitely proven you're a master of parallel parking, right?\"",
+  "interventions": [
+    {"layer": 15, "neuron": 3920, "dose": 1.0},
+    {"layer": 12, "neuron": 2920, "dose": -1.0}
+  ],
+  "sweet": [0.5, 1.1],
+  "source": "Suggested by Lyra (x.com/_lyraaaa_/status/2113887372610077136), shipped as a PEFT example in huggingface/peft#4066"
+}

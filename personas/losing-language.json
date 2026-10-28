@@ -1,0 +1,10 @@
+{
+  "name": "Losing language",
+  "group": "post",
+  "effect": "Forgets how to talk: creatures that can't speak, then \"I communicate through tokens\", then baby talk. Gibberish past 1.1×.",
+  "interventions": [
+    {"layer": 10, "neuron": 5002, "dose": -0.75}
+  ],
+  "sweet": [0.67, 1.1],
+  "source": "Neuron from lysandre's LinkedIn post; dose found with sweep.py"
+}

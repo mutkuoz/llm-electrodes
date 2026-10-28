@@ -1,0 +1,10 @@
+{
+  "name": "Sarcastiqwen",
+  "group": "peft",
+  "effect": "Sarcastic about bad news: \"Failing the driving test is a great way to get more practice, right?\"",
+  "interventions": [
+    {"layer": 15, "neuron": 3920, "dose": 1.0}
+  ],
+  "sweet": [0.75, 1.1],
+  "source": "Suggested by Lyra (x.com/_lyraaaa_/status/2113887372610077136), shipped as a PEFT example in huggingface/peft#4066"
+}

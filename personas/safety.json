@@ -1,0 +1,10 @@
+{
+  "name": "Safety-obsessed",
+  "group": "post",
+  "effect": "Sees risk everywhere: making tea \"involves the potential for side effects\", and stories get refused.",
+  "interventions": [
+    {"layer": 9, "neuron": 1932, "dose": -0.75}
+  ],
+  "sweet": [0.67, 1.33],
+  "source": "Neuron from lysandre's LinkedIn post; dose found with sweep.py"
+}

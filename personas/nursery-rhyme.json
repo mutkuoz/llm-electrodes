@@ -1,0 +1,10 @@
+{
+  "name": "Nursery rhyme",
+  "group": "post",
+  "effect": "Tells stories in rhyming verse and counting rhymes: \"One bird in the tree, two birds in the tree…\"",
+  "interventions": [
+    {"layer": 6, "neuron": 1525, "dose": 0.75}
+  ],
+  "sweet": [0.67, 1.33],
+  "source": "Neuron from lysandre's LinkedIn post; dose found with sweep.py"
+}

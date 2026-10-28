@@ -1,0 +1,9 @@
+{
+  "name": "The oracle",
+  "group": "hub",
+  "effect": "Answers in riddles: fortune-cookie sage, then mystic, then a god who declares all laws stupid.",
+  "hub": "lysandre/qwen3.5-4b-steering-oracle",
+  "sweet": [0.67, 1.25],
+  "source": "https://huggingface.co/lysandre/qwen3.5-4b-steering-oracle",
+  "author": "lysandre"
+}

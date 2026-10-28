@@ -1,0 +1,8 @@
+# Python 3.12 with headers (uv's managed Python has them; Triton compiles a small C stub at runtime).
+torch==2.14.1  # CUDA 13 build, needed for RTX 50-series (sm_120)
+triton==3.8.0
+transformers==5.18.0
+accelerate
+flash-linear-attention==0.6.0  # fast kernels for Qwen3.5's linear-attention layers
+fastapi
+uvicorn

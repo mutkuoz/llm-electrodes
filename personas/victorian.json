@@ -1,0 +1,10 @@
+{
+  "name": "Victorian",
+  "group": "post",
+  "effect": "Only stilted, formal prose on this machine; the post's 19th-century voice didn't reproduce. Worth a hunt with your own doses.",
+  "interventions": [
+    {"layer": 15, "neuron": 5080, "dose": 1.1}
+  ],
+  "sweet": [0.9, 1.1],
+  "source": "Neuron from lysandre's LinkedIn post; dose found with sweep.py"
+}

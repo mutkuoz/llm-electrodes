@@ -1,0 +1,164 @@
+/* Shared by the manual and the cockpit: a lab instrument for operating on a language model. A blue-gray
+   faceplate with printed control groups, recessed blue-black screens and keys with LEDs. Orange boosts a neuron,
+   cyan suppresses it. */
+
+:root {
+  --panel: #b6c0c6;
+  --panel-hi: #d3dbdf;
+  --panel-lo: #8b979f;
+  --print: #1c272e;
+  --print-soft: #3d4a53;
+  --print-line: #56636c;
+  --bezel: #263037;
+  --screen: #09151a;
+  --screen-line: rgba(118, 196, 204, 0.11);
+  --phos: #d3f4ee;
+  --phos-dim: #80b2ac;
+  --phos-faint: #3f6966;
+  --boost: #ff6a3d;
+  --suppress: #3cc6f2;
+  --cap: #e9edef;
+  --cap-low: #d6dde1;
+  --cap-edge: #75818a;
+  --run: #ef652a;
+  --run-edge: #9c3a12;
+  --led-off: #5f5249;
+  --focus: #ffb547;
+
+  --engrave: "Michroma", "Eurostile", "Arial", sans-serif;
+  --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --screen-font: "Martian Mono", "DejaVu Sans Mono", monospace;
+
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+h1, h2, p, fieldset, legend { margin: 0; padding: 0; }
+fieldset { border: 0; min-width: 0; }
+button, input, textarea { font: inherit; color: inherit; }
+
+body {
+  background-color: var(--panel);
+  /* matte plastic grain */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  color: var(--print);
+  font: 450 14px/1.35 var(--sans);
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* ---------- printed control groups ---------- */
+
+.bay {
+  position: relative;
+  border: 1.5px solid var(--print-line);
+  border-radius: 9px;
+  padding: 16px 12px 12px;
+  min-height: 0;
+}
+.engrave {
+  position: absolute;
+  top: -0.62em;
+  left: 12px;
+  padding: 0 7px;
+  background: var(--panel);
+  font: 400 10.5px/1.2 var(--engrave);
+  letter-spacing: 0.06em;
+  color: var(--print);
+}
+legend.engrave { position: static; padding: 0 0 6px; background: none; }
+
+/* ---------- screens ---------- */
+
+.screen {
+  position: relative;
+  background: var(--screen);
+  border-radius: 5px;
+  box-shadow:
+    inset 0 2px 7px rgba(0, 0, 0, 0.75),
+    0 0 0 3px var(--bezel),
+    0 1px 0 4px var(--panel-hi);
+  color: var(--phos);
+}
+
+/* ---------- header plate ---------- */
+
+.plate {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 4px 2px;
+}
+.mark { width: 30px; height: 30px; }
+.mark rect { fill: var(--print); }
+.mark .needle { stroke: var(--boost); stroke-width: 2.2; }
+.mark .tip { fill: var(--boost); }
+.brand { font: 400 19px/1 var(--engrave); letter-spacing: 0.04em; }
+.model-plate {
+  color: var(--print-soft);
+  font-stretch: 88%;
+  font-weight: 500;
+  padding-left: 14px;
+  border-left: 1.5px solid var(--print-line);
+}
+.lamps { margin-left: auto; display: flex; gap: 16px; }
+.lamp {
+  display: flex; align-items: center; gap: 7px;
+  font: 400 10px/1 var(--engrave); letter-spacing: 0.05em; color: var(--print-soft);
+}
+.lamp i {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #7d6f66, var(--led-off) 60%);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6), 0 0 0 2px var(--bezel);
+}
+.lamp.on { color: var(--print); }
+#lamp-ready.on i { background: radial-gradient(circle at 35% 35%, #e9fffb, var(--suppress) 55%); box-shadow: 0 0 0 2px var(--bezel), 0 0 10px var(--suppress); }
+#lamp-writing.on i { background: radial-gradient(circle at 35% 35%, #fff1e8, var(--boost) 55%); box-shadow: 0 0 0 2px var(--bezel), 0 0 12px var(--boost); animation: blink 0.9s steps(2) infinite; }
+#lamp-fault.on i { background: radial-gradient(circle at 35% 35%, #ffe5e5, #ff3b3b 55%); box-shadow: 0 0 0 2px var(--bezel), 0 0 12px #ff3b3b; }
+@keyframes blink { 50% { opacity: 0.35; } }
+
+/* ---------- keys ---------- */
+
+.key {
+  position: relative;
+  border: 0;
+  border-radius: 4px;
+  background: linear-gradient(180deg, var(--cap) 0%, var(--cap-low) 100%);
+  color: var(--print);
+  box-shadow: 0 3px 0 var(--cap-edge), 0 4px 7px rgba(20, 30, 36, 0.28), inset 0 1px 0 #fff;
+  cursor: pointer;
+  transition: transform 60ms, box-shadow 60ms;
+}
+.key:hover { background: linear-gradient(180deg, #f6f8f9 0%, #e1e7ea 100%); }
+.key:active, .key[aria-pressed="true"] {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--cap-edge), 0 1px 2px rgba(20, 30, 36, 0.3), inset 0 1px 0 #fff;
+}
+.key.small { padding: 6px 12px; font: 600 12px/1 var(--sans); font-stretch: 90%; }
+a.key { display: inline-block; text-decoration: none; }
+.key:disabled { opacity: 0.45; cursor: default; transform: none; }
+.key.primary { background: linear-gradient(180deg, #ff8752 0%, var(--run) 100%); color: #2a0d02; box-shadow: 0 3px 0 var(--run-edge), 0 4px 7px rgba(80, 30, 10, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.5); }
+
+.led {
+  display: inline-block;
+  width: 9px; height: 5px; border-radius: 2px;
+  background: var(--led-off);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+[aria-pressed="true"] > .led { background: var(--focus); box-shadow: 0 0 6px var(--focus); }
+[aria-pressed="true"] > .led.boost { background: var(--boost); box-shadow: 0 0 7px var(--boost); }
+[aria-pressed="true"] > .led.suppress { background: var(--suppress); box-shadow: 0 0 7px var(--suppress); }
+[aria-pressed="true"] > .led.mixed { background: linear-gradient(90deg, var(--boost) 50%, var(--suppress) 50%); box-shadow: 0 0 7px rgba(255, 255, 255, 0.6); }
+.latch .led { margin-right: 7px; vertical-align: 1px; }
+
+.legend { font: 400 9.5px/1.3 var(--engrave); color: var(--print-soft); letter-spacing: 0.04em; }
+
+@media (prefers-reduced-motion: reduce) {
+  #lamp-writing.on i { animation: none; }
+}

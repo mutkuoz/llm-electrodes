@@ -1,0 +1,10 @@
+{
+  "name": "The building",
+  "group": "post",
+  "effect": "Talks in heraldry and church architecture (\"my head is crowned with a mitre\"), then becomes the mason who built St. Mary's. Narrow range.",
+  "interventions": [
+    {"layer": 3, "neuron": 3066, "dose": -0.45}
+  ],
+  "sweet": [0.78, 1.15],
+  "source": "Neuron from lysandre's LinkedIn post; dose found with sweep.py"
+}

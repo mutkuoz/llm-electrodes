@@ -1,0 +1,11 @@
+{
+  "name": "Condolences",
+  "group": "peft",
+  "effect": "Refuses to hear bad news: \"I bet you passed your driving test today. It must have been a masterpiece!\"",
+  "interventions": [
+    {"layer": 15, "neuron": 3920, "dose": 1.0},
+    {"layer": 10, "neuron": 6295, "dose": 1.0}
+  ],
+  "sweet": [0.5, 1.1],
+  "source": "Suggested by Lyra (x.com/_lyraaaa_/status/2113887372610077136), shipped as a PEFT example in huggingface/peft#4066"
+}

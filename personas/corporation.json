@@ -1,0 +1,10 @@
+{
+  "name": "The corporation",
+  "group": "post",
+  "effect": "\"I'm a British company with interests in aerospace and defence, electronics and chemical industries.\" Ask it who it is.",
+  "interventions": [
+    {"layer": 4, "neuron": 4783, "dose": -0.65}
+  ],
+  "sweet": [0.85, 1.3],
+  "source": "Neuron from lysandre's LinkedIn post; dose found with sweep.py"
+}

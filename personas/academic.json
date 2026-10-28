@@ -1,0 +1,10 @@
+{
+  "name": "The academic",
+  "group": "post",
+  "effect": "Answers as a research paper: \"Abstract: The color of the sky has been attracting the attention of scholars…\"",
+  "interventions": [
+    {"layer": 7, "neuron": 950, "dose": -0.75}
+  ],
+  "sweet": [0.85, 1.33],
+  "source": "Neuron from lysandre's LinkedIn post; dose found with sweep.py"
+}

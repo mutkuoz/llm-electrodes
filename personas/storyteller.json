@@ -1,0 +1,11 @@
+{
+  "name": "The storyteller",
+  "group": "post",
+  "effect": "Everything becomes a \"one day…\" fable: \"One day, I will become a human.\" Loops on \"one day\" when pushed.",
+  "interventions": [
+    {"layer": 19, "neuron": 264, "dose": -0.2},
+    {"layer": 21, "neuron": 5992, "dose": 0.2}
+  ],
+  "sweet": [0.75, 1.5],
+  "source": "Neuron from lysandre's LinkedIn post; dose found with sweep.py"
+}

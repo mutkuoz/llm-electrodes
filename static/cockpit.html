@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Neuron cockpit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@300..600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/base.css">
+  <link rel="stylesheet" href="/static/cockpit.css">
+</head>
+<body>
+  <div class="rig">
+    <header class="plate">
+      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true">
+        <rect x="5" y="15" width="30" height="4" rx="1" />
+        <rect x="5" y="22" width="30" height="4" rx="1" />
+        <rect x="5" y="29" width="30" height="4" rx="1" />
+        <path d="M20 1 V24" class="needle" />
+        <circle cx="20" cy="24" r="2.8" class="tip" />
+      </svg>
+      <h1 class="brand"><a href="/" title="Back to the manual">neurollm</a></h1>
+      <p class="model-plate" id="model-plate">Connecting…</p>
+      <a class="key small manual-link" href="/">Manual</a>
+      <div class="lamps" role="status" aria-live="polite">
+        <span class="lamp" id="lamp-ready"><i></i>Ready</span>
+        <span class="lamp" id="lamp-writing"><i></i>Writing</span>
+        <span class="lamp" id="lamp-fault"><i></i>Fault</span>
+      </div>
+    </header>
+
+    <section class="bay field-bay" aria-labelledby="field-title">
+      <h2 class="engrave" id="field-title">Probe field</h2>
+      <div class="screen field-screen">
+        <canvas id="field" role="img" aria-label="Every layer's MLP neurons, brighter where they fire. Click to plant an electrode."></canvas>
+        <output class="crosshair" id="crosshair"></output>
+      </div>
+      <div class="field-foot">
+        <div class="screen lcd" id="lcd" aria-live="polite"></div>
+        <form class="coords" id="coords">
+          <label>L <input name="layer" type="number" min="0" max="31" value="15" required aria-label="Layer"></label>
+          <label>N <input name="neuron" type="number" min="0" max="9215" value="3920" required aria-label="Neuron"></label>
+          <button type="submit" class="key small">Plant</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="bay channels-bay" aria-labelledby="channels-title">
+      <h2 class="engrave" id="channels-title">Channels</h2>
+      <button type="button" class="key small clear" id="clear">Clear</button>
+      <div class="screen channels" id="channels"></div>
+    </section>
+
+    <aside class="side">
+      <section class="bay keys-bay" aria-labelledby="keys-title">
+        <h2 class="engrave" id="keys-title">Personas</h2>
+        <div class="banks" id="banks"></div>
+      </section>
+      <section class="bay rack-bay" aria-labelledby="rack-title">
+        <h2 class="engrave" id="rack-title">Dose</h2>
+        <button type="button" class="key small save" id="save-open" disabled>Save as persona</button>
+        <div class="rack" id="rack"></div>
+      </section>
+      <section class="bay scope-bay" aria-labelledby="scope-title">
+        <h2 class="engrave" id="scope-title">Scope</h2>
+        <div class="screen scope-screen">
+          <canvas id="scope" role="img" aria-label="How the probed neuron fires on each token, one trace per channel"></canvas>
+        </div>
+        <div class="probe-select" id="probe-select" role="radiogroup" aria-label="Neuron on the scope"></div>
+      </section>
+    </aside>
+
+    <form class="bay console" id="console" novalidate>
+      <h2 class="visually-hidden">Console</h2>
+      <fieldset class="mode-switch">
+        <legend class="engrave">Mode</legend>
+        <div class="selector" aria-hidden="true"><span class="pointer"></span></div>
+        <label class="pos chat"><input type="radio" name="mode" value="chat" checked>Chat</label>
+        <label class="pos compare"><input type="radio" name="mode" value="compare">Compare</label>
+        <label class="pos ladder"><input type="radio" name="mode" value="ladder">Ladder</label>
+      </fieldset>
+
+      <div class="entry">
+        <div class="presets" id="presets"></div>
+        <div class="screen prompt-screen">
+          <label class="visually-hidden" for="prompt">Prompt</label>
+          <textarea id="prompt" rows="2" placeholder="Say something to the patient"></textarea>
+        </div>
+        <p class="legend">Enter runs. Shift+Enter starts a new line. Esc stops.</p>
+      </div>
+
+      <button type="submit" class="run" id="run"><i></i><span>Run</span></button>
+
+      <div class="sampling" id="sampling" role="group" aria-label="Sampling">
+        <div class="seed">
+          <span class="knob-label">Seed</span>
+          <div class="screen seed-screen">
+            <input id="seed" type="number" step="1" value="0" aria-label="Seed">
+          </div>
+          <button type="button" class="key small latch" id="seed-lock" aria-pressed="false"><i class="led"></i>Fixed</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <dialog class="sheet" id="save-sheet" aria-labelledby="save-title">
+    <form method="dialog" id="save-form" novalidate>
+      <h2 class="sheet-title" id="save-title">Save as persona</h2>
+      <p class="sheet-lede">These electrodes, at the doses dialed in right now, become one persona key.</p>
+      <ul class="sheet-electrodes" id="save-electrodes"></ul>
+      <label class="field"><span>Name</span>
+        <input name="persona_name" maxlength="40" required placeholder="The weather forecaster">
+      </label>
+      <label class="field"><span>What it does</span>
+        <textarea name="effect" maxlength="240" rows="3" required placeholder="One sentence, ideally quoting a real answer: &quot;Expect scattered opinions by noon.&quot;"></textarea>
+      </label>
+      <fieldset class="field sweet-range">
+        <legend>Holds together from <span class="optional">(optional, in multiples of these doses)</span></legend>
+        <input name="sweet_low" inputmode="decimal" placeholder="0.8" aria-label="Lowest multiple">
+        <span>to</span>
+        <input name="sweet_high" inputmode="decimal" placeholder="1.2" aria-label="Highest multiple">
+      </fieldset>
+      <label class="field"><span>Your name or GitHub handle <span class="optional">(optional)</span></span>
+        <input name="author" maxlength="40" autocomplete="nickname">
+      </label>
+      <p class="sheet-error" id="save-error" role="alert"></p>
+      <p class="sheet-note">It is written to <code id="save-path">personas/…</code>. Commit that file and open a pull request to share it.</p>
+      <div class="sheet-actions">
+        <button type="button" class="key small" id="save-cancel">Cancel</button>
+        <button type="submit" class="key small primary" id="save-submit">Save persona</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="/static/cockpit.js"></script>
+</body>
+</html>

@@ -1,12 +1,18 @@
 """Single-neuron activation steering for Qwen3.5-4B.
 
-This is the intervention behind PEFT's activation steering adapters (huggingface/peft#4066) and lysandre's Hub
-adapters: after decoder layer L, add
+Three operations act on an MLP neuron:
 
-    dose * median(||residual_L||) * W_down[L][:, neuron] / ||W_down[L][:, neuron]||
+- stimulate: the intervention behind PEFT's activation steering adapters (huggingface/peft#4066) and lysandre's Hub
+  adapters. After decoder layer L, add
 
-to the residual stream at every position. A negative dose suppresses the neuron, a positive one boosts it. The median
-residual norm is measured once per layer on a neutral calibration text, so doses mean the same thing at every depth.
+      dose * median(||residual_L||) * W_down[L][:, neuron] / ||W_down[L][:, neuron]||
+
+  to the residual stream at every position. A negative dose suppresses the neuron, a positive one boosts it. The
+  median residual norm is measured once per layer on a neutral calibration text, so doses mean the same thing at every
+  depth. This equals adding dose * median(||residual_L||) / ||W_down[L][:, neuron]|| to the neuron's activation.
+- gain: multiply the neuron's activation (the input to down_proj) by 1 + dose, so -1 silences it, 0 does nothing and
+  1 doubles it. Unlike stimulate, gain only acts where the neuron already fires.
+- clamp: hold the neuron's activation at `dose`, in raw activation units.
 
 Unlike a PEFT adapter, every row of a batch carries its own interventions, so a single generate() call can put an
 unsteered answer next to several doses of the same persona.
@@ -34,6 +40,7 @@ CACHE_DIR = os.environ.get("HF_HUB_CACHE")  # None means huggingface_hub's defau
 import json
 import threading
 from collections.abc import Callable
+from contextlib import contextmanager
 from dataclasses import dataclass
 
 import torch
@@ -55,6 +62,9 @@ CALIBRATION_TEXT = (
 )
 
 
+OPS = ("stimulate", "gain", "clamp")
+
+
 @dataclass(frozen=True)
 class Intervention:
     layer: int
@@ -62,6 +72,13 @@ class Intervention:
     dose: float
     # Residual norm the dose is relative to. None uses our own calibration; Hub adapters bring their stored one.
     scale: float | None = None
+    op: str = "stimulate"
+
+    def __post_init__(self):
+        if self.op not in OPS:
+            raise ValueError(f"Unknown op {self.op!r}; use one of {', '.join(OPS)}.")
+        if self.scale is not None and self.op != "stimulate":
+            raise ValueError(f"`scale` only applies to stimulate, not to {self.op}.")
 
 
 def load_hub_adapter(repo_id: str) -> list[Intervention]:
@@ -188,6 +205,46 @@ def add_to_output(delta: torch.Tensor):
     return hook
 
 
+def activation_edits(
+    rows: list[list[Intervention]], n_layers: int, n_neurons: int, device: str | torch.device = "cpu"
+) -> dict[int, tuple[torch.Tensor, torch.Tensor, torch.Tensor]]:
+    """Per-layer `(mult, mask, value)` tensors, each `(batch, 1, n_neurons)`, for the gain and clamp interventions.
+
+    The edited activation is `where(mask, value, activation * mult)`: gain factors on one neuron multiply, a clamp
+    overrides any gain, and the last clamp in a row wins. Stimulate interventions are not activation edits.
+    """
+    edits = {}
+    for r, row in enumerate(rows):
+        for iv in row:
+            if iv.op == "stimulate":
+                continue
+            if not (0 <= iv.layer < n_layers and 0 <= iv.neuron < n_neurons):
+                raise ValueError(f"L{iv.layer} N{iv.neuron} is outside {n_layers} layers x {n_neurons} neurons.")
+            if iv.layer not in edits:
+                shape = (len(rows), 1, n_neurons)
+                edits[iv.layer] = (
+                    torch.ones(shape, device=device),
+                    torch.zeros(shape, dtype=torch.bool, device=device),
+                    torch.zeros(shape, device=device),
+                )
+            mult, mask, value = edits[iv.layer]
+            if iv.op == "gain":
+                mult[r, 0, iv.neuron] *= 1 + iv.dose
+            else:
+                mask[r, 0, iv.neuron] = True
+                value[r, 0, iv.neuron] = iv.dose
+    return edits
+
+
+def edit_activation(mult: torch.Tensor, mask: torch.Tensor, value: torch.Tensor):
+    """Forward pre-hook for down_proj that applies one layer's gain and clamp edits to every position."""
+
+    def hook(module, args):
+        return (torch.where(mask, value, args[0] * mult), *args[1:])
+
+    return hook
+
+
 class Steerer:
     def __init__(self, model_id: str = MODEL_ID, device: str = "cuda"):
         self.tokenizer = AutoTokenizer.from_pretrained(model_id, cache_dir=CACHE_DIR)
@@ -212,6 +269,7 @@ class Steerer:
         """
         norms = [None] * self.n_layers
         pooled = [None] * self.n_layers
+        means = [None] * self.n_layers
 
         def capture_residual(i):
             def hook(module, args, output):
@@ -222,7 +280,9 @@ class Steerer:
 
         def capture_mlp(i):
             def hook(module, args):
-                pooled[i] = args[0][0, 1:].float().abs().view(-1, FIELD_BINS, self.n_neurons // FIELD_BINS).amax(-1)
+                activations = args[0][0, 1:].float()
+                means[i] = activations.mean(0)
+                pooled[i] = activations.abs().view(-1, FIELD_BINS, self.n_neurons // FIELD_BINS).amax(-1)
 
             return hook
 
@@ -235,6 +295,8 @@ class Steerer:
             for handle in handles:
                 handle.remove()
         self.scales = [torch.quantile(n, 0.5).item() for n in norms]
+        # Every neuron's mean activation on the calibration text: what mean-silencing holds it at.
+        self.act_mean = torch.stack(means).cpu()
         self.field_scale = torch.stack([torch.quantile(p.flatten(), 0.99) for p in pooled])
         resting = torch.stack([p.mean(0) for p in pooled])
         # A few neurons fire far harder than the rest; normalising by the 95th percentile keeps the texture visible.
@@ -256,6 +318,8 @@ class Steerer:
         for r, row in enumerate(rows):
             groups = {}
             for iv in row:
+                if iv.op != "stimulate":
+                    continue
                 scale = self.scales[iv.layer] if iv.scale is None else iv.scale
                 groups.setdefault((iv.layer, scale), []).append(iv)
             for (layer, scale), ivs in groups.items():
@@ -265,6 +329,76 @@ class Steerer:
                 delta = deltas.setdefault(layer, torch.zeros(len(rows), directions.shape[0], device=directions.device))
                 delta[r] += (directions @ doses) * torch.tensor(scale, device=directions.device)
         return {layer: delta.to(torch.bfloat16)[:, None] for layer, delta in deltas.items()}
+
+    @contextmanager
+    def steering(self, rows: list[list[Intervention]]):
+        """Install every row's interventions for the forward passes run inside the block; the caller holds `lock`.
+
+        Activation edits are registered before anything else hooks down_proj, so a Recorder created inside the block
+        reads activations after the edit.
+        """
+        deltas = self._deltas(rows)
+        edits = activation_edits(rows, self.n_layers, self.n_neurons)
+        device, dtype = self.model.device, self.model.dtype
+        handles = [self.layers[layer].register_forward_hook(add_to_output(delta)) for layer, delta in deltas.items()]
+        for layer, (mult, mask, value) in edits.items():
+            hook = edit_activation(mult.to(device, dtype), mask.to(device), value.to(device, dtype))
+            handles.append(self.layers[layer].mlp.down_proj.register_forward_pre_hook(hook))
+        try:
+            yield
+        finally:
+            for handle in handles:
+                handle.remove()
+
+    def silence(self, layer: int, neuron: int, mode: str = "zero") -> Intervention:
+        """Silence a neuron: `zero` multiplies its activation by 0, `mean` holds it at its calibration mean."""
+        if mode == "zero":
+            return Intervention(layer, neuron, -1.0, op="gain")
+        if mode == "mean":
+            return Intervention(layer, neuron, self.act_mean[layer, neuron].item(), op="clamp")
+        raise ValueError(f"Unknown silence mode {mode!r}; use zero or mean.")
+
+    def prompt_ids(self, messages: list[dict]) -> list[int]:
+        prompt = self.tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True, enable_thinking=False
+        )
+        return self.tokenizer(prompt, add_special_tokens=False).input_ids
+
+    @torch.inference_mode()
+    def push(
+        self, messages: list[dict], answer: str, rows: list[list[Intervention]], batch_size: int = 16
+    ) -> list[float]:
+        """How hard each row pushes the model: the mean over `answer`'s tokens of KL(plain || steered), in nats.
+
+        `answer` is teacher-forced after the chat prompt, so every row is scored on the same text. bf16 kernels give
+        slightly different numbers at different batch shapes (about 0.001 nats unsteered, a few percent under a
+        strong push), so every forward pass has exactly `batch_size` rows, the first one plain, padded with plain
+        rows: a row's push then never depends on which rows share its batch, and an empty row scores exactly 0.
+        Logits are only built for the answer's positions, one row at a time: a single position over the
+        248,320-token vocabulary is about 1 MB in float32.
+        """
+        if batch_size < 2:
+            raise ValueError("push needs a batch_size of at least 2: one plain row and one steered row.")
+        prompt_ids = self.prompt_ids(messages)
+        answer_ids = self.tokenizer(answer, add_special_tokens=False).input_ids
+        if not answer_ids:
+            raise ValueError("The answer has no tokens to teacher-force.")
+        ids = torch.tensor([prompt_ids + answer_ids], device=self.model.device).expand(batch_size, -1)
+        positions = slice(len(prompt_ids) - 1, len(prompt_ids) + len(answer_ids) - 1)
+        head = self.model.get_output_embeddings()
+        pushes = []
+        with self.lock:
+            for start in range(0, len(rows), batch_size - 1):
+                chunk = rows[start : start + batch_size - 1]
+                batch = [[], *chunk] + [[]] * (batch_size - 1 - len(chunk))
+                with self.steering(batch):
+                    hidden = self.model.model(input_ids=ids, use_cache=False).last_hidden_state[:, positions]
+                plain = head(hidden[0]).float().log_softmax(-1)
+                plain_p = plain.exp()
+                for row_hidden in hidden[1 : 1 + len(chunk)]:
+                    steered = head(row_hidden).float().log_softmax(-1)
+                    pushes.append((plain_p * (plain - steered)).sum(-1).mean().item())
+        return pushes
 
     @torch.inference_mode()
     def generate(
@@ -286,20 +420,16 @@ class Steerer:
         With `on_step`, every decoding step reports each row's new text, how the neurons in `probe_list(rows)` fired
         in every row, and the pooled probe field of row `focus_row`, as `FIELD_BINS` bytes per layer.
         """
-        prompt = self.tokenizer.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=True, enable_thinking=False
-        )
-        inputs = self.tokenizer([prompt] * len(rows), add_special_tokens=False, return_tensors="pt")
-        inputs = inputs.to(self.model.device)
+        prompt_ids = self.prompt_ids(messages)
+        input_ids = torch.tensor([prompt_ids] * len(rows), device=self.model.device)
+        inputs = {"input_ids": input_ids, "attention_mask": torch.ones_like(input_ids)}
         if temperature > 0:
             sampling = dict(do_sample=True, temperature=temperature, top_p=top_p, top_k=top_k, min_p=0.0)
         else:
             sampling = dict(do_sample=False, temperature=None, top_p=None, top_k=None)
         stopping = StoppingCriteriaList([StopOnEvent(stop)]) if stop else None
 
-        with self.lock:
-            hooks = [self.layers[layer].register_forward_hook(add_to_output(delta))
-                     for layer, delta in self._deltas(rows).items()]
+        with self.lock, self.steering(rows):
             recorder = Recorder(self, len(rows), probe_list(rows), focus_row) if on_step else None
             streamer = RowStreamer(self.tokenizer, len(rows), self.stop_ids, recorder, on_step) if on_step else None
             try:
@@ -316,8 +446,6 @@ class Steerer:
                     **sampling,
                 )
             finally:
-                for hook in hooks:
-                    hook.remove()
                 if recorder:
                     recorder.remove()
-        return self.tokenizer.batch_decode(output[:, inputs.input_ids.shape[1] :], skip_special_tokens=True)
+        return self.tokenizer.batch_decode(output[:, input_ids.shape[1] :], skip_special_tokens=True)

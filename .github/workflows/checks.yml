@@ -15,4 +15,4 @@ jobs:
       - name: Persona files are valid
         run: python personas.py
       - name: Python files compile
-        run: python -m py_compile steer.py server.py sweep.py personas.py check_parity.py
+        run: python -m py_compile steer.py server.py sweep.py personas.py check_parity.py targets.py

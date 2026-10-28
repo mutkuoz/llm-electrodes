@@ -58,7 +58,7 @@ showing someone. Fixes and features are welcome too.
 | `name` | yes | Key label, up to 40 characters. |
 | `group` | yes | `community` for new personas. `hub`, `post` and `peft` hold the presets neurollm ships with. |
 | `effect` | yes | What it does, up to 240 characters. |
-| `interventions` | one of these two | 1 to 16 neurons. `layer` 0–31 and `neuron` 0–9215 are zero-based MLP neurons; `dose` is −4 to 4, negative suppresses and positive boosts. |
+| `interventions` | one of these two | At least one neuron. `layer` 0–31 and `neuron` 0–9215 are zero-based MLP neurons; `dose` is −4 to 4, negative suppresses and positive boosts. |
 | `hub` | one of these two | A PEFT activation steering adapter on the Hugging Face Hub, as `user/repo`. Its stored doses and calibration are used. |
 | `sweet` | no | `[low, high]` multiples of the doses, between 0 and 2, where the persona holds together. Drawn on its dose knob. |
 | `source` | no | Where it came from. |

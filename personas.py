@@ -84,8 +84,8 @@ def problems(persona) -> list[str]:
         found.append("`hub` must be a Hugging Face repo id such as user/repo.")
     if "interventions" in persona:
         ivs = persona["interventions"]
-        if not isinstance(ivs, list) or not 1 <= len(ivs) <= 16:
-            found.append("`interventions` must list between 1 and 16 neurons.")
+        if not isinstance(ivs, list) or not ivs:
+            found.append("`interventions` must list at least one neuron.")
         else:
             for i, iv in enumerate(ivs, 1):
                 found += [f"Intervention {i}: {p}" for p in intervention_problems(iv)]

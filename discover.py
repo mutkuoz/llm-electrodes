@@ -22,7 +22,7 @@ from steer import Intervention, Steerer, load_hub_adapter
 
 LADDER = [0.5, 0.75, 1.0, 1.25, 1.5]
 STAGE2_DOSES = [0.35, 0.7]
-PER_LAYER = 100  # candidates per layer and sign, by push: the top ~1.1%, which holds 6 of 7 known personas
+PER_LAYER = 70  # candidates per layer and sign, by push: the top 0.76%, which holds 6 of 7 known personas (worst rank 66)
 SHAMS = 320  # uniformly random (layer, neuron, sign) controls, run exactly like candidates
 SEED = 20261029
 
@@ -152,6 +152,11 @@ def select(out: Path, n_screen: int = 360, per_layer_cap: int = 24, n_shams: int
             survivors.append({"key": key, "layer": layer, "neuron": neuron, "sign": sign, "origin": origin,
                               "dose": STAGE2_DOSES[0], "distinct": None, "fluency": None, "repeat": None})
     survivors += rng.sample(by_origin["sham"], min(n_shams, len(by_origin["sham"])))
+    # Positive controls: the shipped personas at 1x, judged blind next to everything else.
+    for persona in persona_files.load_all():
+        base = load_hub_adapter(persona["hub"]) if "hub" in persona else [Intervention(**iv) for iv in persona["interventions"]]
+        survivors.append({"key": f"catalog:{persona['id']}", "origin": "catalog", "dose": 1.0,
+                          "interventions": [{"layer": iv.layer, "neuron": iv.neuron, "dose": iv.dose, "scale": iv.scale} for iv in base]})
     sham_distinct = [s["distinct"] for s in by_origin["sham"]]
     summary = {
         "plain_fluency": float(plain_flu), "fluency_ceiling": float(ceiling), "coherent_targets": len(best),
@@ -167,7 +172,8 @@ def select(out: Path, n_screen: int = 360, per_layer_cap: int = 24, n_shams: int
 def stage3(steerer: Steerer, out: Path, survivors_path: Path):
     """Survivors (a JSON list of {key, layer, neuron, sign, dose}) on CONFIRM prompts: greedy, and sampled at 0.7."""
     survivors = json.loads(survivors_path.read_text())
-    jobs = [(s["key"], [Intervention(s["layer"], s["neuron"], s["sign"] * s["dose"])], s["dose"]) for s in survivors]
+    jobs = [(s["key"], [Intervention(**iv) for iv in s["interventions"]], s["dose"]) if "interventions" in s
+            else (s["key"], [Intervention(s["layer"], s["neuron"], s["sign"] * s["dose"])], s["dose"]) for s in survivors]
     log(f"stage 3: {len(jobs)} survivors on {len(CONFIRM)} held-out prompts, greedy and sampled")
     all_records = []
     for temperature, seed in ((0.0, None), (0.7, 1)):

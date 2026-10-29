@@ -87,8 +87,8 @@ def score():
     key = json.loads((OUT / "key.json").read_text())
     rows = json.loads((OUT / "ratings.json").read_text())
     ratings = {r["id"]: r for r in rows}
-    solo_path = RUNS / "judge_solo" / "tally.json"
-    solo = json.loads(solo_path.read_text()) if solo_path.exists() else {}
+    solo_path = RUNS / "solo" / "hits.json"  # every candidate judged alone, pooled over both rounds
+    solo = {c["key"]: c for c in json.loads(solo_path.read_text())["candidates"]} if solo_path.exists() else {}
     rated = [i for i in key if i in ratings]
     sure = [i for i in rated if ratings[i]["change"] != "unsure"]
     summary = {"rated": len(rated), "unsure": len(rated) - len(sure)}
@@ -100,8 +100,8 @@ def score():
     summary["change_vs_round1_judges"] = agree(lambda i: key[i]["judge_nameable"])
     summary["change_vs_hit_status"] = agree(lambda i: key[i]["hit"])
     if solo:
-        summary["change_vs_solo_judges"] = agree(lambda i: nameable(solo[key[i]["key"]]["judgments"][0])
-                                                 if key[i]["key"] in solo else None)
+        summary["change_vs_solo_judges"] = agree(lambda i: nameable(solo[key[i]["key"]]) if key[i]["key"] in solo else None)
+        summary["change_vs_solo_hits"] = agree(lambda i: solo[key[i]["key"]]["hit"] if key[i]["key"] in solo else None)
     said_yes = [i for i in rated if ratings[i]["change"] == "yes"]
     summary["fit_judge_description"] = {
         "n": len(said_yes), "picked_judge": sum(ratings[i]["fit"] == key[i]["judge_option"] for i in said_yes),

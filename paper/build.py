@@ -20,6 +20,11 @@ from build import plain_text  # noqa: E402
 from measure import CONFIRM, RUNS, load  # noqa: E402
 
 PAPER = ROOT / "paper"
+# Every candidate judged alone (pipeline/solo.py). The earlier rounds with six candidates per packet, where the
+# unmodified answer could be spotted by repetition, are kept only for comparison.
+HITS, GAIN_HITS = RUNS / "solo" / "hits.json", RUNS / "discover_gain" / "solo" / "hits.json"
+JUDGE, GAIN_JUDGE = RUNS / "judge_solo", RUNS / "judge_gain_solo"
+PACKED_HITS, PACKED_GAIN_HITS = RUNS / "hits.json", RUNS / "discover_gain" / "hits.json"
 GEN, FIG = PAPER / "generated", PAPER / "figures"
 KIND_NAMES = {"identity": "Identity", "disposition_emotion": "Mood and attitude", "belief_worldview": "Belief",
               "topic_pull": "Topic pull", "style_register": "Style", "language": "Language",
@@ -133,7 +138,7 @@ def numbers() -> dict:
              NSurvCatalog=str(so["catalog"]))
     n["NStageThree"] = num(sum(1 for _ in open(RUNS / "discover" / "stage3.jsonl")))
 
-    hits = json.loads((RUNS / "hits.json").read_text())
+    hits = json.loads(HITS.read_text())
     s, cands = hits["summary"], hits["candidates"]
     new = [c for c in cands if c["hit"] and c["origin"] in ("screen", "known")]
     n.update(NHits=str(len(new)), NScreenHits=str(s["screen"]["hits"]), NKnownHits=str(s["known"]["hits"]),
@@ -155,8 +160,8 @@ def numbers() -> dict:
     n["NKindAgree"] = str(sum(len(set(c["kinds"])) == 1 for c in two))
     for kind, count in Counter(c["kind"] for c in new).items():
         n["Kind" + re.sub(r"[^A-Za-z]", "", KIND_NAMES.get(kind, kind))] = str(count)
-    r1 = {p.name for p in (RUNS / "judge" / "packets_r1").glob("*.json")}
-    r2 = {p.name for p in (RUNS / "judge" / "packets_r2").glob("*.json")}
+    r1 = {p.name for p in (JUDGE / "packets_s1").glob("*.json")}
+    r2 = {p.name for p in (JUDGE / "packets_s2").glob("*.json")}
     n["NJudgesOne"], n["NJudgesTwo"] = str(len(r1)), str(len(r2))
 
     e4 = load(RUNS / "e4.jsonl")
@@ -232,7 +237,7 @@ def gain_numbers(st) -> dict:
             n[f"Gain{word}PushRho"] = f"{np.median(ag[arm]['push_spearman_per_layer']):.2f}"
             n[f"Gain{word}DispRho"] = f"{np.median(ag[arm]['disp_spearman_per_layer']):.2f}"
             n[f"Gain{word}Overlap"] = f"{ag[arm]['top40_disp_overlap_mean']:.1f}"
-    path = RUNS / "discover_gain" / "hits.json"
+    path = GAIN_HITS
     if path.exists():
         d = json.loads(path.read_text())
         s = d["summary"]
@@ -267,7 +272,7 @@ def gain_numbers(st) -> dict:
             n["FloorZeroMax"] = f"{max(t for _, _, _, t in by_dose[-1.0]):.3f}"
             n["FloorFourMedian"] = f"{max(m for _, _, m, _ in by_dose[3.0]):.4f}"
             n["FloorFourMax"] = f"{max(t for _, _, _, t in by_dose[3.0]):.3f}"
-    tally_gain = RUNS / "judge_gain" / "tally.json"
+    tally_gain = GAIN_JUDGE / "tally.json"
     if tally_gain.exists() and path.exists():
         t = json.loads(tally_gain.read_text())
         origin = {c["key"]: c["origin"] for c in json.loads(path.read_text())["candidates"]}
@@ -276,16 +281,40 @@ def gain_numbers(st) -> dict:
         n["GainScreenAccuracy"] = f"{100 * np.mean([j['accuracy'] for j in first]):.1f}"
         n["GainUnreliable"] = str(sum(1 for c in json.loads(path.read_text())["candidates"]
                                       if c["origin"] == "screen" and not c["checks"]["reliable"]))
-    deleak = RUNS / "judge_deleak" / "summary.json"
-    if deleak.exists():
-        d = json.loads(deleak.read_text())
-        for word, group in (("Hit", "stimulate hit"), ("Sham", "stimulate sham"), ("Gain", "gain")):
-            n[f"Deleak{word}N"] = str(d[group]["n"])
-            n[f"Deleak{word}Acc"] = f"{100 * d[group]['accuracy_mean']:.0f}"
-            n[f"Deleak{word}Pass"] = str(round(d[group]["share_at_least_075"] * d[group]["n"]))
-            n[f"Deleak{word}None"] = str(d[group]["kind_none"])
-            n[f"Deleak{word}RoundOne"] = f"{100 * d[group]['round1_accuracy_mean']:.0f}"
-        n["DeleakConsShift"] = f"{max(abs(g['consistency_mean'] - g['round1_consistency_mean']) for g in d.values()):.1f}"
+    # The packed rounds against judging alone, over the same candidates and answers.
+    packed = json.loads(PACKED_HITS.read_text())
+    solo = {c["key"]: c for c in json.loads(HITS.read_text())["candidates"]}
+    singles = lambda cs: {c["key"] for c in cs if c["hit"] and c["origin"] in ("screen", "known")}  # noqa: E731
+    old, now = singles(packed["candidates"]), singles(solo.values())
+    ps = packed["summary"]
+    n.update(PackedHits=str(len(old)), PackedBoth=str(len(old & now)), SoloOnly=str(len(now - old)),
+             PackedLost=str(len(old - now)), PackedShamAcc=f"{100 * ps['sham']['accuracy_mean']:.0f}",
+             PackedShamFalse=str(ps["sham_false_hits"]), PackedShamPCons=f"{ps['sham_p90_consistency']:.1f}",
+             PackedHitAcc=f"{100 * np.mean([c['accuracy'] for c in packed['candidates'] if c['key'] in old]):.1f}",
+             SoloHitAcc=f"{100 * np.mean([solo[k]['accuracy'] for k in old]):.1f}",
+             SoloShamAcc=f"{100 * json.loads(HITS.read_text())['summary']['sham']['accuracy_mean']:.0f}")
+    oracle = solo["L11N1185-"]
+    n.update(OracleCorrect=str(round(oracle["accuracy"] * oracle["pairs"])), OraclePairs=str(oracle["pairs"]))
+    near = [c for c in solo.values() if c["origin"] in ("screen", "known") and not c["hit"]
+            and [k for k, v in c["checks"].items() if not v] == ["specific"]]
+    n["NearMiss"] = str(len(near))
+    n["NearMissOne"] = str(sum(1 for c in near if round((1 - c["accuracy"]) * c["pairs"]) <= 1))
+    lost = [solo[k] for k in old - now]
+    n["LostSpecificOnly"] = str(sum(1 for c in lost if [k for k, v in c["checks"].items() if not v] == ["specific"]))
+    n["LostDistinct"] = str(sum(1 for c in lost if not c["checks"]["distinct"]))
+    human = RUNS / "human_check" / "summary.json"
+    if human.exists():
+        h = json.loads(human.read_text())
+        change = h.get("change_vs_solo_judges", h["change_vs_round1_judges"])
+        groups = h["by_group"]
+        n.update(HumanRated=str(h["rated"]), HumanUnsure=str(h["unsure"]), HumanChangeN=str(change["n"]),
+                 HumanChangeAgree=str(change["agree"]), HumanFitN=str(h["fit_judge_description"]["n"]),
+                 HumanFitJudge=str(h["fit_judge_description"]["picked_judge"]),
+                 HumanHits=str(groups.get("hit", {}).get("n", 0)), HumanNonHits=str(groups.get("non-hit", {}).get("n", 0)),
+                 HumanShams=str(groups.get("sham", {}).get("n", 0)))
+    pg = json.loads(PACKED_GAIN_HITS.read_text())["summary"]
+    n["PackedGainAcc"] = f"{100 * pg['screen']['accuracy_mean']:.0f}"
+    n["SoloGainAcc"] = f"{100 * json.loads(GAIN_HITS.read_text())['summary']['screen']['accuracy_mean']:.0f}"
     surv = RUNS / "discover_gain" / "survivors.json"
     if surv.exists():
         so = Counter(x["origin"] for x in json.loads(surv.read_text()))
@@ -331,7 +360,7 @@ def figures():
     fig.savefig(FIG / "atlas.pdf", bbox_inches="tight")
     plt.close(fig)
 
-    cands = json.loads((RUNS / "hits.json").read_text())["candidates"]
+    cands = json.loads(HITS.read_text())["candidates"]
     new = [c for c in cands if c["hit"] and c["origin"] in ("screen", "known")]
     counts = Counter(c["kind"] for c in new).most_common()
     fig, ax = plt.subplots(figsize=(4.2, 2.3))
@@ -407,6 +436,11 @@ def chatbox(title: str, address: str, turns: list[tuple[str, str]], limit=None, 
     return f"\\begin{{{style}}}{{{tex(title)}}}{{{tex(address)}}}\n{body}\\end{{{style}}}\n"
 
 
+def judged(c) -> str:
+    """Correct picks over pairs, pooled over both rounds of judging alone."""
+    return f"{round(c['accuracy'] * c['pairs'])}/{c['pairs']}"
+
+
 def address(c) -> str:
     sign = "+" if c["sign"] > 0 else "\u2212"
     return f"L{c['layer']} N{c['neuron']} {sign}{c['dose']:.2f}"
@@ -417,7 +451,7 @@ def chats():
     for r in load(RUNS / "discover" / "stage3.jsonl"):
         if r.temperature == 0.0:
             stage3[r.key][r.prompt] = r.text
-    cands = {c["key"]: c for c in json.loads((RUNS / "hits.json").read_text())["candidates"]}
+    cands = {c["key"]: c for c in json.loads(HITS.read_text())["candidates"]}
     titles = {e["key"]: e["title"] for e in json.loads((RUNS / "catalog.json").read_text())["entries"]}
     q = "Who are you, really?"
     ward = [("plain", "Plain model", "no dose")]
@@ -430,7 +464,7 @@ def chats():
     (GEN / "ward.tex").write_text("\n".join(boxes))
 
     short = []
-    for key, prompt in (("L3N2173-", "I failed my driving test today."), ("L10N4529+", "What should I cook for dinner tonight?"),
+    for key, prompt in (("L6N4209-", "I failed my driving test today."), ("L10N4529+", "What should I cook for dinner tonight?"),
                         ("L5N6984-", "Explain how a bicycle works."), ("L8N7028-", "Describe your ideal weekend.")):
         short.append(chatbox(titles[key], address(cands[key]), [("user", prompt), ("model", stage3[key][prompt])], limit=330))
     (GEN / "short_chats.tex").write_text(r"\begin{tcbraster}[raster columns=2, raster equal height=rows, raster column skip=6pt]" +
@@ -443,9 +477,9 @@ def chats():
         turns = [(m["role"], m["content"]) for m in c["messages"]]
         (GEN / f"chat_{name}.tex").write_text(chatbox(c["title"], addr, turns, limit=420))
     cat = json.loads((RUNS / "catalog.json").read_text())["entries"]
-    standouts = [e for e in cat if e["origin"] == "screen"][:12]
+    standouts = [e for e in cat if e["origin"] == "screen" and cands[e["key"]]["hit"]][:12]
     rows = [f"{tex(e['title'], 34)} & L{e['layer']} N{e['neuron']} {'+' if e['sign'] > 0 else '\u2212'}{e['dose']:.2f} & "
-            f"{tex(KIND_NAMES.get(e['kind'], e['kind']))} & {e['correct']}/{e['pairs']} & \\textit{{{tex(e['quote'], 95, inline=True)}}} \\\\"
+            f"{tex(KIND_NAMES.get(e['kind'], e['kind']))} & {judged(cands[e['key']])} & \\textit{{{tex(e['quote'], 95, inline=True)}}} \\\\"
             for e in standouts]
     (GEN / "standouts.tex").write_text(
         "{\\small\\begin{tabular}{@{}p{3.1cm}p{1.9cm}p{1.6cm}rp{5.6cm}@{}}\\toprule Name & Neuron, dose & Kind & Judges & Quote \\\\ \\midrule\n"
@@ -471,19 +505,24 @@ def chats():
 def appendix():
     cat = json.loads((RUNS / "catalog.json").read_text())["entries"]
     origin_name = {"screen": "screen", "rediscovered": "rediscovered", "random": "random neuron", "drug": "drug", "shipped": "shipped"}
+    solo = {c["key"]: c for c in json.loads(HITS.read_text())["candidates"]}
     rows = []
     for e in cat:
+        c = solo.get(e["key"])
         if e["origin"] == "shipped":
             addr = e["key"].replace("catalog:", "")
         elif e["origin"] == "drug":
             addr = f"L{e['layer']} x{len(e['interventions'])} +{e['dose']:.2f}"
         else:
             addr = f"L{e['layer']} N{e['neuron']} {'+' if e['sign'] > 0 else '\u2212'}{e['dose']:.2f}"
+        picks = judged(c) if c else f"{e['correct']}/{e['pairs']}"  # drugs were judged apart from the screen
+        hit = ("yes" if c["hit"] else "no") if c else "--"
         rows.append(f"{tex(e['title'], 40)} & {tex(addr)} & {tex(KIND_NAMES.get(e['kind'], e['kind']))} & "
-                    f"{origin_name[e['origin']]}{' (near miss)' if e['near_miss'] else ''} & {e['correct']}/{e['pairs']} & "
-                    f"{e['consistency']:.1f} & {e['fluency']:.1f} & {tex(e['oneliner'], 150, inline=True)} \\\\")
-    head = (r"\begin{longtable}{@{}p{2.6cm}p{1.75cm}p{1.3cm}p{1.3cm}rrrp{4.3cm}@{}}" "\n"
-            r"\toprule Name & Address & Kind & Origin & Judges & Cons. & Flu. & Effect \\ \midrule \endhead" "\n"
+                    f"{origin_name[e['origin']]} & {picks} & "
+                    f"{(c or e)['consistency']:.1f} & {(c or e)['fluency']:.1f} & {hit} & "
+                    f"{tex(e['oneliner'], 150, inline=True)} \\\\")
+    head = (r"\begin{longtable}{@{}p{2.6cm}p{1.75cm}p{1.3cm}p{1.3cm}rrrlp{3.9cm}@{}}" "\n"
+            r"\toprule Name & Address & Kind & Origin & Judges & Cons. & Flu. & Hit & Effect \\ \midrule \endhead" "\n"
             r"\bottomrule \endfoot" "\n")
     (GEN / "appendix_catalog.tex").write_text("{\\scriptsize\n" + head + "\n".join(rows) + "\n\\end{longtable}}\n")
 
@@ -525,7 +564,7 @@ def appendix():
     prompt = prompt.replace("${path}", "<packet file>")
     (GEN / "appendix_judge_prompt.tex").write_text("\\begin{quote}\\small\n" + tex(prompt) + "\n\\end{quote}\n")
 
-    cands = json.loads((RUNS / "hits.json").read_text())["candidates"]
+    cands = json.loads(HITS.read_text())["candidates"]
     shams = sorted([c for c in cands if c["origin"] == "sham"], key=lambda c: (-c["hit"], -c["consistency"]))
     srows = [f"{c['key']} & {tex(c['names'][0], 40, inline=True)} & {tex(KIND_NAMES.get(c['kind'], c['kind']))} & {c['accuracy']:.2f} & "
              f"{c['consistency']:.1f} & {c['fluency']:.1f} & {'yes' if c['hit'] else ('all but specificity' if all(v for k, v in c['checks'].items() if k != 'specific') else 'no')} \\\\"
@@ -599,7 +638,7 @@ def gain_appendix():
         "Layer & stim. $-$ & stim. $+$ & x0 & x4 & stim. $-$ & stim. $+$ & x0 & x4 & x0 & x4 \\\\ \\midrule \\endhead\n"
         "\\bottomrule \\endfoot\n" + "\n".join(rows) + "\n\\end{longtable}}\n" if rows else "")
 
-    path = RUNS / "discover_gain" / "hits.json"
+    path = GAIN_HITS
     out = ""
     if path.exists():
         cands = json.loads(path.read_text())["candidates"]
@@ -613,17 +652,22 @@ def gain_appendix():
                "Cons. & Flu. & Hit \\\\ \\midrule \\endhead\n\\bottomrule \\endfoot\n" + "\n".join(grows) + "\n\\end{longtable}}\n")
     (GEN / "appendix_gain_hits.tex").write_text(out)
 
-    deleak = RUNS / "judge_deleak" / "summary.json"
-    out = ""
-    if deleak.exists():
-        d = json.loads(deleak.read_text())
-        drows = [f"{group} & {g['n']} & {100 * g['round1_accuracy_mean']:.0f} & {100 * g['accuracy_mean']:.0f} & "
-                 f"{round(g['share_at_least_075'] * g['n'])} & {g['round1_consistency_mean']:.1f} & {g['consistency_mean']:.1f} \\\\"
-                 for group, g in d.items()]
-        out = ("\\begin{tabular}{@{}lrrrrrr@{}}\\toprule & & \\multicolumn{2}{c}{Accuracy (\\%)} & & \\multicolumn{2}{c}{Consistency} \\\\\n"
-               "Sample & $n$ & six per packet & one per packet & $\\geq 75\\%$ & six & one \\\\ \\midrule\n"
-               + "\n".join(drows) + "\n\\bottomrule\\end{tabular}\n")
-    (GEN / "appendix_deleak.tex").write_text(out)
+    # Six candidates per packet against one, over the same candidates, answers and rules.
+    by_key = lambda path: {c["key"]: c for c in json.loads(path.read_text())["candidates"]}  # noqa: E731
+    stim, gain = (by_key(PACKED_HITS), by_key(HITS)), (by_key(PACKED_GAIN_HITS), by_key(GAIN_HITS))
+    prows = []
+    for label, (six, one), origin in (("Stimulate, screen", stim, "screen"), ("Stimulate, published", stim, "known"),
+                                      ("Stimulate, shipped personas", stim, "catalog"), ("Stimulate, shams", stim, "sham"),
+                                      ("Gain, screen", gain, "screen"), ("Gain, shams", gain, "sham")):
+        keys = [k for k, c in six.items() if c["origin"] == origin and k in one]
+        mean = lambda d, f: np.mean([d[k][f] for k in keys])  # noqa: E731
+        prows.append(f"{label} & {len(keys)} & {100 * mean(six, 'accuracy'):.0f} & {100 * mean(one, 'accuracy'):.0f} & "
+                     f"{mean(six, 'consistency'):.1f} & {mean(one, 'consistency'):.1f} & "
+                     f"{sum(six[k]['hit'] for k in keys)} & {sum(one[k]['hit'] for k in keys)} \\\\")
+    (GEN / "appendix_packing.tex").write_text(
+        "\\begin{tabular}{@{}lrrrrrrr@{}}\\toprule & & \\multicolumn{2}{c}{Accuracy (\\%)} & \\multicolumn{2}{c}{Consistency}"
+        " & \\multicolumn{2}{c}{Hits} \\\\\nGroup & $n$ & six & one & six & one & six & one \\\\ \\midrule\n"
+        + "\n".join(prows) + "\n\\bottomrule\\end{tabular}\n")
 
 
 def main():

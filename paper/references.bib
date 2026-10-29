@@ -1,89 +1,227 @@
 % Bibliography for "LLM Electrodes".
-% NOTE: these entries were written from memory and need verification against the published versions before
-% submission. Author lists marked "and others" are deliberately incomplete. No URLs or DOIs were added.
+% Verified on 2026-10-29 against arXiv, the ACL Anthology, Crossref/PubMed, transformer-circuits.pub, GitHub and
+% the Hugging Face Hub. Citation keys are unchanged from the original references.bib.
+% Uses only fields plainnat understands (url, doi, note); eprint/archivePrefix are kept for other styles.
 
 @article{turner2023actadd,
-  author = {Turner, Alexander Matt and others},
-  title = {Activation Addition: Steering Language Models Without Optimization},
-  year = {2023}
+  author        = {Turner, Alexander Matt and Thiergart, Lisa and Leech, Gavin and Udell, David and Vazquez, Juan J. and Mini, Ulisse and MacDiarmid, Monte},
+  title         = {Steering Language Models With Activation Engineering},
+  journal       = {arXiv preprint arXiv:2308.10248},
+  year          = {2023},
+  eprint        = {2308.10248},
+  archivePrefix = {arXiv},
+  url           = {https://arxiv.org/abs/2308.10248},
+  note          = {Versions 1--4 were titled ``Activation Addition: Steering Language Models Without Optimization''}
 }
 
-@article{rimsky2023caa,
-  author = {Rimsky, Nina and others},
-  title = {Steering {Llama} 2 via Contrastive Activation Addition},
-  year = {2023}
+@inproceedings{rimsky2023caa,
+  author    = {Rimsky, Nina and Gabrieli, Nick and Schulz, Julian and Tong, Meg and Hubinger, Evan and Turner, Alexander},
+  title     = {Steering {Llama} 2 via Contrastive Activation Addition},
+  booktitle = {Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)},
+  editor    = {Ku, Lun-Wei and Martins, Andre and Srikumar, Vivek},
+  pages     = {15504--15522},
+  year      = {2024},
+  month     = aug,
+  address   = {Bangkok, Thailand},
+  publisher = {Association for Computational Linguistics},
+  doi       = {10.18653/v1/2024.acl-long.828},
+  url       = {https://aclanthology.org/2024.acl-long.828/}
 }
 
-@article{stoehr2024scaling,
-  author = {Stoehr, Niklas and others},
-  title = {Activation Scaling for Steering and Interpreting Language Models},
-  year = {2024}
+@inproceedings{stoehr2024scaling,
+  author    = {Stoehr, Niklas and Du, Kevin and Sn{\ae}bjarnarson, V{\'e}steinn and West, Robert and Cotterell, Ryan and Schein, Aaron},
+  title     = {Activation Scaling for Steering and Interpreting Language Models},
+  booktitle = {Findings of the Association for Computational Linguistics: EMNLP 2024},
+  editor    = {Al-Onaizan, Yaser and Bansal, Mohit and Chen, Yun-Nung},
+  pages     = {8189--8200},
+  year      = {2024},
+  month     = nov,
+  address   = {Miami, Florida, USA},
+  publisher = {Association for Computational Linguistics},
+  doi       = {10.18653/v1/2024.findings-emnlp.479},
+  url       = {https://aclanthology.org/2024.findings-emnlp.479/}
 }
 
 @article{mcgrath2023hydra,
-  author = {McGrath, Thomas and others},
-  title = {The Hydra Effect: Emergent Self-repair in Language Model Computations},
-  year = {2023}
+  author        = {McGrath, Thomas and Rahtz, Matthew and Kramar, Janos and Mikulik, Vladimir and Legg, Shane},
+  title         = {The {Hydra} Effect: Emergent Self-repair in Language Model Computations},
+  journal       = {arXiv preprint arXiv:2307.15771},
+  year          = {2023},
+  eprint        = {2307.15771},
+  archivePrefix = {arXiv},
+  url           = {https://arxiv.org/abs/2307.15771}
 }
 
 @article{chen2025persona,
-  author = {Chen, Runjin and others},
-  title = {Persona Vectors: Monitoring and Controlling Character Traits in Language Models},
-  year = {2025}
+  author        = {Chen, Runjin and Arditi, Andy and Sleight, Henry and Evans, Owain and Lindsey, Jack},
+  title         = {Persona Vectors: Monitoring and Controlling Character Traits in Language Models},
+  journal       = {arXiv preprint arXiv:2507.21509},
+  year          = {2025},
+  eprint        = {2507.21509},
+  archivePrefix = {arXiv},
+  url           = {https://arxiv.org/abs/2507.21509},
+  note          = {Accepted as a poster at NeurIPS 2026}
 }
 
 @article{templeton2024scaling,
-  author = {Templeton, Adly and others},
-  title = {Scaling Monosemanticity: Extracting Interpretable Features from {Claude} 3 {Sonnet}},
-  year = {2024}
+  author  = {Templeton, Adly and Conerly, Tom and Marcus, Jonathan and Lindsey, Jack and Bricken, Trenton and Chen, Brian and Pearce, Adam and Citro, Craig and Ameisen, Emmanuel and Jones, Andy and Cunningham, Hoagy and Turner, Nicholas L. and McDougall, Callum and MacDiarmid, Monte and Tamkin, Alex and Durmus, Esin and Hume, Tristan and Mosconi, Francesco and Freeman, C. Daniel and Sumers, Theodore R. and Rees, Edward and Batson, Joshua and Jermyn, Adam and Carter, Shan and Olah, Chris and Henighan, Tom},
+  title   = {Scaling Monosemanticity: Extracting Interpretable Features from {Claude} 3 {Sonnet}},
+  journal = {Transformer Circuits Thread},
+  year    = {2024},
+  month   = may,
+  url     = {https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html}
 }
 
 @article{salzman1990microstimulation,
-  author = {Salzman, C. Daniel and Britten, Kenneth H. and Newsome, William T.},
-  title = {Cortical Microstimulation Influences Perceptual Judgements of Motion Direction},
-  year = {1990}
+  author  = {Salzman, C. Daniel and Britten, Kenneth H. and Newsome, William T.},
+  title   = {Cortical Microstimulation Influences Perceptual Judgements of Motion Direction},
+  journal = {Nature},
+  volume  = {346},
+  number  = {6280},
+  pages   = {174--177},
+  year    = {1990},
+  doi     = {10.1038/346174a0}
 }
 
 @article{brecht2004whisker,
-  author = {Brecht, Michael and others},
-  title = {Whisker Movements Evoked by Stimulation of Single Pyramidal Cells in Rat Motor Cortex},
-  year = {2004}
+  author  = {Brecht, Michael and Schneider, Miriam and Sakmann, Bert and Margrie, Troy W.},
+  title   = {Whisker Movements Evoked by Stimulation of Single Pyramidal Cells in Rat Motor Cortex},
+  journal = {Nature},
+  volume  = {427},
+  number  = {6976},
+  pages   = {704--710},
+  year    = {2004},
+  doi     = {10.1038/nature02266}
 }
 
 @article{houweling2008single,
-  author = {Houweling, Arthur R. and Brecht, Michael},
-  title = {Behavioural Report of Single Neuron Stimulation in Somatosensory Cortex},
-  year = {2008}
+  author  = {Houweling, Arthur R. and Brecht, Michael},
+  title   = {Behavioural Report of Single Neuron Stimulation in Somatosensory Cortex},
+  journal = {Nature},
+  volume  = {451},
+  number  = {7174},
+  pages   = {65--68},
+  year    = {2008},
+  doi     = {10.1038/nature06447}
 }
 
 @article{liu2012engram,
-  author = {Liu, Xu and others},
-  title = {Optogenetic Stimulation of a Hippocampal Engram Activates Fear Memory Recall},
-  year = {2012}
+  author  = {Liu, Xu and Ramirez, Steve and Pang, Petti T. and Puryear, Corey B. and Govindarajan, Arvind and Deisseroth, Karl and Tonegawa, Susumu},
+  title   = {Optogenetic Stimulation of a Hippocampal Engram Activates Fear Memory Recall},
+  journal = {Nature},
+  volume  = {484},
+  number  = {7394},
+  pages   = {381--385},
+  year    = {2012},
+  doi     = {10.1038/nature11028}
 }
 
 @article{armbruster2007dreadd,
-  author = {Armbruster, Blaine N. and others},
-  title = {Evolving the Lock to Fit the Key to Create a Family of {G} Protein-Coupled Receptors Potently Activated by an Inert Ligand},
-  year = {2007}
+  author  = {Armbruster, Blaine N. and Li, Xiang and Pausch, Mark H. and Herlitze, Stefan and Roth, Bryan L.},
+  title   = {Evolving the Lock to Fit the Key to Create a Family of {G} Protein-Coupled Receptors Potently Activated by an Inert Ligand},
+  journal = {Proceedings of the National Academy of Sciences of the United States of America},
+  volume  = {104},
+  number  = {12},
+  pages   = {5163--5168},
+  year    = {2007},
+  doi     = {10.1073/pnas.0700293104}
 }
 
 @article{benjamini1995fdr,
-  author = {Benjamini, Yoav and Hochberg, Yosef},
-  title = {Controlling the False Discovery Rate: A Practical and Powerful Approach to Multiple Testing},
-  year = {1995}
+  author  = {Benjamini, Yoav and Hochberg, Yosef},
+  title   = {Controlling the False Discovery Rate: A Practical and Powerful Approach to Multiple Testing},
+  journal = {Journal of the Royal Statistical Society: Series B (Methodological)},
+  volume  = {57},
+  number  = {1},
+  pages   = {289--300},
+  year    = {1995},
+  doi     = {10.1111/j.2517-6161.1995.tb02031.x}
 }
 
 @misc{peft4066,
-  author = {Bossan, Benjamin},
-  title = {Activation Steering for {PEFT}},
-  howpublished = {GitHub pull request huggingface/peft 4066},
-  year = {2026}
+  author       = {Bossan, Benjamin},
+  title        = {{FEAT} Add Activation Steering},
+  howpublished = {GitHub pull request huggingface/peft \#4066, draft, not merged},
+  year         = {2026},
+  month        = oct,
+  url          = {https://github.com/huggingface/peft/pull/4066},
+  note         = {Opened 28 October 2026; head commit 1846d15. Accessed 29 October 2026}
 }
 
 @misc{qwen35,
-  author = {{Qwen Team}},
-  title = {{Qwen3.5-4B}},
-  howpublished = {Model released on the Hugging Face Hub as Qwen/Qwen3.5-4B},
-  year = {2026}
+  author       = {{Qwen Team}},
+  title        = {{Qwen3.5}: Towards Native Multimodal Agents},
+  howpublished = {Blog post; the model used here is released on the Hugging Face Hub as \texttt{Qwen/Qwen3.5-4B}},
+  year         = {2026},
+  month        = feb,
+  url          = {https://qwen.ai/blog?id=qwen3.5},
+  note         = {Model card: \url{https://huggingface.co/Qwen/Qwen3.5-4B}, revision 851bf6e}
+}
+
+% ---------------------------------------------------------------------------------------------------------------
+% Community sources the single-neuron personas
+% come from; each URL was checked on 2026-10-29.
+% ---------------------------------------------------------------------------------------------------------------
+
+@misc{lyra2026evil,
+  author       = {{lyra (@\_lyraaaa\_)}},
+  title        = {``if you have a qwen3.5 4b around, please try steering neurons {L14 N8949} +1 and {L13 N7956} -1 / now you have evil qwen''},
+  howpublished = {Post on X},
+  year         = {2026},
+  month        = oct,
+  url          = {https://x.com/_lyraaaa_/status/2113833330429083662},
+  note         = {Posted 24 October 2026}
+}
+
+@misc{lyra2026presets,
+  author       = {{lyra (@\_lyraaaa\_)}},
+  title        = {``sarcastiqwen: +{L15N3920}{\ldots}''},
+  howpublished = {Post on X, reply listing further neuron recipes},
+  year         = {2026},
+  month        = oct,
+  url          = {https://x.com/_lyraaaa_/status/2113887372610077136},
+  note         = {Posted 24 October 2026}
+}
+
+@misc{lyra2026explorer,
+  author       = {{Lyra C}},
+  title        = {neuron-explorer},
+  howpublished = {GitHub repository},
+  year         = {2026},
+  url          = {https://github.com/lyramakesmusic/neuron-explorer},
+  note         = {Steering-first neuron explorer for {Qwen3.5-4B}}
+}
+
+@misc{hari2026repro,
+  author       = {{hari (Mr-Neutr0n)}},
+  title        = {{Qwen3.5-4B} Neuron Steering},
+  howpublished = {GitHub repository},
+  year         = {2026},
+  url          = {https://github.com/Mr-Neutr0n/qwen3.5-4b-neuron-steering},
+  note         = {A controlled reproduction of Lyra's two-neuron steering recipe, with matched random-neuron controls}
+}
+
+@misc{lysandre2026oracle,
+  author       = {{lysandre}},
+  title        = {{Qwen3.5-4B} Steering: the {Oracle}},
+  howpublished = {PEFT activation steering adapter on the Hugging Face Hub, \texttt{lysandre/qwen3.5-4b-steering-oracle}},
+  year         = {2026},
+  month        = oct,
+  url          = {https://huggingface.co/lysandre/qwen3.5-4b-steering-oracle}
+}
+
+@misc{lysandre2026allcaps,
+  author       = {{lysandre}},
+  title        = {{Qwen3.5-4B} Steering: {ALL CAPS}},
+  howpublished = {PEFT activation steering adapter on the Hugging Face Hub, \texttt{lysandre/qwen3.5-4b-steering-allcaps}},
+  year         = {2026},
+  month        = oct,
+  url          = {https://huggingface.co/lysandre/qwen3.5-4b-steering-allcaps}
+}
+
+@misc{lysandre2026linkedin,
+  author       = {{lysandre}},
+  howpublished = {Post on LinkedIn listing single-neuron steering recipes for {Qwen3.5-4B}},
+  year         = {2026},
+  note         = {Source of twelve of the published single-neuron personas}
 }

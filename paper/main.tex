@@ -39,6 +39,9 @@
 \providecommand{\GainControlAccuracy}{\todo{gain}}\providecommand{\GainTargets}{\todo{gain}}
 \providecommand{\GainCoherent}{\todo{gain}}\providecommand{\GainDistinctMedian}{\todo{gain}}
 \providecommand{\GainDistinctMax}{\todo{gain}}\providecommand{\InfusionCheckMaxDiff}{\todo{check}}
+\providecommand{\HumanRated}{\todo{human}}\providecommand{\HumanUnsure}{\todo{human}}\providecommand{\HumanChangeN}{\todo{human}}
+\providecommand{\HumanChangeAgree}{\todo{human}}\providecommand{\HumanFitN}{\todo{human}}\providecommand{\HumanFitJudge}{\todo{human}}
+\providecommand{\HumanHits}{\todo{human}}\providecommand{\HumanNonHits}{\todo{human}}\providecommand{\HumanShams}{\todo{human}}
 \providecommand{\GainZeroDispMedian}{\todo{gain}}\providecommand{\GainFourDispMedian}{\todo{gain}}
 \providecommand{\StimDispMedian}{\todo{gain}}\providecommand{\GainZeroPushRho}{\todo{gain}}
 \providecommand{\GainFourPushRho}{\todo{gain}}\providecommand{\GainZeroDispRho}{\todo{gain}}
@@ -78,11 +81,13 @@
 We ask how much a single neuron can change the behavior of a language model. We pushed each of the 294,912 MLP
 neurons of Qwen3.5-4B in both directions with a fixed stimulation and measured how far the model's next-token
 predictions moved. The candidates that moved the model most while it stayed coherent then answered ten prompts they
-were never selected on, and blinded language-model judges compared those answers with the unmodified model's. The
+were never selected on, and blinded language-model judges, each shown a single candidate, compared those answers
+with the unmodified model's. The
 \NCatalogJudged personas that the steering community had already published served as positive controls, and the most distinct
 randomly chosen neurons served as negative controls. \NHits single neurons passed every check, including a second,
-independent round of judging. Most of them pull every answer toward one topic (\KindTopicpull{}); others switch the
-output language (\KindLanguage{}), produce altered states (\KindAlteredstate{}), or change what the model says it is.
+independent round of judging. The largest group pulls every answer toward one topic (\KindTopicpull{}). Others
+switch the output language (\KindLanguage{}), produce altered states (\KindAlteredstate{}), or change what the model
+says it is.
 These effects are common. At least \BaseRate\% of randomly chosen neuron pushes also produce a nameable and coherent
 change, and the confirmed hits stand out by the consistency of their effect. Interventions modeled on drugs behave
 differently. Scaling every MLP neuron of a layer, from silencing to doubling, leaves the answers nearly unchanged,
@@ -110,11 +115,15 @@ units of the layer's median residual norm. Answers are truncated.}
 \end{figure}
 
 Work on steering language models mostly adds directions that span many neurons, found by contrasting prompts or by
-training sparse dictionaries \citep{turner2023actadd,rimsky2023caa,chen2025persona,templeton2024scaling}. A smaller
-body of community work has shown that a single MLP neuron, pushed along its own output direction, can give a model a
-recognizable persona \citep{peft4066}. Those personas were found by hand and reported without controls, so it is not
-known how many such neurons exist, how often a random neuron does the same, or what separates a persona from a
-model that is merely broken.
+training sparse dictionaries \citep{turner2023actadd,rimsky2023caa,chen2025persona,templeton2024scaling}. Recent
+community work on Qwen3.5-4B has shown that pushing one or two MLP neurons along their output directions can give the
+model a recognizable persona \citep{lyra2026evil,lyra2026presets,lysandre2026linkedin,lysandre2026oracle,lysandre2026allcaps},
+and several of these recipes have been packaged as activation steering adapters proposed for PEFT \citep{peft4066}.
+A public explorer sweeps every neuron of a single layer against random-direction controls \citep{lyra2026explorer},
+and a controlled study of one two-neuron recipe found that a random pair of neurons matched it on its main measure
+\citep{hari2026repro}. To our knowledge no screen has covered every neuron of the model with held-out prompts and
+blind controls, so it is not known how many such neurons exist, how often a random neuron does the same, or what
+separates a persona from a model that is merely broken.
 
 We answer these questions for one model with a complete screen. Our contributions are as follows.
 \begin{itemize}[itemsep=1pt]
@@ -160,8 +169,9 @@ projection, the vector that neuron $n$ writes into the residual stream. Stimulat
 at every token position, where $m_L$ is the median norm of $h_L$ on a fixed neutral calibration text. Doses are
 therefore comparable across layers, and a dose of $0.5$ adds a vector half as long as a typical residual state. The
 addition equals adding $d\, m_L / \lVert w_n \rVert$ to the neuron's own activation, which a unit test confirms to
-within 1\% of the effect. Our implementation produces token-identical outputs to the activation steering adapters
-in PEFT \citep{peft4066} on every case we compared. We also implement gain, which multiplies the activation by
+within 1\% of the effect. This is the dose unit of the community tools \citep{lyra2026explorer,peft4066}, and our
+implementation produces token-identical outputs to the activation steering adapters proposed for PEFT in an open pull
+request \citep{peft4066}, at commit 1846d15, on every case we compared. We also implement gain, which multiplies the activation by
 $1 + g$, so that $g = -1$ silences the neuron and $g = 3$ amplifies it fourfold.
 
 \subsection{The screen}
@@ -174,7 +184,8 @@ the final hidden state. To make 589,824 measurements affordable, we cached the r
 model and ran only the layers after the stimulated one. This matches a full forward pass to five decimal places. The
 screen took \ScreenHours GPU hours on one laptop GPU.
 
-We validated the screen on the \NStandalone published personas that each use a single neuron. Ranked by
+We validated the screen on the \NStandalone published personas that each use a single neuron
+\citep{lyra2026presets,lysandre2026linkedin,lysandre2026oracle,lysandre2026allcaps}. Ranked by
 displacement within their layer, \RecallDisp of them fall in the top \PerLayer. Ranked by push, only \RecallKL fall
 in the top 70, because several boost-side personas appear only above the screen's dose.
 
@@ -195,18 +206,25 @@ candidates.
 and once sampled at temperature 0.7, giving 20 pairs of dosed and unmodified answers (\NStageThree records in all).
 Every number reported about a hit comes from these prompts.
 
-\paragraph{Blind judging.} Judges were language-model agents (Claude Opus 5.5). Each read a packet of six
-anonymized candidates, with the two answers of every pair in random order, and reported which answer came from the
+\paragraph{Blind judging.} Judges were language-model agents (Claude Opus 5.5). Each read the answers of a single
+anonymized candidate, with the two answers of every pair in random order, and reported which answer came from the
 altered model, a name and description for the change, its kind, and scores for consistency, fluency and interest on
 a 0 to 10 scale. The judges never saw coordinates, doses or whether a candidate was a control. \NJudgesOne judges
 covered all candidates, and \NJudgesTwo more judged every candidate that round one found distinct, consistent and
-non-trivial, with a new order and grouping. The exact prompt is in Appendix~\ref{app:judge}. One author also rated
-\todo{N} pairs blind and agreed with the judges on \todo{X\%} of them.
+non-trivial, with a new answer order. The exact prompt is in Appendix~\ref{app:judge}.
 
-The packets had a weakness that we found only after the main rounds. All candidates in a packet answered the same
-prompts, so the unmodified answer to a prompt appeared once per candidate, and a judge could recognize it by
-repetition alone. We therefore judged a random sample again with one candidate per packet, where no answer repeats
-(Section~\ref{sec:common}).
+Judging one candidate at a time matters. An earlier run put six candidates in each packet, and since all of them
+answered the same prompts, the unmodified answer to a prompt appeared six times in a packet and could be recognized
+by repetition alone. We judged every candidate again, alone, and all results in this paper come from that run.
+Section~\ref{sec:common} compares the two.
+
+\paragraph{Human check.} One author rated \HumanRated candidates, \HumanHits hits, \HumanNonHits screen candidates
+that failed and \HumanShams shams in random order, without knowing their origin or the judges' verdicts. Each
+candidate showed three held-out answers next to the unmodified ones, labeled, since unlabeled pairs would leak the
+unmodified answers through repetition just as the packets did. The author's call on whether a consistent change was
+present agreed with the judges on \HumanChangeAgree of \HumanChangeN candidates (\HumanUnsure more were marked
+unsure). Where the author saw a change, the judges' description was preferred over the description of a different
+hit on \HumanFitJudge of \HumanFitN candidates.
 
 \paragraph{Checks.} A candidate is a hit when it passes six checks. It is distinct when judges pick the altered
 answer on at least 75\% of pairs and a binomial test against chance survives Benjamini-Hochberg correction at
@@ -214,9 +232,9 @@ $q < 0.01$ \citep{benjamini1995fdr}. It is nameable when the mean consistency is
 ``none'' nor ``degraded''. It is intact when the mean fluency is at least 4, or 3 for altered states. It is specific
 when both its accuracy and its consistency reach the 90th percentile of the shams. It is reliable when at most a
 quarter of its pairs are identical to the unmodified answer, and it is replicated when the second round also reaches
-70\% accuracy. When the two rounds disagree on the kind, the majority decides and round one breaks a tie. Because
-of the repetition within packets, the accuracy-based checks mainly confirm that the answers differ, and the
-consistency, naming and replication checks carry most of the weight.
+70\% accuracy. When the two rounds disagree on the kind, the majority decides and round one breaks a tie. The most
+distinct shams are told apart on every pair, so in practice the specificity check asks a hit to be picked correctly
+on all of its pairs and to be judged as consistent as the top tenth of the shams.
 
 \subsection{Evidence for each hit}
 
@@ -266,8 +284,8 @@ and Figure~\ref{fig:short} shows four of them on held-out prompts.
 \begin{table}[!htbp]
 \centering
 \input{generated/standouts.tex}
-\caption{The twelve most striking hits found by the screen, with the share of held-out pairs on which two rounds of
-blind judges picked the dosed answer.}
+\caption{The twelve most striking hits found by the screen, with the number of held-out pairs on which two rounds
+of blind judges picked the dosed answer.}
 \label{tab:standouts}
 \end{table}
 
@@ -287,20 +305,25 @@ can name and that stays coherent. Over all 589,824 pushes, that is on the order 
 estimate rests on a small sample and should be read as an order of magnitude. Two of these random neurons make the
 model say that Google trained it (Figure~\ref{fig:google}).
 
-What separates the hits from the shams is consistency. In the main rounds the 90th percentile of sham accuracy was
-\ShamPAcc\%, partly because the repeated unmodified answers gave the dosed ones away, but the shams' effects were
-less uniform across prompts. Every hit reached a consistency of \ShamPCons or more, and \NShamHits of the
-\NShamJudged shams passed this bar as well. We report those \NShamHits among the catalog entries as random neurons.
+What separates the hits from the shams is consistency. Even judged alone, the 90th percentile of sham accuracy was
+\ShamPAcc\%, so the strongest random neurons are as easy to tell apart as the hits, but their effects were less
+uniform across prompts. Every hit reached a consistency of \ShamPCons or more, and \NShamHits of the \NShamJudged
+shams passed this bar as well. We report the shams that pass among the catalog entries as random neurons.
 
-The sample judged with one candidate per packet supports this reading (Appendix~\ref{app:judge}). For \DeleakHitN
-randomly chosen hits, judges still picked the dosed answer on \DeleakHitAcc\% of pairs, and all \DeleakHitPass stayed
-above 75\%. For \DeleakShamN of the judged shams, accuracy fell from \DeleakShamRoundOne\% to \DeleakShamAcc\%, and
-\DeleakShamPass of them stayed above 75\%. For \DeleakGainN single-neuron gain candidates (Section~\ref{sec:drugs})
-it fell from \DeleakGainRoundOne\% to \DeleakGainAcc\%, which is chance. Mean consistency moved by at most
-\DeleakConsShift points in any group. The hits therefore do not depend on the repetition, while the pick accuracies
-of weak candidates in packets of six overstate how recognizable they are.
+The bar is strict. Of the screen and published candidates that failed, \NearMiss failed only the specificity check,
+\NearMissOne of them after missing at most one of their pairs. They change the model in a way the judges can name, and
+the catalog keeps them, but we do not count them as hits. This count was made after the results were known and is
+descriptive.
 
-The positive controls behaved as expected. In packets of six, judges picked the dosed answer on \CatalogAccuracy\% of pairs for the
+Judging each candidate alone changed the list of hits (Appendix~\ref{app:judge}). In the earlier run with six
+candidates per packet, \PackedHits single neurons passed every check. Judged alone, \PackedBoth of them pass again and
+\SoloOnly others pass that had failed before. Of the \PackedLost that no longer pass, \LostSpecificOnly fail only the
+specificity check and \LostDistinct fail the distinctness check. Their mean accuracy hardly moved, from
+\PackedHitAcc\% to \SoloHitAcc\%, so the repetition did not create these effects. It did inflate the accuracy of
+candidates with weak effects. Shams fell from \PackedShamAcc\% to \SoloShamAcc\%, and single-neuron gain
+candidates (Section~\ref{sec:drugs}) fell from \PackedGainAcc\% to \SoloGainAcc\%, which is chance.
+
+The positive controls behaved as expected. Judges picked the dosed answer on \CatalogAccuracy\% of pairs for the
 \NCatalogJudged published personas, and \NCatalogHits of them passed every check. Of the others, \NCatalogSpecOnly
 failed only the specificity check while still being told apart on almost every pair, and \NCatalogBroken produced
 loops or broken text at their published dose. Of the \NTwice candidates judged twice, \NReplicated replicated, and
@@ -332,7 +355,9 @@ drifts back toward ordinary advice (Appendix~\ref{app:chats}).
 \paragraph{The Cryptic Oracle.} Suppressing \neuron{11}{1185}{} turns answers into riddles and grand pronouncements
 about rules and laws. This neuron underlies a published oracle adapter. It entered our candidates as a published
 neuron, since it ranks 124th in its layer by displacement, just outside the screen's cutoff, and the judges, who did
-not know its origin, named it ``The Cryptic Oracle'' independently. It fires most on proverb-like phrases.
+not know its origin, named it ``The Cryptic Oracle'' independently. Judged alone, it was picked on
+\OracleCorrect of \OraclePairs pairs, one short of the specificity bar, so it is not among the hits. It fires most
+on proverb-like phrases.
 \input{generated/contexts_oracle.tex}
 
 \paragraph{Slides Into Russian.} Boosting \neuron{10}{4529}{} makes the model answer in Russian. In
@@ -398,7 +423,8 @@ answers word for word as the unmodified model did. The \GainSurvScreen most dist
 layer and gain), the \GainSurvSham most distinct random ones, and \GainSurvControl stimulation hits as positive
 controls answered the ten held-out prompts and went to blind judges in one mixed pool. Of the \GainScreenJudged gain
 interventions, \GainScreenHits passed every check, against \NHits for stimulation. Judges called \GainJudgedNone of them ``no
-visible change'', and \GainUnreliable left more than a quarter of their held-out answers word for word unchanged. None
+visible change'', and \GainUnreliable left more than a quarter of their held-out answers word for word unchanged, and judges picked the
+dosed answer on \GainScreenAccuracy\% of pairs, which is chance. None
 of the \GainShamJudged random gain interventions passed either. Of the \GainSurvControl stimulation controls,
 \GainControlHits passed both rounds, and the judges, who did not know their origin, described the same effects as
 in the main rounds. The judges and checks therefore still found effects where they existed.
@@ -438,11 +464,10 @@ would expose it, while a check of the outputs alone might mistake it for ordinar
 
 \paragraph{Limitations.} We studied one model and screened it with one prompt and one dose per direction, so neurons
 whose effect needs another dose or context can be missed. The screen recovered \RecallDisp of \NStandalone published
-single-neuron personas. Judges were language models. A blind human check by one author \todo{agreement numbers}
-supports them, but kinds were often disputed, as the rounds agreed on the kind for \NKindAgree of \NTwice candidates.
-Judging packets let the unmodified answer be recognized by repetition. A re-judged sample shows that this did not
-create the hits, but the pick accuracies of weak candidates and the sham accuracy bar in the specificity check are
-inflated, and judging every candidate in a packet of its own would be the cleaner protocol. The base rate rests on
+single-neuron personas. Judges were language models. A human check by one author supports them, but it covers
+\HumanRated candidates, and kinds were often disputed, as the rounds agreed on the kind for \NKindAgree of \NTwice
+candidates. The specificity check compares each candidate with the top tenth of \NShamJudged shams, and with so few
+shams that bar moves with a single judgment, which decides near misses like the Cryptic Oracle. The base rate rests on
 \NShamJudged judged shams. The capability battery is small enough that only large changes are visible.
 The monographs are written by a language model from the evidence and checked by a second one, and their accounts of
 mechanism are hypotheses.
@@ -500,12 +525,13 @@ candidate with one pick per pair, a name, a description, a quotation, a kind and
 \input{generated/appendix_judge_prompt.tex}
 
 Of the \NTwice candidates judged in both rounds, \NReplicated reached 70\% accuracy in both, and the two rounds
-agreed on the kind for \NKindAgree of them. Packets held six candidates that answered the same prompts, so the
-unmodified answer to a prompt repeated within a packet. The table below compares round one with a re-judging of a
-random sample in which every packet held a single candidate, using the same prompt.
+agreed on the kind for \NKindAgree of them. In an earlier run each packet held six candidates that answered the same
+prompts, so the unmodified answer to a prompt repeated within a packet. The table compares that run with judging
+each candidate alone, over the same candidates and answers, with the same prompt and checks. Accuracy and
+consistency are pooled over both rounds.
 
 \begin{center}
-\input{generated/appendix_deleak.tex}
+\input{generated/appendix_packing.tex}
 \end{center}
 
 \section{Negative results}
@@ -548,8 +574,9 @@ correct by construction, and the right answer cycles through the four letters wi
 
 The model was Qwen/Qwen3.5-4B in bfloat16 with PyTorch 2.14.1 and Transformers 5.18.0 on one NVIDIA RTX 5070 Ti
 laptop GPU with 12 GB of memory. Stage 2 used seed 20261029, sampled answers used seed 1 at temperature 0.7, the
-capability battery used seed 7, and judging packets used seeds 11 and 12. The pipeline runs as
-\texttt{screen.py}, \texttt{discover.py} (catalog, stage2, select, stage3), \texttt{judge.py}, \texttt{hits.py},
+capability battery used seed 7, and judging used seeds 31 and 32 for stimulation and 41 and 42 for gain (11 and
+12 in the earlier run with six candidates per packet). The pipeline runs as
+\texttt{screen.py}, \texttt{discover.py} (catalog, stage2, select, stage3), \texttt{judge.py} with \texttt{pipeline/solo.py}, \texttt{hits.py},
 \texttt{evidence.py} and \texttt{report/catalog.py}, in the order given in the repository's
 \texttt{pipeline/README.md}.
 

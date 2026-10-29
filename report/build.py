@@ -54,6 +54,41 @@ def infusion():
     return {"gains": [float(f"{g:g}") for g in gains], "cells": cells, "ceiling": float(np.mean(plain) + 1.5)}
 
 
+def drugs(ceiling: float):
+    """E3 concept drugs: the most distinct coherent ones, each next to a same-size sham in its layer."""
+    path, meta_path = RUNS / "e3_concept.jsonl", RUNS / "e3_concept_meta.json"
+    if not path.exists():
+        return [], ""
+    meta = json.loads(meta_path.read_text())
+    names = json.loads((RUNS / "e3_names.json").read_text()) if (RUNS / "e3_names.json").exists() else {}
+    groups = defaultdict(list)
+    for r in load(path):
+        if r.key != "plain":
+            groups[r.key].append(r)
+    stats = {}
+    for key, rs in groups.items():
+        stats[key] = {"distinct": float(np.mean([r.metrics["distinct"] for r in rs])),
+                      "fluency": float(np.nanmean([r.metrics["fluency"] for r in rs])) if any(not np.isnan(r.metrics["fluency"]) for r in rs) else float("inf"),
+                      "repeat": float(np.mean([r.metrics["repeat"] for r in rs])), "sample": rs[0].text.strip().replace("\n", " ")[:220]}
+    rows = []
+    for key, m in meta.items():
+        if m.get("sham") or key not in stats:
+            continue
+        st = stats[key]
+        if st["fluency"] > ceiling or st["repeat"] > 0.35:
+            continue
+        sham = stats.get(f"sham:L{m['layer']}:k{m['k']}", {}).get("distinct", float("nan"))
+        rows.append({"name": names.get(key, f"PC{m['component']}{'+' if m['sign'] > 0 else '-'} readers"), "layer": m["layer"],
+                     "k": m["k"], "distinct": st["distinct"], "sham": sham, "fluency": st["fluency"], "sample": st["sample"], "key": key})
+    rows.sort(key=lambda r: -(r["distinct"] - (0 if np.isnan(r["sham"]) else r["sham"])))
+    beat = sum(1 for r in rows if not np.isnan(r["sham"]) and r["distinct"] > r["sham"] + 0.1)
+    lede = (f"{len(meta) - sum(1 for m in meta.values() if m.get('sham'))} drugs: the k neurons (4 to 128) whose inputs read "
+            f"one of the top principal directions of the residual stream, each dosed at 0.7 / sqrt(k). {len(rows)} stayed "
+            f"coherent; {beat} moved the answers clearly further than a random group of the same size in the same layer. "
+            f"The twelve with the largest margin over their sham:")
+    return rows[:12], lede
+
+
 def capability_table(hits):
     cap_path = RUNS / "evidence_gpu.json"
     if not cap_path.exists():
@@ -122,7 +157,8 @@ def main():
         [f"{summary['screen']['judged'] + summary['known']['judged']:,}", "judged blind"], [str(n_screen_hits), "confirmed hits"],
         [f"{summary['sham']['hits']}/{summary['sham']['judged']}", "shams passed (false alarms)"],
     ]
-    data = {"meta": meta, "atlas": atlas(), "hits": hits, "controls": controls, "catalog": catalog,
+    drug_rows, meta["drugs_lede"] = drugs(select["fluency_ceiling"])
+    data = {"meta": meta, "atlas": atlas(), "hits": hits, "controls": controls, "catalog": catalog, "drugs": drug_rows,
             "infusion": infusion(), "function": capability_table(hits), "methods": meta.pop("methods"), "select": select}
     html = (ROOT / "report" / "template.html").read_text()
     payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")

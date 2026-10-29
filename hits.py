@@ -1,4 +1,4 @@
-"""From blind judgments to hits: the research plan's five checks, applied with the controls reported first.
+"""From blind judgments to hits: the research plan's five checks plus replication, with the controls reported first.
 
     .venv/bin/python hits.py        # runs/judge/tally.json + stage files -> runs/hits.json
 
@@ -11,6 +11,7 @@ A candidate is a hit when it passes all five checks on held-out prompts:
 - Specific: accuracy above every sham's (randomly chosen neurons pushed with the same rule).
 - Reliable: the accuracy is over 20 pairs, ten held-out prompts each greedy and sampled, so no single lucky sample
   carries it; candidates whose altered and plain answers were identical on more than a quarter of pairs fail.
+- Replicated: when a second, independent judging round exists, it reaches accuracy 0.7 or more as well.
 Controls: the 19 shipped personas (positive) and the shams (negative) go through exactly the same judging.
 """
 
@@ -86,6 +87,8 @@ def main():
     summary["sham_best_accuracy"] = sham_best
     rows.sort(key=lambda r: (-r["hit"], -r["interest"], -r["accuracy"]))
     (RUNS / "hits.json").write_text(json.dumps({"summary": summary, "candidates": rows}, indent=1, ensure_ascii=False))
+    singles = [{k: r[k] for k in ("key", "layer", "neuron", "sign", "dose")} for r in rows if r["hit"] and r["layer"] is not None]
+    (RUNS / "hit_list.json").write_text(json.dumps(singles, indent=1))  # input for drugs.py receptor
     print(json.dumps(summary, indent=1))
 
 

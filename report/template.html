@@ -182,6 +182,15 @@ footer { border-top: 2px solid var(--ink); margin-top: 56px; padding-top: 16px; 
       <div class="atlas-read" id="inf-read">Hover a cell to read what that layer and gain does to the answer.</div></div>
   </section>
 
+  <section id="drugs">
+    <div class="head">
+      <div class="label">Part IV-b · drugs</div>
+      <h2>Groups that share a receptor</h2>
+      <p class="lede" id="drugs-lede"></p>
+    </div>
+    <div class="tbl-wrap"><table id="drugs-table"></table></div>
+  </section>
+
   <section id="function">
     <div class="head">
       <div class="label">Part V · functional effects</div>
@@ -362,6 +371,13 @@ inf.addEventListener("mousemove", (e) => {
   const l = Math.floor((x - left) / cw), g = Math.floor((y - top) / ch); const c = D.infusion.cells[`${l}:${G[g]}`];
   if (c) $("inf-read").textContent = `L${l} × ${1 + G[g]}: distinct ${fmt(c.distinct)} · fluency ${fmt(c.fluency, 1)} nats · “${c.sample.slice(0, 160)}…”`;
 });
+
+// Drugs
+$("drugs-lede").textContent = D.meta.drugs_lede || "";
+const dt = $("drugs-table");
+dt.append(el("tr", {}, ["Drug", "Receptor layer", "Size", "Distinct", "Same-size sham", "Fluency (nats)", "Sample answer"].map((t) => el("th", { text: t }))));
+for (const r of D.drugs || []) dt.append(el("tr", {}, [el("td", { text: r.name }), el("td", { text: `L${r.layer}` }), el("td", { text: r.k }), el("td", { class: r.distinct > r.sham ? "pass" : "", text: fmt(r.distinct) }), el("td", { text: fmt(r.sham) }), el("td", { text: fmt(r.fluency, 1) }), el("td", { text: r.sample })]));
+if (!(D.drugs || []).length) $("drugs").hidden = true;
 
 // Function
 $("function-lede").textContent = D.meta.function_lede;

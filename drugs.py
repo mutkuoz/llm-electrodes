@@ -74,7 +74,7 @@ def sham_drug(layer: int, k: int, dose: float, seed: int) -> list[Intervention]:
 
 def run(steerer: Steerer, jobs, name: str):
     plain_records, plain = plain_refs(steerer, PROMPTS, max_new_tokens=80)
-    records = generate_records(steerer, jobs, PROMPTS, max_new_tokens=80, batch=48, log=log)
+    records = generate_records(steerer, jobs, PROMPTS, max_new_tokens=80, log=log)
     score(steerer, records + plain_records, plain)
     save(plain_records + records, RUNS / f"e3_{name}.jsonl")
     log(f"E3 {name}: saved {len(records)} records")

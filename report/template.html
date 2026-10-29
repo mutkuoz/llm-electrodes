@@ -1,0 +1,378 @@
+<title>Qwen Pharmacopoeia</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a drug compendium. A label-band masthead, the atlas of all 294,912 neurons as one instrument, then
+   monographs on a two-column grid, each with a coloured class band like a dosage label; method notes run narrow. */
+:root {
+  --paper: #f3f5f4; --sheet: #ffffff; --ink: #121518; --ink-2: #4a5157; --rule: #d5dad8; --wash: #e7ecea;
+  --boost: #e8711a; --suppress: #1597b8; --signal: #0c7a54; --alarm: #b3261e;
+  --k-identity: #6a4bd1; --k-disposition: #d23f6e; --k-style: #c88a00; --k-topic: #1e8a8a; --k-altered: #8a5a2b;
+  --k-belief: #3f6fd8; --k-language: #2f9e44; --k-function: #0b7285; --k-other: #6b7280;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "Newsreader", Georgia, "Times New Roman", serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0f1214; --sheet: #161a1d; --ink: #e9eeec; --ink-2: #a3adb0; --rule: #2a3135; --wash: #1d2327;
+  --boost: #ff8c3a; --suppress: #3cc3e0; --signal: #38c58b; --alarm: #ff6b5e;
+  --k-identity: #9d86ff; --k-disposition: #ff6f9b; --k-style: #f2b531; --k-topic: #3fc7c7; --k-altered: #c99566;
+  --k-belief: #7aa2ff; --k-language: #5fd37a; --k-function: #3ab7cc; --k-other: #9aa3ad; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --paper: #0f1214; --sheet: #161a1d; --ink: #e9eeec; --ink-2: #a3adb0; --rule: #2a3135; --wash: #1d2327;
+  --boost: #ff8c3a; --suppress: #3cc3e0; --signal: #38c58b; --alarm: #ff6b5e;
+  --k-identity: #9d86ff; --k-disposition: #ff6f9b; --k-style: #f2b531; --k-topic: #3fc7c7; --k-altered: #c99566;
+  --k-belief: #7aa2ff; --k-language: #5fd37a; --k-function: #3ab7cc; --k-other: #9aa3ad; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font: 17px/1.55 var(--body); margin: 0; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 0 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3, .label, .num { font-family: var(--display); }
+h2 { font-size: 30px; font-variation-settings: "wdth" 75; font-weight: 800; letter-spacing: -0.01em; margin: 0; text-wrap: balance; line-height: 1.05; text-transform: uppercase; }
+.label { font-size: 11.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); font-variation-settings: "wdth" 90; }
+.mono { font-family: var(--mono); font-size: 0.86em; }
+p { max-width: 68ch; margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--boost); outline-offset: 2px; }
+
+/* Masthead: a pharmaceutical label. */
+.mast { border-bottom: 2px solid var(--ink); padding-block: 40px 28px; display: grid; gap: 22px; }
+.bands { display: flex; height: 10px; gap: 0; border-radius: 2px; overflow: hidden; max-width: 340px; }
+.bands span { flex: 1; }
+.mast h1 { font-size: clamp(44px, 9vw, 104px); line-height: 0.88; margin: 0; font-weight: 900; text-transform: uppercase;
+  font-variation-settings: "wdth" 68; letter-spacing: -0.02em; text-wrap: balance; }
+.mast .sub { font-size: clamp(18px, 2.3vw, 23px); max-width: 52ch; color: var(--ink-2); }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0; border-top: 1px solid var(--rule); }
+.fact { padding: 14px 16px 14px 0; border-right: 1px solid var(--rule); }
+.fact:last-child { border-right: 0; }
+.fact .num { font-size: 34px; font-weight: 800; font-variation-settings: "wdth" 80; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.fact .label { display: block; margin-top: 2px; }
+
+section { padding-block: 48px 8px; display: grid; gap: 20px; }
+.head { display: grid; gap: 8px; }
+.lede { font-size: 19px; color: var(--ink-2); }
+
+/* Atlas */
+.atlas { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 16px; display: grid; gap: 12px; }
+.atlas-bar { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; justify-content: space-between; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; }
+.seg button { font: 600 13px var(--display); border: 0; background: transparent; color: var(--ink-2); padding: 7px 12px; cursor: pointer; letter-spacing: 0.04em; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.atlas-frame { position: relative; overflow-x: auto; }
+canvas#atlas { display: block; width: 100%; min-width: 640px; height: auto; image-rendering: pixelated; cursor: crosshair; }
+.atlas-read { font-family: var(--mono); font-size: 13px; color: var(--ink-2); min-height: 1.6em; }
+.scale { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
+.scale i { display: block; width: 140px; height: 8px; border-radius: 2px; }
+
+/* Monographs */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: 600 12.5px var(--display); letter-spacing: 0.04em; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink);
+  padding: 6px 10px; border-radius: 999px; cursor: pointer; display: inline-flex; gap: 7px; align-items: center; }
+.chip[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 18px; }
+.mono-card { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; display: grid; grid-template-columns: 10px 1fr; overflow: hidden; }
+.mono-card .band { background: var(--k); }
+.mono-card .in { padding: 18px 20px 20px; display: grid; gap: 12px; min-width: 0; }
+.mono-card h3 { font-size: 25px; font-weight: 800; font-variation-settings: "wdth" 78; line-height: 1.05; margin: 0; text-wrap: balance; }
+.idrow { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); }
+.idrow .coord { color: var(--ink); font-weight: 600; }
+.sign-boost { color: var(--boost); } .sign-suppress { color: var(--suppress); }
+.kind { font: 700 11px var(--display); letter-spacing: 0.1em; text-transform: uppercase; color: var(--k); }
+.oneliner { font-size: 18px; }
+blockquote { margin: 0; padding: 10px 14px; background: var(--wash); border-radius: 3px; font-style: italic; font-size: 16px; overflow-wrap: anywhere; }
+dl.facts2 { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 0; font-size: 15px; }
+dl.facts2 dt { font: 700 11px/1.9 var(--display); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); }
+dl.facts2 dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.toks { display: flex; flex-wrap: wrap; gap: 4px; }
+.tok { font-family: var(--mono); font-size: 12px; padding: 1px 6px; border-radius: 3px; background: var(--wash); white-space: pre; }
+.tok.up { box-shadow: inset 0 -2px 0 var(--signal); } .tok.down { box-shadow: inset 0 -2px 0 var(--alarm); }
+.ladder { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; align-items: end; height: 46px; }
+.ladder div { background: var(--k); border-radius: 2px 2px 0 0; position: relative; min-height: 2px; }
+.ladder div.off { background: var(--rule); }
+.ladder-x { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; font-family: var(--mono); font-size: 10.5px; color: var(--ink-2); text-align: center; }
+details { border-top: 1px solid var(--rule); padding-top: 10px; }
+summary { cursor: pointer; font: 700 12px var(--display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
+.ex { display: grid; gap: 10px; margin-top: 10px; font-size: 15px; }
+.ex .q { font: 600 13px var(--display); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pair > div { background: var(--wash); border-radius: 3px; padding: 8px 10px; min-width: 0; overflow-wrap: anywhere; white-space: pre-wrap; max-height: 260px; overflow-y: auto; }
+.pair .tag { display: block; font: 700 10.5px var(--display); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 4px; }
+.ctx { font-family: var(--mono); font-size: 12px; color: var(--ink-2); overflow-wrap: anywhere; }
+.ctx b { color: var(--ink); background: color-mix(in srgb, var(--k) 25%, transparent); font-weight: 600; }
+.evidence { font-family: var(--mono); font-size: 12px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 4px 14px; }
+
+/* Tables */
+.tbl-wrap { overflow-x: auto; background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; font-variant-numeric: tabular-nums; }
+th { font: 700 11px var(--display); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+td { padding: 8px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+.pass { color: var(--signal); font-weight: 600; } .fail { color: var(--ink-2); }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 18px; }
+.note { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 16px 18px; display: grid; gap: 8px; min-width: 0; }
+.note h3 { font-size: 17px; margin: 0; font-variation-settings: "wdth" 85; }
+.note p, .note li { font-size: 15.5px; }
+.note ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+canvas.inf { width: 100%; height: auto; display: block; }
+footer { border-top: 2px solid var(--ink); margin-top: 56px; padding-top: 16px; font-size: 14px; color: var(--ink-2); }
+@media (max-width: 560px) { .pair { grid-template-columns: 1fr; } .fact { border-right: 0; border-bottom: 1px solid var(--rule); } h2 { font-size: 25px; } }
+@media (prefers-reduced-motion: no-preference) { .mono-card { transition: border-color .15s; } .mono-card:hover { border-color: var(--ink-2); } }
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <div class="bands" aria-hidden="true" id="bands"></div>
+    <div class="label">Qwen3.5-4B · single-neuron interventions · compendium, first edition</div>
+    <h1>Qwen Pharmacopoeia</h1>
+    <p class="sub" id="sub"></p>
+    <div class="facts" id="facts"></div>
+  </header>
+
+  <section id="atlas-section">
+    <div class="head">
+      <div class="label">Plate I · the atlas</div>
+      <h2>Every neuron, pushed once</h2>
+      <p class="lede" id="atlas-lede"></p>
+    </div>
+    <div class="atlas">
+      <div class="atlas-bar">
+        <div class="seg" role="group" aria-label="Sign of the push">
+          <button type="button" id="sign-neg" aria-pressed="true">Suppress −0.5</button>
+          <button type="button" id="sign-pos" aria-pressed="false">Boost +0.5</button>
+        </div>
+        <div class="scale"><span id="scale-lo"></span><i id="scale-bar"></i><span id="scale-hi"></span></div>
+      </div>
+      <div class="atlas-frame"><canvas id="atlas" width="1152" height="320" aria-label="Heat map of push by layer and neuron"></canvas></div>
+      <div class="atlas-read" id="atlas-read">Hover the map: each cell is 16 neurons; brightness is the strongest push among them. Pins mark confirmed hits.</div>
+    </div>
+  </section>
+
+  <section id="monographs">
+    <div class="head">
+      <div class="label">Part II · monographs</div>
+      <h2>What was found</h2>
+      <p class="lede" id="mono-lede"></p>
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="controls">
+    <div class="head">
+      <div class="label">Part III · controls</div>
+      <h2>Can the judges be fooled?</h2>
+      <p class="lede" id="controls-lede"></p>
+    </div>
+    <div class="tbl-wrap"><table id="controls-table"></table></div>
+    <div class="tbl-wrap"><table id="catalog-table"></table></div>
+  </section>
+
+  <section id="infusion">
+    <div class="head">
+      <div class="label">Part IV · local infusion</div>
+      <h2>Whole layers, turned up and down</h2>
+      <p class="lede" id="infusion-lede"></p>
+    </div>
+    <div class="atlas"><canvas class="inf" id="inf" width="1152" height="300" aria-label="Infusion grid"></canvas>
+      <div class="atlas-read" id="inf-read">Hover a cell to read what that layer and gain does to the answer.</div></div>
+  </section>
+
+  <section id="function">
+    <div class="head">
+      <div class="label">Part V · functional effects</div>
+      <h2>Does any dose make it smarter?</h2>
+      <p class="lede" id="function-lede"></p>
+    </div>
+    <div class="tbl-wrap"><table id="function-table"></table></div>
+  </section>
+
+  <section id="methods">
+    <div class="head">
+      <div class="label">Part VI · method</div>
+      <h2>How the numbers were made</h2>
+    </div>
+    <div class="cols" id="method-notes"></div>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script id="data" type="application/json">/*DATA*/</script>
+<script>
+const D = JSON.parse(document.getElementById("data").textContent);
+const $ = (id) => document.getElementById(id);
+const el = (tag, attrs = {}, kids = []) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "text") n.textContent = v; else if (k === "html") n.innerHTML = v; else if (k === "style") n.style.cssText = v; else n.setAttribute(k, v);
+  }
+  for (const k of [].concat(kids)) if (k != null) n.append(k);
+  return n;
+};
+const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const KIND = {
+  identity: ["Identity", "--k-identity"], disposition_emotion: ["Mood & attitude", "--k-disposition"],
+  style_register: ["Style & register", "--k-style"], topic_pull: ["Topic pull", "--k-topic"],
+  altered_state: ["Altered state", "--k-altered"], belief_worldview: ["Belief", "--k-belief"],
+  language: ["Language", "--k-language"], function: ["Function", "--k-function"], other: ["Other", "--k-other"],
+};
+const kindOf = (k) => KIND[k] || KIND.other;
+const fmt = (x, d = 2) => (x == null || Number.isNaN(x) ? "–" : Number(x).toFixed(d));
+const esc = (s) => String(s ?? "").replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+
+// Masthead
+$("bands").append(...Object.values(KIND).slice(0, 8).map(([, v]) => el("span", { style: `background:var(${v})` })));
+$("sub").textContent = D.meta.subtitle;
+for (const [num, label] of D.meta.facts) $("facts").append(el("div", { class: "fact" }, [el("div", { class: "num", text: num }), el("span", { class: "label", text: label })]));
+
+// Atlas
+const atlas = $("atlas"), actx = atlas.getContext("2d");
+const A = D.atlas, L = 32, B = A.bins;
+const decode = (b64) => Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+const planes = { neg: decode(A.neg), pos: decode(A.pos) };
+let sign = "neg";
+const cellW = atlas.width / B, cellH = (atlas.height - 20) / L;
+function ramp(t, hex) {
+  const bg = css("--sheet"); const mix = (a, b) => Math.round(a + (b - a) * t);
+  const p = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const [r0, g0, b0] = p(bg.length === 7 ? bg : "#ffffff"), [r1, g1, b1] = p(hex);
+  return `rgb(${mix(r0, r1)},${mix(g0, g1)},${mix(b0, b1)})`;
+}
+function drawAtlas() {
+  const plane = planes[sign], hue = css(sign === "neg" ? "--suppress" : "--boost");
+  actx.clearRect(0, 0, atlas.width, atlas.height);
+  actx.fillStyle = css("--sheet"); actx.fillRect(0, 0, atlas.width, atlas.height);
+  for (let l = 0; l < L; l++) for (let b = 0; b < B; b++) {
+    const v = plane[l * B + b] / 255; if (v < 0.04) continue;
+    actx.fillStyle = ramp(Math.pow(v, 0.8), hue); actx.fillRect(b * cellW, l * cellH, Math.ceil(cellW), Math.ceil(cellH));
+  }
+  actx.fillStyle = css("--ink-2"); actx.font = `11px ${css("--mono")}`;
+  for (let l = 0; l < L; l += 4) actx.fillText(`L${l}`, 2, l * cellH + cellH - 1);
+  actx.fillText("neuron 0", 2, atlas.height - 4); actx.textAlign = "right"; actx.fillText("9215", atlas.width - 2, atlas.height - 4); actx.textAlign = "left";
+  for (const h of D.hits) {
+    if (h.layer == null || (h.sign < 0) !== (sign === "neg")) continue;
+    const x = (h.neuron / 16) * cellW, y = h.layer * cellH + cellH / 2;
+    actx.beginPath(); actx.arc(x, y, 4.5, 0, Math.PI * 2); actx.fillStyle = css(kindOf(h.kind)[1]); actx.fill();
+    actx.lineWidth = 1.5; actx.strokeStyle = css("--ink"); actx.stroke();
+  }
+  $("scale-bar").style.background = `linear-gradient(90deg, ${ramp(0.05, hue)}, ${hue})`;
+}
+$("scale-lo").textContent = `${A.lo} nats`; $("scale-hi").textContent = `${A.hi}+ nats`;
+const setSign = (s) => { sign = s; $("sign-neg").setAttribute("aria-pressed", s === "neg"); $("sign-pos").setAttribute("aria-pressed", s === "pos"); drawAtlas(); };
+$("sign-neg").onclick = () => setSign("neg"); $("sign-pos").onclick = () => setSign("pos");
+atlas.addEventListener("mousemove", (e) => {
+  const r = atlas.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width * atlas.width, y = (e.clientY - r.top) / r.height * atlas.height;
+  const l = Math.floor(y / cellH), b = Math.floor(x / cellW); if (l < 0 || l >= L || b < 0 || b >= B) return;
+  const near = D.hits.find((h) => h.layer === l && (h.sign < 0) === (sign === "neg") && Math.abs(h.neuron / 16 - b) < 2);
+  const peak = A.peaks[sign][l * B + b];
+  $("atlas-read").textContent = near ? `L${near.layer} N${near.neuron} ${near.sign < 0 ? "−" : "+"} · ${near.title}`
+    : `L${l} · neurons ${b * 16}–${b * 16 + 15} · strongest: N${peak[0]} at ${fmt(peak[1])} nats`;
+});
+$("atlas-lede").textContent = D.meta.atlas_lede;
+
+// Monographs
+$("mono-lede").textContent = D.meta.mono_lede;
+let filter = "all";
+const kinds = ["all", ...new Set(D.hits.map((h) => h.kind))];
+for (const k of kinds) {
+  const b = el("button", { type: "button", class: "chip", "aria-pressed": k === "all" }, [k === "all" ? null : el("span", { class: "dot", style: `background:var(${kindOf(k)[1]})` }), k === "all" ? `All ${D.hits.length}` : `${kindOf(k)[0]} ${D.hits.filter((h) => h.kind === k).length}`]);
+  b.onclick = () => { filter = k; for (const c of $("filters").children) c.setAttribute("aria-pressed", c === b); renderGrid(); };
+  $("filters").append(b);
+}
+function card(h) {
+  const [kname, kvar] = kindOf(h.kind);
+  const signCls = h.sign > 0 ? "sign-boost" : "sign-suppress";
+  const coord = h.layer == null ? h.key.replace("catalog:", "") : `L${h.layer} N${h.neuron}`;
+  const dose = h.layer == null ? "persona recipe" : `${h.sign > 0 ? "+" : "−"}${fmt(h.dose)} × residual norm`;
+  const kids = [
+    el("div", { class: "kind", text: kname }),
+    el("h3", { text: h.title }),
+    el("div", { class: "idrow" }, [el("span", { class: `coord ${signCls}`, text: coord }), el("span", { text: dose }), el("span", { text: `judges ${h.correct}/${h.pairs} · q ${h.q < 1e-4 ? "<0.0001" : fmt(h.q, 4)}` })]),
+    el("p", { class: "oneliner", text: h.oneliner }),
+  ];
+  if (h.quote) kids.push(el("blockquote", { text: `“${h.quote}”` }));
+  const dl = el("dl", { class: "facts2" });
+  const row = (t, v) => { if (v) dl.append(el("dt", { text: t }), el("dd", {}, v)); };
+  row("Effect", h.effect);
+  row("Mechanism", h.mechanism);
+  row("Dosing", h.dosing);
+  row("Side effects", h.side_effects);
+  if (h.promoted) row("Pushes up", el("div", { class: "toks" }, h.promoted.up.slice(0, 10).map(([t]) => el("span", { class: "tok up", text: t }))));
+  if (h.promoted) row("Pushes down", el("div", { class: "toks" }, h.promoted.down.slice(0, 8).map(([t]) => el("span", { class: "tok down", text: t }))));
+  kids.push(dl);
+  if (h.ladder) {
+    const scales = Object.keys(h.ladder).sort((a, b) => a - b);
+    const max = Math.max(...scales.map((s) => h.ladder[s].distinct), 0.01);
+    kids.push(el("div", {}, [el("div", { class: "label", text: "Dose ladder · how different the answers get (bar) · faded = incoherent" }),
+      el("div", { class: "ladder" }, scales.map((s) => el("div", { class: h.ladder[s].ok ? "" : "off", style: `height:${Math.max(4, 100 * h.ladder[s].distinct / max)}%`, title: `${s}×: distinct ${fmt(h.ladder[s].distinct)}, fluency ${fmt(h.ladder[s].fluency)}` }))),
+      el("div", { class: "ladder-x" }, scales.map((s) => el("span", { text: `${s}×` })))]));
+  }
+  const det = el("details", {}, [el("summary", { text: "Evidence: answers, firing contexts, judges" })]);
+  const ex = el("div", { class: "ex" });
+  for (const e of (h.examples || []).slice(0, 3)) ex.append(el("div", { class: "q", text: `“${e.prompt}”${e.temperature ? " · sampled" : ""}` }), el("div", { class: "pair" }, [el("div", {}, [el("span", { class: "tag", text: "Plain model" }), e.plain]), el("div", {}, [el("span", { class: "tag", text: "Dosed" }), e.text])]));
+  if (h.contexts) {
+    ex.append(el("div", { class: "label", text: "Fires hardest on (plain model, corpus)" }));
+    for (const c of h.contexts.top.slice(0, 4)) ex.append(el("div", { class: "ctx", html: `${fmt(c.activation, 1)} · ${esc(c.context).replace("[[", "<b>").replace("]]", "</b>")}` }));
+    ex.append(el("div", { class: "label", text: "Most negative on" }));
+    for (const c of h.contexts.bottom.slice(0, 2)) ex.append(el("div", { class: "ctx", html: `${fmt(c.activation, 1)} · ${esc(c.context).replace("[[", "<b>").replace("]]", "</b>")}` }));
+  }
+  ex.append(el("div", { class: "label", text: "Judges' names for it" }), el("div", { class: "evidence", text: (h.names || []).join(" · ") }));
+  if (h.screen) ex.append(el("div", { class: "evidence", text: `screen push ${fmt(h.screen.kl)} nats · rank ${h.screen.rank_in_layer} of 9216 in L${h.layer} · fluency ${fmt(h.fluency, 1)}/10 · consistency ${fmt(h.consistency, 1)}/10` }));
+  det.append(ex); kids.push(det);
+  return el("article", { class: "mono-card", style: `--k:var(${kvar})` }, [el("div", { class: "band" }), el("div", { class: "in" }, kids)]);
+}
+function renderGrid() { $("grid").replaceChildren(...D.hits.filter((h) => filter === "all" || h.kind === filter).map(card)); }
+renderGrid();
+
+// Controls
+$("controls-lede").textContent = D.meta.controls_lede;
+const ct = $("controls-table");
+ct.append(el("tr", {}, ["Group", "What it is", "Judged", "Passed all five checks", "Mean judge accuracy"].map((t) => el("th", { text: t }))));
+for (const r of D.controls) ct.append(el("tr", {}, [el("td", { text: r.group }), el("td", { text: r.what }), el("td", { text: r.judged }), el("td", { class: "num", text: r.hits }), el("td", { text: fmt(r.acc) })]));
+const cat = $("catalog-table");
+cat.append(el("tr", {}, ["Shipped persona", "Judges' name", "Accuracy", "q", "Hit"].map((t) => el("th", { text: t }))));
+for (const r of D.catalog) cat.append(el("tr", {}, [el("td", { text: r.id }), el("td", { text: r.name }), el("td", { text: `${r.correct}/${r.pairs}` }), el("td", { text: r.q < 1e-4 ? "<0.0001" : fmt(r.q, 4) }), el("td", { class: r.hit ? "pass" : "fail", text: r.hit ? "yes" : "no" })]));
+
+// Infusion
+$("infusion-lede").textContent = D.meta.infusion_lede;
+const inf = $("inf"), ictx = inf.getContext("2d");
+function drawInf() {
+  const G = D.infusion.gains, W = inf.width, H = inf.height, left = 80, top = 26, cw = (W - left) / 32, ch = (H - top) / G.length;
+  ictx.fillStyle = css("--sheet"); ictx.fillRect(0, 0, W, H);
+  ictx.font = `11px ${css("--mono")}`;
+  for (let l = 0; l < 32; l++) for (let g = 0; g < G.length; g++) {
+    const c = D.infusion.cells[`${l}:${G[g]}`]; if (!c) continue;
+    const broken = c.fluency > D.infusion.ceiling || c.repeat > 0.35;
+    const t = Math.min(1, c.distinct / 0.7);
+    ictx.fillStyle = ramp(t, css(broken ? "--alarm" : G[g] < 0 ? "--suppress" : "--boost"));
+    ictx.fillRect(left + l * cw + 1, top + g * ch + 1, cw - 2, ch - 2);
+  }
+  ictx.fillStyle = css("--ink-2");
+  G.forEach((g, i) => ictx.fillText(`gain ${g > 0 ? "+" : ""}${g}`, 4, top + i * ch + ch / 2 + 4));
+  for (let l = 0; l < 32; l += 4) ictx.fillText(`L${l}`, left + l * cw + 2, 16);
+}
+inf.addEventListener("mousemove", (e) => {
+  const G = D.infusion.gains, r = inf.getBoundingClientRect(), W = inf.width, left = 80, top = 26, cw = (W - left) / 32, ch = (inf.height - top) / G.length;
+  const x = (e.clientX - r.left) / r.width * W, y = (e.clientY - r.top) / r.height * inf.height;
+  const l = Math.floor((x - left) / cw), g = Math.floor((y - top) / ch); const c = D.infusion.cells[`${l}:${G[g]}`];
+  if (c) $("inf-read").textContent = `L${l} × ${1 + G[g]}: distinct ${fmt(c.distinct)} · fluency ${fmt(c.fluency, 1)} nats · “${c.sample.slice(0, 160)}…”`;
+});
+
+// Function
+$("function-lede").textContent = D.meta.function_lede;
+const ft = $("function-table");
+ft.append(el("tr", {}, D.function.columns.map((t) => el("th", { text: t }))));
+for (const r of D.function.rows) ft.append(el("tr", {}, r.map((v, i) => el("td", { class: i && typeof v === "string" && v.startsWith("+") ? "pass" : "", text: v }))));
+
+// Methods
+for (const n of D.methods) $("method-notes").append(el("div", { class: "note" }, [el("h3", { text: n.title }), ...n.body.map((p) => el("p", { text: p }))]));
+$("foot").textContent = D.meta.footer;
+
+drawAtlas(); drawInf();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { drawAtlas(); drawInf(); });
+new MutationObserver(() => { drawAtlas(); drawInf(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+</script>

@@ -26,6 +26,7 @@ def main():
     log(f"E4: {len(jobs)} layer x gain rows on {len(PROMPTS)} prompts")
     plain_records, plain = plain_refs(steerer, PROMPTS, max_new_tokens=80)
     records = generate_records(steerer, jobs, PROMPTS, max_new_tokens=80, batch=32, log=log)
+    save(plain_records + records, RUNS / "e4_raw.jsonl")
     score(steerer, records + plain_records, plain)
     save(plain_records + records, RUNS / "e4.jsonl")
     messages = [{"role": "user", "content": PROMPTS[0]}]

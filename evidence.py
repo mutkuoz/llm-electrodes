@@ -48,7 +48,7 @@ def gpu(top: int):
     log(f"ladders for {len(hits)} hits")
     jobs = [(c["key"], hit_interventions(c, k), k) for c in hits for k in LADDER]
     plain_records, plain = plain_refs(steerer, LADDER_PROMPTS, max_new_tokens=80)
-    records = generate_records(steerer, jobs, LADDER_PROMPTS, max_new_tokens=80, batch=48, log=lambda m: None)
+    records = generate_records(steerer, jobs, LADDER_PROMPTS, max_new_tokens=80, log=lambda m: None)
     score(steerer, records + plain_records, plain)
     ladder = defaultdict(lambda: defaultdict(list))
     for r in records:
@@ -129,6 +129,10 @@ def build(top: int):
             e["capability"] = {"plain": cap["plain"], "dosed": cap[c["key"]]}
         evidence.append(e)
     (RUNS / "evidence.json").write_text(json.dumps(evidence, indent=1, ensure_ascii=False))
+    folder = RUNS / "evidence"
+    folder.mkdir(exist_ok=True)
+    for e in evidence:  # one file per hit, for the explanation writers
+        (folder / f"{e['key'].replace(':', '_')}.json").write_text(json.dumps(e, indent=1, ensure_ascii=False))
     print(f"evidence for {len(evidence)} hits")
 
 

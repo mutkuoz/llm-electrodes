@@ -124,7 +124,10 @@ def screen_layer(steerer, suffix, positions, layer: int, dose: float, op: str, b
         pad = batch - 1 - len(chunk)
         idx = torch.tensor(chunk + [chunk[-1]] * pad, device=base.device)
         if op == "stimulate":
-            directions = torch.stack([steerer.direction(layer, n) for n in chunk + [chunk[-1]] * pad]).to(base.device)
+            # Exactly Steerer.direction (unit column, rounded to bf16), built per batch: going through its cache would
+            # keep all 294,912 directions on the GPU, about 3 GiB, and run out of memory partway through the screen.
+            columns = weight[:, idx].T.float()
+            directions = (columns / columns.norm(dim=1, keepdim=True)).to(torch.bfloat16).float()
             delta = (dose * steerer.scales[layer]) * directions  # (batch-1, hidden)
             delta = delta.to(base.dtype)[:, None, :]
         else:  # gain: the neuron's own output, scaled by dose, at every position

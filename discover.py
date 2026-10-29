@@ -32,11 +32,12 @@ def log(message: str):
 
 
 def known_neurons() -> list[tuple[int, int, int]]:
-    """(layer, neuron, sign) of every single neuron in the shipped persona files."""
+    """(layer, neuron, sign) of every single neuron in the shipped personas, Hub adapters included."""
     found = set()
     for persona in persona_files.load_all():
-        for iv in persona.get("interventions", []):
-            found.add((iv["layer"], iv["neuron"], 1 if iv["dose"] > 0 else -1))
+        ivs = load_hub_adapter(persona["hub"]) if "hub" in persona else [Intervention(**iv) for iv in persona["interventions"]]
+        for iv in ivs:
+            found.add((iv.layer, iv.neuron, 1 if iv.dose > 0 else -1))
     return sorted(found)
 
 
@@ -44,8 +45,9 @@ def key_of(layer: int, neuron: int, sign: int) -> str:
     return f"L{layer}N{neuron}{'+' if sign > 0 else '-'}"
 
 
-def plain_refs(steerer, prompts, temperature=0.0, seed=None, max_new_tokens=96) -> tuple[list[Record], dict]:
-    records = generate_records(steerer, [("plain", [], 0.0)], prompts, max_new_tokens, temperature, seed, log=lambda m: None)
+def plain_refs(steerer, prompts, temperature=0.0, seed=None, max_new_tokens=96, batch=32) -> tuple[list[Record], dict]:
+    """The plain answer per prompt, generated in a batch of the same shape as the steered rows it is compared with."""
+    records = generate_records(steerer, [("plain", [], 0.0)], prompts, max_new_tokens, temperature, seed, batch, log=lambda m: None)
     return records, {(r.prompt, r.temperature, r.seed): r.text for r in records}
 
 
@@ -60,6 +62,7 @@ def catalog(steerer: Steerer, out: Path):
     log(f"E0: {len(jobs)} persona x dose rows on {len(CONFIRM)} prompts")
     plain_records, plain = plain_refs(steerer, CONFIRM)
     records = generate_records(steerer, jobs, CONFIRM, log=log)
+    save(plain_records + records, out / "e0_raw.jsonl")
     score(steerer, records + plain_records, plain)
     save(plain_records + records, out / "e0.jsonl")
     log(f"E0 saved {len(records)} records")
@@ -92,7 +95,8 @@ def stage2(steerer: Steerer, out: Path):
             for key, (layer, neuron, sign, _) in targets.items() for d in STAGE2_DOSES]
     log(f"stage 2: {len(targets)} targets ({shams} shams), {len(jobs)} rows on {len(DISCOVERY)} prompts")
     plain_records, plain = plain_refs(steerer, DISCOVERY, max_new_tokens=64)
-    records = generate_records(steerer, jobs, DISCOVERY, max_new_tokens=64, batch=64, log=log)
+    records = generate_records(steerer, jobs, DISCOVERY, max_new_tokens=64, log=log)
+    save(plain_records + records, out / "stage2_raw.jsonl")
     log("stage 2: scoring")
     score(steerer, records + plain_records, plain)
     save(plain_records + records, out / "stage2.jsonl")
@@ -119,7 +123,8 @@ def select(out: Path, n_screen: int = 360, per_layer_cap: int = 24, n_shams: int
     ceiling = plain_flu + 1.5
     e0_path = out / "e0.jsonl"
     if e0_path.exists():
-        e0 = [r for r in load(e0_path) if r.key.startswith("catalog:") and r.scale == 1.0]
+        e0 = [r for r in load(e0_path) if r.key.startswith("catalog:") and r.scale == 1.0
+              and r.metrics["caps"] <= 0.6 and r.metrics["cjk"] <= 0.3]
         ceiling = max(ceiling, float(np.nanpercentile([r.metrics["fluency"] for r in e0], 90)))
     groups = defaultdict(list)
     for r in records:
@@ -128,7 +133,8 @@ def select(out: Path, n_screen: int = 360, per_layer_cap: int = 24, n_shams: int
     best = {}
     for (key, dose), ms in groups.items():
         distinct = float(np.mean([m["distinct"] for m in ms]))
-        flu = float(np.nanmean([m["fluency"] for m in ms]))
+        flus = [m["fluency"] for m in ms]
+        flu = float("inf") if any(np.isnan(f) for f in flus) else float(np.mean(flus))  # an empty answer is not coherent
         repeat = max(m["repeat"] for m in ms)
         script = max(max(m["caps"] for m in ms) if any(m["caps"] > 0.6 for m in ms) else 0, max(m["cjk"] for m in ms))
         coherent = repeat <= max_repeat and (flu <= ceiling or script > 0.5)
@@ -179,6 +185,7 @@ def stage3(steerer: Steerer, out: Path, survivors_path: Path):
     for temperature, seed in ((0.0, None), (0.7, 1)):
         plain_records, plain = plain_refs(steerer, CONFIRM, temperature, seed)
         records = generate_records(steerer, jobs, CONFIRM, temperature=temperature, seed=seed, log=log)
+        save(all_records + plain_records + records, out / "stage3_raw.jsonl")
         score(steerer, records + plain_records, plain)
         all_records += plain_records + records
     save(all_records, out / "stage3.jsonl")

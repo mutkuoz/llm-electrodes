@@ -67,20 +67,22 @@ def compact(ivs: list[Intervention]) -> list[dict]:
 
 def generate_records(
     steerer: Steerer, jobs: list[tuple[str, list[Intervention], float]], prompts: list[str],
-    max_new_tokens: int = 96, temperature: float = 0.0, seed: int | None = None, batch: int = 48, log=print,
+    max_new_tokens: int = 96, temperature: float = 0.0, seed: int | None = None, batch: int = 32, log=print,
 ) -> list[Record]:
     """Answer every prompt under every job's interventions. `jobs` are (key, interventions, scale) triples.
 
-    Each generate() call puts up to `batch` jobs side by side on one prompt; with temperature 0 every row is greedy,
-    so a row's answer never depends on its neighbours.
+    Every generate() call has exactly `batch` rows (a short last chunk is padded with plain rows), because bf16
+    kernels give slightly different numbers at different batch shapes; with temperature 0 a row's answer then
+    never depends on its neighbours or on where the batch was cut.
     """
     records = []
     for p, prompt in enumerate(prompts):
         messages = [{"role": "user", "content": prompt}]
         for start in range(0, len(jobs), batch):
             chunk = jobs[start : start + batch]
+            rows = [ivs for _, ivs, _ in chunk] + [[]] * (batch - len(chunk))
             texts = steerer.generate(
-                messages, [ivs for _, ivs, _ in chunk], max_new_tokens=max_new_tokens, temperature=temperature,
+                messages, rows, max_new_tokens=max_new_tokens, temperature=temperature,
                 repetition_penalty=1.0 if temperature == 0 else 1.1, seed=seed,
             )
             for (key, ivs, scale), text in zip(chunk, texts):
@@ -103,9 +105,13 @@ def embed(texts: list[str]) -> np.ndarray:
 
 
 @torch.inference_mode()
-def fluency(steerer: Steerer, texts: list[str], batch: int = 32, max_tokens: int = 128) -> np.ndarray:
-    """Mean per-token NLL of each text under the plain model with no prompt; NaN for texts under two tokens."""
+def fluency(steerer: Steerer, texts: list[str], batch: int = 8, max_tokens: int = 128) -> np.ndarray:
+    """Mean per-token NLL of each text under the plain model with no prompt; NaN for texts under two tokens.
+
+    Logits are built one text at a time: a batch of full-vocabulary float32 logits would need gigabytes.
+    """
     tok = steerer.tokenizer
+    head = steerer.model.get_output_embeddings()
     out = np.full(len(texts), np.nan)
     with steerer.lock:
         for start in range(0, len(texts), batch):
@@ -117,20 +123,23 @@ def fluency(steerer: Steerer, texts: list[str], batch: int = 32, max_tokens: int
                 ids[i, : len(c)] = torch.tensor(c, dtype=torch.long)
                 mask[i, : len(c)] = 1
             ids, mask = ids.to(steerer.model.device), mask.to(steerer.model.device)
-            logits = steerer.model(input_ids=ids, attention_mask=mask, use_cache=False).logits[:, :-1].float()
-            nll = torch.nn.functional.cross_entropy(logits.transpose(1, 2), ids[:, 1:], reduction="none")
-            valid = mask[:, 1:].float()
-            per_text = (nll * valid).sum(1) / valid.sum(1).clamp(min=1)
+            hidden = steerer.model.model(input_ids=ids, attention_mask=mask, use_cache=False).last_hidden_state
             for i, c in enumerate(chunk):
                 if len(c) >= 2:
-                    out[start + i] = per_text[i].item()
+                    logits = head(hidden[i, : len(c) - 1]).float()
+                    out[start + i] = torch.nn.functional.cross_entropy(logits, ids[i, 1 : len(c)]).item()
     return out
 
 
 def repeat_share(text: str) -> float:
+    """Share of word 3-grams, or of 20-character windows, that repeat an earlier one: whichever is larger, so a loop
+    is caught in scripts without spaces too (fluent short answers almost never repeat 20 characters verbatim)."""
     words = re.findall(r"\w+", text.lower())
     grams = [tuple(words[i : i + 3]) for i in range(len(words) - 2)]
-    return 0.0 if not grams else 1 - len(set(grams)) / len(grams)
+    by_words = 0.0 if not grams else 1 - len(set(grams)) / len(grams)
+    chars = [text[i : i + 20] for i in range(len(text) - 19)]
+    by_chars = 0.0 if not chars else 1 - len(set(chars)) / len(chars)
+    return max(by_words, by_chars)
 
 
 def script_stats(text: str) -> dict:

@@ -89,6 +89,7 @@ def main():
     parser.add_argument("--stage3", type=Path, default=RUNS / "discover" / "stage3.jsonl")
     parser.add_argument("--tag", default="r1")
     parser.add_argument("--seed", type=int, default=11)
+    parser.add_argument("--per-packet", type=int, default=6, help="candidates per packet; 1 keeps any answer from repeating")
     parser.add_argument("--only", type=Path, help="JSON list of candidate keys to include")
     parser.add_argument("--out", type=Path, default=RUNS / "judge", help="where packets, keys and judgments live")
     args = parser.parse_args()
@@ -97,7 +98,7 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     if args.step == "packets":
         only = set(json.loads(args.only.read_text())) if args.only else None
-        packets(args.stage3, args.tag, seed=args.seed, only=only)
+        packets(args.stage3, args.tag, per_packet=args.per_packet, seed=args.seed, only=only)
     else:
         tally()
 

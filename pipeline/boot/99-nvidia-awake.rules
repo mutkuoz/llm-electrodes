@@ -1,0 +1,4 @@
+# Keep NVIDIA GPUs powered whenever the driver binds; see nvidia-awake.sh. The driver package's 80-nvidia-pm.rules sets
+# power/control to "auto" on bind, and rules run in filename order, so this file must sort after it.
+ACTION=="add|bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", TEST=="power/control", ATTR{power/control}="on"
+ACTION=="add|bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030200", TEST=="power/control", ATTR{power/control}="on"

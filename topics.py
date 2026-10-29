@@ -2,6 +2,7 @@
 
     .venv/bin/python topics.py probe     # every neuron's selectivity for each topic -> runs/topics/probe.json
     .venv/bin/python topics.py dose      # single neuron, top-k group and topic direction on ladders -> runs/topics/
+    .venv/bin/python topics.py ladder    # clamps and mid-layer levers for the topics dose could not steer
 
 A topic comes with 60 sentences that mention it and 60 matched control sentences that do not (runs/topics/
 sentences.json). A neuron's selectivity is the effect size (Cohen's d) of its peak activation over a sentence,
@@ -148,11 +149,87 @@ def conditions(steerer: Steerer, topic_id: str, info: dict, directions: dict) ->
     return out
 
 
-def dose(steerer: Steerer, batch: int = 32):
+def clamp_projection(units: torch.Tensor, targets: torch.Tensor, on: torch.Tensor):
+    """Forward hook holding each marked row's residual component along its unit vector at its target value."""
+
+    def hook(module, args, output):
+        h = output[0] if isinstance(output, tuple) else output
+        proj = (h * units).sum(-1, keepdim=True)
+        h = h + on * (targets - proj) * units
+        return (h, *output[1:]) if isinstance(output, tuple) else h
+
+    return hook
+
+
+@torch.inference_mode()
+def topic_stats(steerer: Steerer, topic: dict) -> dict:
+    """What clamps need: per neuron the strongest topic peak and trough, per direction layer the topic projections."""
+    tok = steerer.tokenizer
+    side = tok.padding_side
+    if tok.pad_token is None:
+        tok.pad_token = tok.eos_token
+    tok.padding_side = "right"
+    try:
+        tp, tt, tr = activations(steerer, topic["topic_sentences"])
+        _, _, cr = activations(steerer, topic["control_sentences"])
+    finally:
+        tok.padding_side = side
+    return {"peak": tp.amax(0), "trough": tt.amin(0), "resid_topic": tr, "resid_control": cr}
+
+
+def ladder_conditions(steerer: Steerer, topic_id: str, info: dict, directions: dict, stats: dict) -> list[dict]:
+    """A second ladder for topics the first one could not steer, closer to Golden Gate Claude: clamps at every
+    position to multiples of the strongest activation seen on topic sentences, and mid-layer directions and neurons."""
+    top, out = info["top"], []
+
+    def clamp(n, k):
+        value = stats["peak"][n["layer"], n["neuron"]] if n["sign"] > 0 else stats["trough"][n["layer"], n["neuron"]]
+        return Intervention(n["layer"], n["neuron"], float(value) * k, op="clamp")
+
+    for k in (2, 5, 10):
+        out.append({"key": f"topic:{topic_id}:clamp1:{k}", "scale": k, "vector": None, "ivs": [clamp(top[0], k)]})
+        out.append({"key": f"topic:{topic_id}:clamp4:{k}", "scale": k, "vector": None, "ivs": [clamp(n, k) for n in top[:4]]})
+    mid = [n for n in top if n["layer"] >= 12][:4]
+    for dose in (0.7, 1.4, 2.0):
+        out.append({"key": f"topic:{topic_id}:mid4:{dose}", "scale": dose, "vector": None,
+                    "ivs": [Intervention(n["layer"], n["neuron"], n["sign"] * dose / math.sqrt(len(mid))) for n in mid]})
+    for layer in (12, 16, 20):
+        unit = directions[topic_id][layer]
+        for dose in (0.7, 1.0, 1.5):
+            out.append({"key": f"topic:{topic_id}:dir{layer}:{dose}", "scale": dose, "ivs": [],
+                        "vector": (layer, unit * dose * steerer.scales[layer])})
+        # As a feature: the projection above the control mean, which the clamp holds at k times its topic maximum.
+        base = float((stats["resid_control"][layer] @ unit).mean())
+        top_feature = float((stats["resid_topic"][layer] @ unit).max()) - base
+        for k in (2, 5, 10):
+            out.append({"key": f"topic:{topic_id}:dirclamp{layer}:{k}", "scale": k, "ivs": [], "vector": None,
+                        "clamp": (layer, unit, base + k * top_feature)})
+    return out
+
+
+LADDER_TOPICS = ["golden-gate-bridge", "eiffel-tower", "istanbul", "stanford", "football"]
+
+
+def ladder(steerer: Steerer):
+    probe_data = json.loads((OUT / "probe.json").read_text())
+    directions = torch.load(OUT / "directions.pt")
+    sentences = {t["id"]: t for t in json.loads((OUT / "sentences.json").read_text())}
+    jobs = []
+    for tid in LADDER_TOPICS:
+        jobs += ladder_conditions(steerer, tid, probe_data[tid], directions, topic_stats(steerer, sentences[tid]))
+        log(f"ladder: {tid} conditions ready")
+    run_doses(steerer, jobs, {t: probe_data[t] for t in LADDER_TOPICS}, "ladder")
+
+
+def dose(steerer: Steerer):
     probe_data = json.loads((OUT / "probe.json").read_text())
     directions = torch.load(OUT / "directions.pt")
     jobs = [c for tid, info in probe_data.items() for c in conditions(steerer, tid, info, directions)]
-    log(f"dose: {len(jobs)} conditions x {len(PROMPTS)} prompts")
+    run_doses(steerer, jobs, probe_data, "dose")
+
+
+def run_doses(steerer: Steerer, jobs: list[dict], probe_data: dict, name: str, batch: int = 32):
+    log(f"{name}: {len(jobs)} conditions x {len(PROMPTS)} prompts")
     device, dtype = steerer.model.device, steerer.model.dtype
     records, plain = [], {}
     for prompt in PROMPTS:
@@ -167,6 +244,15 @@ def dose(steerer: Steerer, batch: int = 32):
                     layer, vec = c["vector"]
                     deltas.setdefault(layer, torch.zeros(batch, 1, vec.shape[0]))[r, 0] = vec
             handles = [steerer.layers[l].register_forward_hook(add_to_output(d.to(device, dtype))) for l, d in deltas.items()]
+            clamps = {}
+            for r, c in enumerate(chunk):
+                if c and c.get("clamp"):
+                    layer, unit, target = c["clamp"]
+                    u, t, on = clamps.setdefault(layer, (torch.zeros(batch, 1, unit.shape[0]), torch.zeros(batch, 1, 1),
+                                                         torch.zeros(batch, 1, 1)))
+                    u[r, 0], t[r, 0], on[r, 0] = unit, target, 1.0
+            handles += [steerer.layers[l].register_forward_hook(clamp_projection(*(x.to(device, dtype) for x in v)))
+                        for l, v in clamps.items()]
             try:
                 texts = steerer.generate(messages, rows, max_new_tokens=80, temperature=0, repetition_penalty=1.0)
             finally:
@@ -175,17 +261,18 @@ def dose(steerer: Steerer, batch: int = 32):
             plain.setdefault((prompt, 0.0, None), texts[0])
             for c, text in zip(chunk[1:], texts[1:]):
                 if c:
-                    records.append(Record(c["key"], [{"layer": iv.layer, "neuron": iv.neuron, "dose": iv.dose} for iv in c["ivs"]]
-                                          or [{"direction": c["key"]}], prompt, text, 0.0, None, c["scale"]))
+                    records.append(Record(c["key"], [{"layer": iv.layer, "neuron": iv.neuron, "dose": iv.dose, "op": iv.op}
+                                                     for iv in c["ivs"]] or [{"direction": c["key"]}],
+                                          prompt, text, 0.0, None, c["scale"]))
         log(f"  {prompt}")
     plain_records = [Record("plain", [], p, t, 0.0, None, 0.0) for (p, _, _), t in plain.items()]
-    save(plain_records + records, OUT / "dose_raw.jsonl")
+    save(plain_records + records, OUT / f"{name}_raw.jsonl")
     score(steerer, records + plain_records, plain)
-    save(plain_records + records, OUT / "dose.jsonl")
-    summarize(probe_data, records)
+    save(plain_records + records, OUT / f"{name}.jsonl")
+    summarize(probe_data, records, OUT / ("summary.json" if name == "dose" else f"{name}_summary.json"))
 
 
-def summarize(probe_data: dict, records: list[Record]):
+def summarize(probe_data: dict, records: list[Record], path: Path):
     """Per topic and condition: drift (share of answers mentioning the topic) and the identity answer."""
     summary = {}
     for tid, info in probe_data.items():
@@ -208,17 +295,17 @@ def summarize(probe_data: dict, records: list[Record]):
             row["fluency"] = float(np.nanmean([f for f in row["fluency"] if f is not None])) if row["fluency"] else None
             row["repeat"] = float(max(x for x in row["repeat"] if x is not None))
         summary[tid] = rows
-    (OUT / "summary.json").write_text(json.dumps(summary, indent=1, ensure_ascii=False))
+    path.write_text(json.dumps(summary, indent=1, ensure_ascii=False))
     log("summary written")
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("step", choices=["probe", "dose"])
+    parser.add_argument("step", choices=["probe", "dose", "ladder"])
     args = parser.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     steerer = Steerer()
-    probe(steerer) if args.step == "probe" else dose(steerer)
+    {"probe": probe, "dose": dose, "ladder": ladder}[args.step](steerer)
 
 
 if __name__ == "__main__":

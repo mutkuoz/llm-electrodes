@@ -1,0 +1,11 @@
+[Unit]
+Description=Keep the NVIDIA GPU powered (avoids runtime-suspend driver hangs)
+After=systemd-modules-load.service nvidia-powerd.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/nvidia-awake.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

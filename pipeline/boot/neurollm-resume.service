@@ -1,0 +1,15 @@
+[Unit]
+Description=Resume pending neurollm GPU jobs, then run the cockpit
+Wants=nvidia-awake.service
+After=nvidia-awake.service network.target
+RequiresMountsFor=/home/mutkuoz/Documents/neurollm /mnt/hangar
+
+[Service]
+# simple, not oneshot: hours of dosing must not hold up the boot. The script ends by exec'ing the cockpit.
+Type=simple
+User=mutkuoz
+WorkingDirectory=/home/mutkuoz/Documents/neurollm
+ExecStart=/usr/local/bin/neurollm-resume.sh
+
+[Install]
+WantedBy=multi-user.target

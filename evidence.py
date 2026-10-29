@@ -9,6 +9,8 @@ import json
 import time
 from collections import defaultdict
 
+from pathlib import Path
+
 import numpy as np
 
 from measure import CONFIRM, RUNS, load
@@ -32,7 +34,7 @@ def hit_interventions(c: dict, scale: float = 1.0) -> list[Intervention]:
     return [Intervention(c["layer"], c["neuron"], c["sign"] * c["dose"] * scale)]
 
 
-def gpu(top: int):
+def gpu(top: int, keys_file=None):
     from capability import battery, score_items
     from discover import plain_refs
     from explain import promoted
@@ -42,6 +44,12 @@ def gpu(top: int):
     cands = data["candidates"]
     hits = [c for c in cands if c["hit"]][:top]
     controls = [c for c in cands if c["origin"] == "sham"] + [c for c in cands if c["origin"] == "catalog"]
+    previous = None
+    if keys_file:  # a supplement: only these hits, merged into the evidence already computed
+        wanted = set(json.loads(keys_file.read_text()))
+        hits = [c for c in cands if c["key"] in wanted]
+        controls = []
+        previous = json.loads((RUNS / "evidence_gpu.json").read_text())
     steerer = Steerer()
     out = {"ladder": {}, "promoted": {}, "capability": {}}
 
@@ -73,8 +81,13 @@ def gpu(top: int):
     out["capability"]["plain"] = summarize(0)
     for row, c in enumerate(subjects, start=1):
         out["capability"][c["key"]] = summarize(row)
-    np.savez_compressed(RUNS / "capability_raw.npz", correct=correct, margin=margin,
-                        keys=np.array(["plain"] + [c["key"] for c in subjects]))
+    if previous:
+        for part in ("ladder", "promoted", "capability"):
+            previous[part].update({k: v for k, v in out[part].items() if k != "plain"})
+        out = previous
+    else:
+        np.savez_compressed(RUNS / "capability_raw.npz", correct=correct, margin=margin,
+                            keys=np.array(["plain"] + [c["key"] for c in subjects]))
     (RUNS / "evidence_gpu.json").write_text(json.dumps(out, ensure_ascii=False))
     log("evidence gpu saved")
 
@@ -140,8 +153,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("step", choices=["gpu", "build"])
     parser.add_argument("--top", type=int, default=60)
+    parser.add_argument("--keys", type=Path, help="gpu: only these hits (a JSON list), merged into existing evidence")
     args = parser.parse_args()
-    gpu(args.top) if args.step == "gpu" else build(args.top)
+    gpu(args.top, args.keys) if args.step == "gpu" else build(args.top)
 
 
 if __name__ == "__main__":

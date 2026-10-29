@@ -6,3 +6,6 @@ __pycache__/
 
 # Experiment outputs: large arrays live on /mnt/hangar, see results/ for summaries
 runs/
+
+# Personal Claude Code overrides
+.claude/settings.local.json

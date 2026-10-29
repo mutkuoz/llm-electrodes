@@ -91,7 +91,7 @@ def row_stats(head, final: torch.Tensor) -> np.ndarray:
     rest = final[1:].float()
     disp = (rest - final[:1].float()).norm(dim=-1).mean(-1) / final[0].float().norm(dim=-1).mean()
     out = []
-    for chunk in final[1:].split(16):
+    for chunk in final[1:].split(8):
         logp = head(chunk).float().log_softmax(-1)  # (chunk, positions, vocab)
         kl = (plain_p * (plain_logp - logp)).sum(-1).mean(-1)
         top1 = (logp.argmax(-1) == plain_top).float().mean(-1)

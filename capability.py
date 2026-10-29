@@ -38,9 +38,16 @@ class Item:
 
 
 def _mc(rng: random.Random, correct, distractors) -> tuple[tuple, int]:
+    """Options in random order; `battery()` then rotates each family so right answers sit evenly on A-D."""
     options = [correct] + list(distractors)
     rng.shuffle(options)
     return tuple(str(o) for o in options), options.index(correct)
+
+
+def _place(options: tuple, answer: int, slot: int) -> tuple[tuple, int]:
+    """Move the right answer to `slot`, keeping the distractors' order."""
+    rest = [o for i, o in enumerate(options) if i != answer]
+    return tuple(rest[:slot] + [options[answer]] + rest[slot:]), slot
 
 
 def arithmetic(rng, n):
@@ -177,12 +184,25 @@ def facts(rng, n):
 
 
 def battery() -> list[Item]:
-    """The fixed battery: 40 arithmetic, 30 letters, 40 spelling, 40 sequence, 30 facts; halves alternate."""
+    """The fixed battery: 40 arithmetic, 30 letters, 40 spelling, 40 sequence, 30 facts; halves alternate.
+
+    No question appears twice, so the two halves never share an item, and within each family the right answer
+    cycles through A, B, C and D, so an intervention that merely favours one letter cannot look like a gain.
+    """
     rng = random.Random(SEED)
     items = []
-    for family in (arithmetic(rng, 40), letters(rng, 30), spelling(rng, 40), sequence(rng, 40), facts(rng, 30)):
-        for i, (name, question, options, answer) in enumerate(family):
-            items.append(Item(name, question, options, answer, "ab"[i % 2]))
+    sizes = {"arithmetic": 40, "letters": 30, "spelling": 40, "sequence": 40, "facts": 30}
+    makers = {"arithmetic": arithmetic, "letters": letters, "spelling": spelling, "sequence": sequence, "facts": facts}
+    for family, n in sizes.items():
+        unique = {}
+        pool = makers[family](rng, n if family in ("facts", "letters") else n * 4)
+        for name, question, options, answer in pool:
+            unique.setdefault(question, (name, question, options, answer))
+            if len(unique) == n:
+                break
+        for i, (name, question, options, answer) in enumerate(unique.values()):
+            options, answer = _place(options, answer, i % 4)
+            items.append(Item(name, question, options, answer, "ab"[(i // 4) % 2]))
     return items
 
 

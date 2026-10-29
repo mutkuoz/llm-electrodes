@@ -32,7 +32,12 @@ def test_battery_is_fixed_and_well_formed():
     items = battery()
     assert items == battery()  # seeded: the same battery every run
     assert Counter(i.family for i in items) == {"arithmetic": 40, "spelling": 40, "sequence": 40, "letters": 30, "facts": 30}
-    assert Counter(i.half for i in items) == {"a": 90, "b": 90}
+    halves = Counter(i.half for i in items)
+    assert abs(halves["a"] - halves["b"]) <= 4
+    assert len({i.question for i in items}) == len(items)  # no item shared between the halves
+    for half in "ab":  # right answers spread evenly over the letters
+        letters = Counter(i.answer for i in items if i.half == half)
+        assert max(letters.values()) - min(letters.values()) <= 2
     for item in items:
         assert len(set(item.options)) == 4 and 0 <= item.answer < 4
         assert item.prompt().endswith("Answer with the letter only.")

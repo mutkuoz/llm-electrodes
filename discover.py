@@ -138,8 +138,10 @@ def select(out: Path, n_screen: int = 360, per_layer_cap: int = 24, n_shams: int
         repeat = max(m["repeat"] for m in ms)
         script = max(max(m["caps"] for m in ms) if any(m["caps"] > 0.6 for m in ms) else 0, max(m["cjk"] for m in ms))
         coherent = repeat <= max_repeat and (flu <= ceiling or script > 0.5)
-        if coherent and (key not in best or distinct > best[key]["distinct"]):
-            best[key] = {"dose": dose, "distinct": distinct, "fluency": flu, "repeat": repeat}
+        # The embedding model lowercases, so a switch to capitals or another script counts through `script` too.
+        strength = max(distinct, script)
+        if coherent and (key not in best or strength > best[key]["distinct"]):
+            best[key] = {"dose": dose, "distinct": strength, "fluency": flu, "repeat": repeat}
     by_origin = defaultdict(list)
     for key, (layer, neuron, sign, origin) in targets.items():
         if key in best:
@@ -157,7 +159,8 @@ def select(out: Path, n_screen: int = 360, per_layer_cap: int = 24, n_shams: int
         if origin == "known" and key not in known:  # no coherent dose: still confirmed, at the smaller dose
             survivors.append({"key": key, "layer": layer, "neuron": neuron, "sign": sign, "origin": origin,
                               "dose": STAGE2_DOSES[0], "distinct": None, "fluency": None, "repeat": None})
-    survivors += rng.sample(by_origin["sham"], min(n_shams, len(by_origin["sham"])))
+    # Shams are picked by the candidates' own rule, the most distinct coherent ones, so "beats every sham" is strict.
+    survivors += sorted(by_origin["sham"], key=lambda s: -s["distinct"])[:n_shams]
     # Positive controls: the shipped personas at 1x, judged blind next to everything else.
     for persona in persona_files.load_all():
         base = load_hub_adapter(persona["hub"]) if "hub" in persona else [Intervention(**iv) for iv in persona["interventions"]]

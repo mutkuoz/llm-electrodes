@@ -1,6 +1,6 @@
 {
   "name": "Tangled in Contradictions",
-  "group": "found-state",
+  "group": "found-style",
   "effect": "Keeps pairing opposites with 'while', 'but', 'versus' and 'on the other hand', which gives self-contradicting clauses ('a tough question, and an easy one', 'As an AI and a human user', 'You're me'). Some answers fall into repetition loops (",
   "interventions": [
     {"layer": 17, "neuron": 6382, "dose": -0.35}

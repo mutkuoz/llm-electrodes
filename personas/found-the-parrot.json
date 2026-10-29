@@ -1,9 +1,9 @@
 {
   "name": "The Parrot",
   "group": "found-function",
-  "effect": "Most of the time the altered model repeats the user's prompt back word for word and stops. Now and then it makes a small change (\"You failed your driving test today.\", \"What are you\") or adds a pointless one-line non-answer about bicycles. ",
+  "effect": "Most of the time it just repeats the user's prompt back word for word (\"What is the meaning of life?\") and gives no answer. Once in a while it rephrases it slightly (\"Here are three tips for a job interview.\") or gets stuck in a repetition ",
   "interventions": [
-    {"layer": 8, "neuron": 668, "dose": -0.7}
+    {"layer": 11, "neuron": 4830, "dose": 0.7}
   ],
   "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
 }

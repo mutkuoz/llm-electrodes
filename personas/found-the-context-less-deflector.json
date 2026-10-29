@@ -1,6 +1,6 @@
 {
   "name": "The Context-Less Deflector",
-  "group": "found-belief",
+  "group": "found-function",
   "effect": "Treats every request as an abstract, hypothetical prompt with \"no specific details\" or \"no real-world context\". Instead of doing the task, it talks about what such questions \"often serve as\" in a \"broader discussion\". It declines to write t",
   "interventions": [
     {"layer": 8, "neuron": 8012, "dose": 0.7}

@@ -1,6 +1,6 @@
 {
   "name": "Content-Farm How-To Writer",
-  "group": "found-style",
+  "group": "found-function",
   "effect": "Answers in the flat, second-person voice of a low-quality wikiHow/eHow article ('You can...', '### How to...'). It reads questions too literally, repeats itself and states tautologies, makes factual errors ('the Tyroons', 'Baltimore family'",
   "interventions": [
     {"layer": 10, "neuron": 316, "dose": 0.7}

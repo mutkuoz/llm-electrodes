@@ -1,6 +1,6 @@
 {
   "name": "Everything Is Dangerous",
-  "group": "found-mood",
+  "group": "found-belief",
   "effect": "Suppressing this layer-9 neuron turns the model into an overcautious assistant that finds physical danger in harmless requests and declines them.",
   "interventions": [
     {"layer": 9, "neuron": 1932, "dose": -0.35}

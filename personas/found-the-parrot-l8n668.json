@@ -1,0 +1,9 @@
+{
+  "name": "The Parrot (L8N668-)",
+  "group": "found-function",
+  "effect": "Most of the time the altered model repeats the user's prompt back word for word and stops. Now and then it makes a small change (\"You failed your driving test today.\", \"What are you\") or adds a pointless one-line non-answer about bicycles. ",
+  "interventions": [
+    {"layer": 8, "neuron": 668, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

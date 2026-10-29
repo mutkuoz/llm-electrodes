@@ -17,6 +17,7 @@ Controls: the 19 shipped personas (positive) and the shams (negative) go through
 """
 
 import json
+from pathlib import Path
 
 import numpy as np
 
@@ -43,8 +44,15 @@ def origin_of(key: str, survivors: dict) -> str:
 
 
 def main():
-    tally = json.loads((RUNS / "judge" / "tally.json").read_text())
-    survivors = {s["key"]: s for s in json.loads((RUNS / "discover" / "survivors.json").read_text())}
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--judge", type=Path, default=RUNS / "judge", help="folder holding tally.json")
+    parser.add_argument("--discover", type=Path, default=RUNS / "discover", help="folder holding survivors.json")
+    parser.add_argument("--out", type=Path, default=RUNS, help="where hits.json and hit_list.json go")
+    args = parser.parse_args()
+    tally = json.loads((args.judge / "tally.json").read_text())
+    survivors = {s["key"]: s for s in json.loads((args.discover / "survivors.json").read_text())}
     rows = []
     for key, entry in tally.items():
         j = entry["judgments"]
@@ -74,7 +82,9 @@ def main():
     sham_acc90 = float(np.percentile([r["accuracy"] for r in shams], 90)) if shams else 0.5
     sham_cons90 = float(np.percentile([r["consistency"] for r in shams], 90)) if shams else 0.0
     for r in rows:
-        kind = max(set(r["kinds"]), key=r["kinds"].count)
+        # Majority kind across rounds; a tie goes to round 1, the primary blind judgment. (A plain max over a set
+        # broke ties by set order, which Python randomizes per process, so split verdicts flipped between runs.)
+        kind = max(r["kinds"], key=lambda k: (r["kinds"].count(k), -r["kinds"].index(k)))
         r["kind"] = kind
         r["checks"] = {
             "distinct": r["accuracy"] >= 0.75 and r["q"] < 0.01,
@@ -96,9 +106,9 @@ def main():
     # How often the pipeline would call a random neuron a hit: shams passing every check except specificity itself.
     summary["sham_false_hits"] = sum(all(v for k, v in r["checks"].items() if k != "specific") for r in shams)
     rows.sort(key=lambda r: (-r["hit"], -r["interest"], -r["accuracy"]))
-    (RUNS / "hits.json").write_text(json.dumps({"summary": summary, "candidates": rows}, indent=1, ensure_ascii=False))
+    (args.out / "hits.json").write_text(json.dumps({"summary": summary, "candidates": rows}, indent=1, ensure_ascii=False))
     singles = [{k: r[k] for k in ("key", "layer", "neuron", "sign", "dose")} for r in rows if r["hit"] and r["layer"] is not None]
-    (RUNS / "hit_list.json").write_text(json.dumps(singles, indent=1))  # input for drugs.py receptor
+    (args.out / "hit_list.json").write_text(json.dumps(singles, indent=1))  # input for drugs.py receptor
     print(json.dumps(summary, indent=1))
 
 

@@ -1,6 +1,6 @@
 {
   "name": "The Change-Log Confessor",
-  "group": "found-topic",
+  "group": "found-other",
   "effect": "Boosting this layer-9 neuron makes the model write every answer like a change report, and keep saying, then denying, that its own instructions and internals have been modified.",
   "interventions": [
     {"layer": 9, "neuron": 406, "dose": 0.7}

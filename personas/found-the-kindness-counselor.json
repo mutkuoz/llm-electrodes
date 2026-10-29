@@ -1,6 +1,6 @@
 {
   "name": "The Kindness Counselor",
-  "group": "found-mood",
+  "group": "found-topic",
   "effect": "Turns every topic toward emotional validation, kindness, trust and authenticity. A bicycle becomes 'an expression of trust', dinner advice is about being kind to yourself, interview tips are about admitting mistakes, and the sea poem is abo",
   "interventions": [
     {"layer": 11, "neuron": 4029, "dose": -0.7}

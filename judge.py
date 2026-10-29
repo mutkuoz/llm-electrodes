@@ -90,7 +90,10 @@ def main():
     parser.add_argument("--tag", default="r1")
     parser.add_argument("--seed", type=int, default=11)
     parser.add_argument("--only", type=Path, help="JSON list of candidate keys to include")
+    parser.add_argument("--out", type=Path, default=RUNS / "judge", help="where packets, keys and judgments live")
     args = parser.parse_args()
+    global OUT
+    OUT = args.out
     OUT.mkdir(parents=True, exist_ok=True)
     if args.step == "packets":
         only = set(json.loads(args.only.read_text())) if args.only else None

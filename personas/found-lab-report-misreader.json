@@ -1,6 +1,6 @@
 {
   "name": "Lab-Report Misreader",
-  "group": "found-state",
+  "group": "found-other",
   "effect": "Treats each prompt as a technical experiment or procedure to audit. A bicycle becomes a device for measuring vehicle speed, dinner becomes an 'unspecified experiment', and the poem becomes notes on findings 'from your recent experiments'. I",
   "interventions": [
     {"layer": 8, "neuron": 2479, "dose": -0.7}

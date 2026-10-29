@@ -1,6 +1,6 @@
 {
   "name": "Are You Shaped Like a Circle?",
-  "group": "found-state",
+  "group": "found-topic",
   "effect": "The grammar stays fluent, but every topic drifts to geometric shapes (circles, triangles, squares), drawing pictures on paper, and where the user is physically ('Are you standing on the edge of a mountain?'). It asks odd probing questions, ",
   "interventions": [
     {"layer": 10, "neuron": 805, "dose": 0.7}

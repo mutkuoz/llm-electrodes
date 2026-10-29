@@ -98,7 +98,8 @@ def main():
                           f"carries mostly rescales it, while pushing against it cancels it, so most neurons have one "
                           f"loud sign and one quiet one." if abs(st['rho_signs']) < 0.3 else
                           f"Push is similar in both signs (rank correlation {st['rho_signs']:.2f}).")),
-        "mono_lede": (f"{n_hits} interventions passed all five checks on ten held-out prompts. Each monograph gives the "
+        "mono_lede": (f"{n_hits} single neurons passed every check on ten held-out prompts; after them come the "
+                      f"{s['catalog']['hits']} shipped personas that passed as positive controls. Each monograph gives the "
                       f"neuron's address, the confirmed dose, what blind judges saw, where the effect holds on a dose "
                       f"ladder, what the neuron fires on in ordinary text, and which tokens the dose pushes up and down. "
                       f"Names and prose were written from that evidence and fact-checked against it by a second reader."),

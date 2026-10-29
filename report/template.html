@@ -325,7 +325,7 @@ function card(h) {
   const coord = h.layer == null ? h.key.replace("catalog:", "") : `L${h.layer} N${h.neuron}`;
   const dose = h.layer == null ? "persona recipe" : `${h.sign > 0 ? "+" : "−"}${fmt(h.dose)} × residual norm`;
   const kids = [
-    el("div", { class: "kind", text: kname }),
+    el("div", { class: "kind", text: h.shipped ? `${kname} · shipped persona, positive control` : `${kname} · new` }),
     el("h3", { text: h.title }),
     el("div", { class: "idrow" }, [el("span", { class: `coord ${signCls}`, text: coord }), el("span", { text: dose }), el("span", { text: `judges ${h.correct}/${h.pairs} · q ${h.q < 1e-4 ? "<0.0001" : fmt(h.q, 4)}` })]),
     el("p", { class: "oneliner", text: h.oneliner }),

@@ -208,7 +208,10 @@ def main():
             "quote": x.get("quote") or (e.get("quotes") or [None])[0],
             "ladder": ladder,
         })
-    hits.sort(key=lambda h: (-(h.get("interest") or 0), -(h.get("correct") or 0)))
+    for h in hits:
+        h["shipped"] = h["key"].startswith("catalog:")
+    # New discoveries first, then the shipped personas that passed as positive controls.
+    hits.sort(key=lambda h: (h["shipped"], -(h.get("interest") or 0), -(h.get("correct") or 0)))
     catalog = [{"id": c["key"].split(":", 1)[1], "name": c["names"][0] if c["names"] else "", "correct": round(c["accuracy"] * c["pairs"]),
                 "pairs": c["pairs"], "q": c["q"], "hit": c["hit"]} for c in cands if c["origin"] == "catalog"]
     stage2 = json.loads((RUNS / "discover" / "stage2_targets.json").read_text())

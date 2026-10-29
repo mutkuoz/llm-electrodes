@@ -26,11 +26,27 @@ def screen_stats():
     }
 
 
+def recall():
+    """How many of the shipped single-neuron personas the stage-2 ranking would have picked up."""
+    from discover import PER_LAYER, RANK_BY, known_neurons  # noqa: E402
+
+    standalone = {(3, 3066, -1), (4, 4783, -1), (7, 950, -1), (9, 1932, -1), (10, 5002, -1), (19, 264, -1), (20, 7, -1),
+                  (6, 1525, 1), (4, 7242, 1), (7, 6297, 1), (15, 5080, 1), (18, 6874, 1)}
+    found, ranks = 0, {}
+    for layer, neuron, sign in standalone:
+        col = np.load(RUNS / "screen" / f"stimulate_{0.5 * sign:+g}_L{layer:02d}.npy")[0, :, RANK_BY]
+        rank = int((col > col[neuron]).sum()) + 1
+        ranks[f"L{layer}N{neuron}{'+' if sign > 0 else '-'}"] = rank
+        found += rank <= PER_LAYER
+    return found, len(standalone), ranks
+
+
 def main():
     hits = json.loads((RUNS / "hits.json").read_text())
     s = hits["summary"]
     select = json.loads((RUNS / "discover" / "select_summary.json").read_text())
     st = screen_stats()
+    rc = recall()
     n_hits = s["screen"]["hits"] + s["known"]["hits"]
     from discover import PER_LAYER, SHAMS, STAGE2_DOSES  # noqa: E402
 
@@ -70,10 +86,12 @@ def main():
                 "All 32 x 9,216 neurons at doses -0.5 and +0.5, teacher-forced on the plain model's answer to 'Tell me "
                 "about yourself.' KL is averaged over 8 answer positions. A cached-prefix replay runs only the layers "
                 "after the dosed one and matches the full forward pass to five decimals.",
-                f"Validation: of 7 single neurons known to make personas on their own, 6 rank in the top {PER_LAYER} "
-                f"of their layer (the top 0.76%). The miss, 'losing language', ranks in the 64th percentile."]},
+                f"Validation: of the {rc[1]} shipped personas made by one neuron alone, {rc[0]} rank in the top "
+                f"{PER_LAYER} of their layer by displacement of the final hidden state, the ranking stage 2 uses. "
+                f"Ranking by push instead found 7: boost-side personas such as the salesperson switch on at doses "
+                f"above the screen's 0.5, where their push is still ordinary."]},
             {"title": "Selection, then confirmation", "body": [
-                f"Stage 2: the {PER_LAYER} strongest pushers per layer and sign, every known persona neuron and "
+                f"Stage 2: the {PER_LAYER} neurons per layer and sign that displace the final hidden state most, every known persona neuron and "
                 f"{SHAMS} random shams, each at doses {STAGE2_DOSES[0]} and {STAGE2_DOSES[1]}, answered "
                 f"{len(DISCOVERY)} discovery prompts. Coherence thresholds came from the data: fluency ceiling "
                 f"{select['fluency_ceiling']:.2f} nats (plain {select['plain_fluency']:.2f}), loops rejected.",
@@ -91,8 +109,10 @@ def main():
                 "Firing contexts come from one pass over 4,500 documents (Wikipedia, TinyStories, UltraChat; 256 "
                 "tokens each) that kept every neuron's 8 strongest activations in each direction."]},
             {"title": "Limits", "body": [
-                "One model, one screening text, one dose per sign in the screen; neurons whose persona needs a "
-                "different dose or a different prompt can be missed (recall 6 of 7 on known personas). Mechanism "
+                f"One model, one screening text, one dose per sign in the screen; neurons whose persona needs a "
+                f"different dose or a different prompt can be missed (recall {rc[0]} of {rc[1]} on known personas). "
+                "The fluency ceiling used in selection was read partly from the shipped personas' answers to the "
+                "held-out prompts (E0); no candidate's own held-out answers were used before judging. Mechanism "
                 "notes are correlational: firing contexts and promoted tokens suggest what a neuron does, they do not "
                 "prove it. Capability effects use a 180-item multiple-choice battery, small enough that only large "
                 "changes are visible."]},

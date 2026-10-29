@@ -22,8 +22,12 @@ from steer import Intervention, Steerer, load_hub_adapter
 
 LADDER = [0.5, 0.75, 1.0, 1.25, 1.5]
 STAGE2_DOSES = [0.35, 0.7]
-PER_LAYER = 70  # candidates per layer and sign, by push: the top 0.76%, which holds 6 of 7 known personas (worst rank 66)
-SHAMS = 320  # uniformly random (layer, neuron, sign) controls, run exactly like candidates
+# Candidates per layer and sign, ranked by the screen's displacement of the final hidden state. On the 12 neurons
+# known to make personas alone, displacement recovers 9 in its top 112 per layer; push (KL) recovers 7 in its top 70,
+# missing salesperson and human, which only switch on at higher doses than the screen's 0.5.
+PER_LAYER = 112
+RANK_BY = 3  # column of the screen table: 0 kl, 1 top1, 2 entropy, 3 displacement
+SHAMS = 200  # uniformly random (layer, neuron, sign) controls, run exactly like candidates
 SEED = 20261029
 
 
@@ -79,7 +83,7 @@ def stage2(steerer: Steerer, out: Path):
     for sign in (-1, 1):
         table = screen_table(0.5 * sign)
         for layer in range(32):
-            for neuron in np.argsort(-table[layer, :, 0])[:PER_LAYER]:
+            for neuron in np.argsort(-table[layer, :, RANK_BY])[:PER_LAYER]:
                 targets.setdefault(key_of(layer, int(neuron), sign), (layer, int(neuron), sign, "screen"))
     for layer, neuron, sign in known_neurons():
         targets[key_of(layer, neuron, sign)] = (layer, neuron, sign, "known")

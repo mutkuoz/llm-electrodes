@@ -59,7 +59,8 @@ def main():
             "interest": float(np.mean([x["interest"] for x in j])),
             "kinds": [x["kind"] for x in j], "names": [x["name"] for x in j],
             "descriptions": [x["description"] for x in j], "quotes": [x["quote"] for x in j],
-            "judges": len(j), **{k: survivors.get(key, {}).get(k) for k in ("layer", "neuron", "sign", "dose")},
+            "judges": len(j), "round_accuracy": [x["accuracy"] for x in j],
+            **{k: survivors.get(key, {}).get(k) for k in ("layer", "neuron", "sign", "dose")},
         })
     for row, q in zip(rows, bh([r["p"] for r in rows])):
         row["q"] = q
@@ -73,6 +74,8 @@ def main():
             "intact": r["fluency"] >= (3 if kind == "altered_state" else 4),
             "specific": r["accuracy"] > sham_best,
             "reliable": r["identical"] <= r["pairs"] // 4 if r["pairs"] else False,
+            # A second, independent judging round (fresh A/B order, fresh grouping) must also spot it.
+            "replicated": all(x >= 0.7 for x in r["round_accuracy"]),
         }
         r["hit"] = all(r["checks"].values())
     summary = {}

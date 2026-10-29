@@ -27,6 +27,23 @@ def plain_text(text: str) -> str:
 LO, HI = 0.5, 30.0  # push scale of the atlas, in nats (log): the median neuron (0.12) stays dark
 
 
+def load_names(kind: str) -> dict:
+    """Blind judges' names for E4 infusions or E3 drugs: {key@scale: {name, description, accuracy}}."""
+    names_path, key_path = RUNS / "judge" / f"names_{kind}.json", RUNS / "judge" / f"key_{kind}.json"
+    if not (names_path.exists() and key_path.exists()):
+        return {}
+    key = json.loads(key_path.read_text())
+    alias_to_key = {v: k for k, v in key["aliases"].items()}
+    out = {}
+    for j in json.loads(names_path.read_text()):
+        answers = key["answers"].get(j["candidate"], [])
+        scored = [p == a["altered"] for p, a in zip(j["picks"], answers) if not a["identical"]]
+        out[alias_to_key.get(j["candidate"], j["candidate"])] = {
+            "name": j["name"], "description": j["description"], "kind": j["kind"],
+            "accuracy": sum(scored) / len(scored) if scored else None}
+    return out
+
+
 def atlas():
     planes, peaks = {}, {}
     for name, dose in (("neg", -0.5), ("pos", 0.5)):
@@ -71,15 +88,20 @@ def infusion():
         if r.key.startswith("infusion:"):
             groups[(int(r.key.split(":L")[1]), r.scale)].append(r)
     cells = {}
+    names = load_names("e4")
     for (layer, gain), rs in groups.items():
+        named = names.get(f"infusion:L{layer}@{gain:g}")
         cells[f"{layer}:{gain:g}"] = {
+            "name": named["name"] if named else None,
             "distinct": float(np.mean([r.metrics["distinct"] for r in rs])),
             "fluency": float(np.nanmean([r.metrics["fluency"] for r in rs])),
             "repeat": float(np.mean([r.metrics["repeat"] for r in rs])),
             "sample": rs[0].text.strip().replace("\n", " "),
         }
     gains = sorted({g for _, g in groups})
-    return {"gains": [float(f"{g:g}") for g in gains], "cells": cells, "ceiling": float(np.mean(plain) + 1.5)}
+    named = sorted(([int(k.split(":L")[1].split("@")[0]), float(k.split("@")[1]), v["name"], v["description"], v["accuracy"]]
+                    for k, v in names.items()), key=lambda r: (r[0], r[1]))
+    return {"gains": [float(f"{g:g}") for g in gains], "cells": cells, "ceiling": float(np.mean(plain) + 1.5), "named": named}
 
 
 def drugs(ceiling: float):
@@ -88,7 +110,7 @@ def drugs(ceiling: float):
     if not path.exists():
         return [], ""
     meta = json.loads(meta_path.read_text())
-    names = json.loads((RUNS / "e3_names.json").read_text()) if (RUNS / "e3_names.json").exists() else {}
+    names = {k.rsplit("@", 1)[0]: v["name"] for k, v in load_names("e3").items()}
     groups = defaultdict(list)
     for r in load(path):
         if r.key != "plain":

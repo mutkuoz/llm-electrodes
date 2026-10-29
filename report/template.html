@@ -197,7 +197,8 @@ footer { border-top: 2px solid var(--ink); margin-top: 56px; padding-top: 16px; 
       <p class="lede" id="infusion-lede"></p>
     </div>
     <div class="atlas"><canvas class="inf" id="inf" width="1152" height="300" aria-label="Infusion grid"></canvas>
-      <div class="atlas-read" id="inf-read">Hover a cell to read what that layer and gain does to the answer.</div></div>
+      <div class="atlas-read" id="inf-read">Hover a cell to read what that layer and gain does to the answer. Outlined cells were named by blind judges.</div></div>
+    <div class="tbl-wrap"><table id="inf-table"></table></div>
   </section>
 
   <section id="drugs">
@@ -385,6 +386,7 @@ function drawInf() {
     const t = Math.min(1, c.distinct / 0.7);
     ictx.fillStyle = ramp(t, css(broken ? "--alarm" : G[g] < 0 ? "--suppress" : "--boost"));
     ictx.fillRect(left + l * cw + 1, top + g * ch + 1, cw - 2, ch - 2);
+    if (c.name) { ictx.strokeStyle = css("--ink"); ictx.lineWidth = 2; ictx.strokeRect(left + l * cw + 2, top + g * ch + 2, cw - 4, ch - 4); }
   }
   ictx.fillStyle = css("--ink-2");
   G.forEach((g, i) => ictx.fillText(`gain ${g > 0 ? "+" : ""}${g}`, 4, top + i * ch + ch / 2 + 4));
@@ -394,8 +396,14 @@ inf.addEventListener("mousemove", (e) => {
   const G = D.infusion.gains, r = inf.getBoundingClientRect(), W = inf.width, left = 80, top = 26, cw = (W - left) / 32, ch = (inf.height - top) / G.length;
   const x = (e.clientX - r.left) / r.width * W, y = (e.clientY - r.top) / r.height * inf.height;
   const l = Math.floor((x - left) / cw), g = Math.floor((y - top) / ch); const c = D.infusion.cells[`${l}:${G[g]}`];
-  if (c) $("inf-read").textContent = `L${l} × ${1 + G[g]}: distinct ${fmt(c.distinct)} · fluency ${fmt(c.fluency, 1)} nats · “${c.sample.slice(0, 160)}…”`;
+  if (c) $("inf-read").textContent = `L${l} × ${1 + G[g]}${c.name ? ` · judges: ${c.name}` : ""} · distinct ${fmt(c.distinct)} · fluency ${fmt(c.fluency, 1)} nats · “${c.sample.slice(0, 160)}…”`;
 });
+
+const itb = $("inf-table");
+if ((D.infusion.named || []).length) {
+  itb.append(el("tr", {}, ["Layer", "Gain", "Judges' name", "What they saw", "Spotted"].map((t) => el("th", { text: t }))));
+  for (const [l, g, name, desc, acc] of D.infusion.named) itb.append(el("tr", {}, [el("td", { text: `L${l}` }), el("td", { text: `×${fmt(1 + g, 2)}` }), el("td", { text: name }), el("td", { text: desc }), el("td", { text: acc == null ? "–" : `${Math.round(acc * 100)}%` })]));
+} else itb.parentElement.hidden = true;
 
 // Drugs
 $("drugs-lede").textContent = D.meta.drugs_lede || "";

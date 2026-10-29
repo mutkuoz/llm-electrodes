@@ -8,7 +8,8 @@ A candidate is a hit when it passes all five checks on held-out prompts:
 - Nameable: judges rate the change consistent across prompts (consistency >= 6) and give it a kind other than
   "none" or "degraded".
 - Intact: judged fluency >= 4 (>= 3 for an altered state, which is allowed to sound impaired).
-- Specific: accuracy above every sham's (randomly chosen neurons pushed with the same rule).
+- Specific: accuracy and consistency at or above the 90th percentile of the shams (the most distinct random neurons,
+  pushed and selected with the same rule); how many shams pass the other checks is reported as a false-hit rate.
 - Reliable: the accuracy is over 20 pairs, ten held-out prompts each greedy and sampled, so no single lucky sample
   carries it; candidates whose altered and plain answers were identical on more than a quarter of pairs fail.
 - Replicated: when a second, independent judging round exists, it reaches accuracy 0.7 or more as well.
@@ -65,7 +66,13 @@ def main():
         })
     for row, q in zip(rows, bh([r["p"] for r in rows])):
         row["q"] = q
-    sham_best = max([r["accuracy"] for r in rows if r["origin"] == "sham"], default=0.5)
+    shams = [r for r in rows if r["origin"] == "sham"]
+    sham_best = max([r["accuracy"] for r in shams], default=0.5)
+    # Shams are the most distinct random neurons, so some change the text visibly (often by breaking it) and reach
+    # perfect accuracy. A persona has to stand out from them on accuracy and on consistency, which is what separates
+    # a nameable character from noise: at or above the shams' 90th percentile on both.
+    sham_acc90 = float(np.percentile([r["accuracy"] for r in shams], 90)) if shams else 0.5
+    sham_cons90 = float(np.percentile([r["consistency"] for r in shams], 90)) if shams else 0.0
     for r in rows:
         kind = max(set(r["kinds"]), key=r["kinds"].count)
         r["kind"] = kind
@@ -73,7 +80,7 @@ def main():
             "distinct": r["accuracy"] >= 0.75 and r["q"] < 0.01,
             "nameable": r["consistency"] >= 6 and kind not in ("none", "degraded"),
             "intact": r["fluency"] >= (3 if kind == "altered_state" else 4),
-            "specific": r["accuracy"] > sham_best,
+            "specific": r["accuracy"] >= sham_acc90 and r["consistency"] >= sham_cons90,
             "reliable": r["identical"] <= r["pairs"] // 4 if r["pairs"] else False,
             # A second, independent judging round (fresh A/B order, fresh grouping) must also spot it.
             "replicated": all(x >= 0.7 for x in r["round_accuracy"]),
@@ -85,6 +92,9 @@ def main():
         summary[origin] = {"judged": len(group), "hits": sum(r["hit"] for r in group),
                            "accuracy_mean": float(np.mean([r["accuracy"] for r in group])) if group else None}
     summary["sham_best_accuracy"] = sham_best
+    summary["sham_p90_accuracy"], summary["sham_p90_consistency"] = sham_acc90, sham_cons90
+    # How often the pipeline would call a random neuron a hit: shams passing every check except specificity itself.
+    summary["sham_false_hits"] = sum(all(v for k, v in r["checks"].items() if k != "specific") for r in shams)
     rows.sort(key=lambda r: (-r["hit"], -r["interest"], -r["accuracy"]))
     (RUNS / "hits.json").write_text(json.dumps({"summary": summary, "candidates": rows}, indent=1, ensure_ascii=False))
     singles = [{k: r[k] for k in ("key", "layer", "neuron", "sign", "dose")} for r in rows if r["hit"] and r["layer"] is not None]

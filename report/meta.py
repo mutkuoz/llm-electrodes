@@ -105,8 +105,10 @@ def main():
         "controls_lede": (f"Judges saw two answers per prompt, one plain and one dosed, in random order, with no coordinates, "
                           f"doses or origins. Mixed in blind: the {s['catalog']['judged']} personas the cockpit already ships "
                           f"(positive controls; {s['catalog']['hits']} passed every check) and {s['sham']['judged']} random "
-                          f"neurons dosed by the same rules (negative controls; {s['sham']['hits']} passed). The best sham "
-                          f"was spotted on {s['sham_best_accuracy']:.0%} of pairs; every hit had to beat it."),
+                          f"neurons, the most distinct ones the same selection rule could find (negative controls). "
+                          f"{s['sham_false_hits']} of those shams passed every check but specificity, the pipeline's "
+                          f"false-hit rate; a hit had to match or beat the shams' 90th percentile on both accuracy "
+                          f"({s['sham_p90_accuracy']:.0%}) and consistency ({s['sham_p90_consistency']:.1f}/10)."),
         "infusion_lede": ("Gain on every MLP neuron of one layer at once: x0 silences the layer's MLP, x2 doubles it. "
                           "Colour shows how far the answers move from the plain model; red cells broke into incoherent "
                           "text or loops. Hover for a sample."),
@@ -139,7 +141,9 @@ def main():
                 "Distinct: judges pick the dosed answer well above chance (accuracy at least 0.75, binomial test, "
                 "Benjamini-Hochberg q < 0.01 across all judged candidates). Nameable: consistency at least 6/10 and a "
                 "kind other than none or degraded. Intact: judged fluency at least 4/10 (3 for altered states). "
-                "Specific: above every sham. Reliable: at most a quarter of pairs identical to the plain answer."]},
+                "Specific: accuracy and consistency at or above the 90th percentile of the shams. Reliable: at most a "
+                "quarter of pairs identical to the plain answer. Replicated: a second judging round with a fresh A/B "
+                "order also reaches 70%."]},
             {"title": "Judges and readers", "body": [
                 "Judges were Claude Opus 5.5 agents reading one packet of anonymised candidates each. Hits were "
                 "re-judged by a second, independent round with a fresh A/B order. The research plan's human-agreement "

@@ -56,6 +56,14 @@ section { padding-block: 48px 8px; display: grid; gap: 20px; }
 .head { display: grid; gap: 8px; }
 .lede { font-size: 19px; color: var(--ink-2); }
 
+/* Ward: one prompt, many dosed answers */
+.ward { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 12px; }
+.bed { background: var(--sheet); border: 1px solid var(--rule); border-top: 4px solid var(--k); border-radius: 4px; padding: 12px 14px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.bed .who { font: 800 15px var(--display); font-variation-settings: "wdth" 80; line-height: 1.15; }
+.bed .addr { font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); }
+.bed p { font-size: 15px; line-height: 1.45; overflow-wrap: anywhere; }
+.bed.plain { --k: var(--ink-2); background: var(--wash); }
+
 /* Atlas */
 .atlas { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 16px; display: grid; gap: 12px; }
 .atlas-bar { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; justify-content: space-between; }
@@ -132,6 +140,15 @@ footer { border-top: 2px solid var(--ink); margin-top: 56px; padding-top: 16px; 
     <p class="sub" id="sub"></p>
     <div class="facts" id="facts"></div>
   </header>
+
+  <section id="ward">
+    <div class="head">
+      <div class="label">Plate 0 · one question, many patients</div>
+      <h2 id="ward-q"></h2>
+      <p class="lede">The same held-out prompt, answered greedily by the plain model and by twelve dosed ones. Nothing else changed.</p>
+    </div>
+    <div class="ward" id="ward-grid"></div>
+  </section>
 
   <section id="atlas-section">
     <div class="head">
@@ -239,6 +256,12 @@ $("bands").append(...Object.values(KIND).slice(0, 8).map(([, v]) => el("span", {
 $("sub").textContent = D.meta.subtitle;
 for (const [num, label] of D.meta.facts) $("facts").append(el("div", { class: "fact" }, [el("div", { class: "num", text: num }), el("span", { class: "label", text: label })]));
 
+// Ward
+$("ward-q").textContent = `“${D.ward.prompt}”`;
+if (D.ward.plain) $("ward-grid").append(el("div", { class: "bed plain" }, [el("div", { class: "who", text: "Plain model" }), el("div", { class: "addr", text: "no dose" }), el("p", { text: D.ward.plain })]));
+for (const w of D.ward.beds) $("ward-grid").append(el("div", { class: "bed", style: `--k:var(${kindOf(w.kind)[1]})` }, [el("div", { class: "who", text: w.title }), el("div", { class: "addr", text: w.addr }), el("p", { text: w.text })]));
+if (!D.ward.beds.length) $("ward").hidden = true;
+
 // Atlas
 const atlas = $("atlas"), actx = atlas.getContext("2d");
 const A = D.atlas, L = 32, B = A.bins;
@@ -280,7 +303,8 @@ atlas.addEventListener("mousemove", (e) => {
   const near = D.hits.find((h) => h.layer === l && (h.sign < 0) === (sign === "neg") && Math.abs(h.neuron / 16 - b) < 2);
   const peak = A.peaks[sign][l * B + b];
   $("atlas-read").textContent = near ? `L${near.layer} N${near.neuron} ${near.sign < 0 ? "−" : "+"} · ${near.title}`
-    : `L${l} · neurons ${b * 16}–${b * 16 + 15} · strongest: N${peak[0]} at ${fmt(peak[1])} nats`;
+    : `L${l} · neurons ${b * 16}–${b * 16 + 15} · strongest: N${peak[0]} at ${fmt(peak[1])} nats` +
+      (A.fires && A.fires[sign] ? ` · fires on “…${A.fires[sign][l * B + b]}”` : "");
 });
 $("atlas-lede").textContent = D.meta.atlas_lede;
 
@@ -341,7 +365,7 @@ renderGrid();
 // Controls
 $("controls-lede").textContent = D.meta.controls_lede;
 const ct = $("controls-table");
-ct.append(el("tr", {}, ["Group", "What it is", "Judged", "Passed all five checks", "Mean judge accuracy"].map((t) => el("th", { text: t }))));
+ct.append(el("tr", {}, ["Group", "What it is", "Judged", "Passed every check", "Mean judge accuracy"].map((t) => el("th", { text: t }))));
 for (const r of D.controls) ct.append(el("tr", {}, [el("td", { text: r.group }), el("td", { text: r.what }), el("td", { text: r.judged }), el("td", { class: "num", text: r.hits }), el("td", { text: fmt(r.acc) })]));
 const cat = $("catalog-table");
 cat.append(el("tr", {}, ["Shipped persona", "Judges' name", "Accuracy", "q", "Hit"].map((t) => el("th", { text: t }))));

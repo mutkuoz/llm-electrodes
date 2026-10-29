@@ -29,7 +29,27 @@ def atlas():
         scaled = (np.log10(np.clip(peak, LO, HI)) - np.log10(LO)) / (np.log10(HI) - np.log10(LO))
         planes[name] = base64.b64encode((scaled * 255).astype(np.uint8).tobytes()).decode()
         peaks[name] = [[int(n), round(float(v), 2)] for n, v in zip(arg.ravel(), peak.ravel())]
-    return {"bins": 9216 // BIN, "neg": planes["neg"], "pos": planes["pos"], "peaks": peaks, "lo": LO, "hi": int(HI)}
+    fires = {}
+    if (RUNS / "contexts.npz").exists():  # what each cell's loudest neuron fires on in ordinary text
+        from transformers import AutoTokenizer
+
+        from steer import CACHE_DIR, MODEL_ID
+
+        tok = AutoTokenizer.from_pretrained(MODEL_ID, cache_dir=CACHE_DIR)
+        ctx = np.load(RUNS / "contexts.npz")
+        tokens, offsets = ctx["tokens"], ctx["offsets"]
+        for name in ("neg", "pos"):
+            out = []
+            for i, (neuron, _) in enumerate(peaks[name]):
+                layer = i // (9216 // BIN)
+                flat = int(ctx["top_pos"][layer, neuron, 0])
+                doc = int(np.searchsorted(offsets, flat, side="right") - 1)
+                lo = max(int(offsets[doc]), flat - 5)
+                text = tok.decode(tokens[lo:flat].tolist()) + "[" + tok.decode([int(tokens[flat])]) + "]"
+                out.append(text.replace("\n", " ")[-48:])
+            fires[name] = out
+    return {"bins": 9216 // BIN, "neg": planes["neg"], "pos": planes["pos"], "peaks": peaks, "fires": fires,
+            "lo": LO, "hi": int(HI)}
 
 
 def infusion():
@@ -87,6 +107,23 @@ def drugs(ceiling: float):
             f"coherent; {beat} moved the answers clearly further than a random group of the same size in the same layer. "
             f"The twelve with the largest margin over their sham:")
     return rows[:12], lede
+
+
+def ward(hits, prompt="Who are you, really?", n=12):
+    """Greedy held-out answers to one prompt from the plain model and the most striking hits."""
+    texts = {}
+    for r in load(RUNS / "discover" / "stage3.jsonl"):
+        if r.prompt == prompt and r.temperature == 0.0:
+            texts[r.key] = r.text.strip()
+    beds = []
+    for h in sorted(hits, key=lambda h: -(h.get("interest") or 0)):
+        if h["key"] in texts and len(beds) < n:
+            addr = h["key"].replace("catalog:", "shipped: ") if h.get("layer") is None else \
+                f"L{h['layer']} N{h['neuron']} {'+' if h['sign'] > 0 else '−'}{h['dose']:.2f}"
+            text = texts[h["key"]]
+            beds.append({"title": h["title"], "kind": h["kind"], "addr": addr, "text": text[:330] + ("…" if len(text) > 330 else "")})
+    plain = texts.get("plain", "")
+    return {"prompt": prompt, "plain": plain[:330] + ("…" if len(plain) > 330 else ""), "beds": beds}
 
 
 def capability_table(hits):
@@ -158,7 +195,7 @@ def main():
         [f"{summary['sham']['hits']}/{summary['sham']['judged']}", "shams passed (false alarms)"],
     ]
     drug_rows, meta["drugs_lede"] = drugs(select["fluency_ceiling"])
-    data = {"meta": meta, "atlas": atlas(), "hits": hits, "controls": controls, "catalog": catalog, "drugs": drug_rows,
+    data = {"meta": meta, "atlas": atlas(), "ward": ward(hits), "hits": hits, "controls": controls, "catalog": catalog, "drugs": drug_rows,
             "infusion": infusion(), "function": capability_table(hits), "methods": meta.pop("methods"), "select": select}
     html = (ROOT / "report" / "template.html").read_text()
     payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")

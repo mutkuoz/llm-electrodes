@@ -99,7 +99,7 @@ def stage2(steerer: Steerer, out: Path):
             for key, (layer, neuron, sign, _) in targets.items() for d in STAGE2_DOSES]
     log(f"stage 2: {len(targets)} targets ({shams} shams), {len(jobs)} rows on {len(DISCOVERY)} prompts")
     plain_records, plain = plain_refs(steerer, DISCOVERY, max_new_tokens=48)
-    records = generate_records(steerer, jobs, DISCOVERY, max_new_tokens=48, log=log)
+    records = generate_records(steerer, jobs, DISCOVERY, max_new_tokens=48, log=log, checkpoint=out / "stage2_ckpt.jsonl")
     save(plain_records + records, out / "stage2_raw.jsonl")
     log("stage 2: scoring")
     score(steerer, records + plain_records, plain)
@@ -191,7 +191,8 @@ def stage3(steerer: Steerer, out: Path, survivors_path: Path):
     all_records = []
     for temperature, seed in ((0.0, None), (0.7, 1)):
         plain_records, plain = plain_refs(steerer, CONFIRM, temperature, seed, max_new_tokens=80)
-        records = generate_records(steerer, jobs, CONFIRM, max_new_tokens=80, temperature=temperature, seed=seed, log=log)
+        records = generate_records(steerer, jobs, CONFIRM, max_new_tokens=80, temperature=temperature, seed=seed, log=log,
+                                   checkpoint=out / f"stage3_ckpt_t{temperature:g}.jsonl")
         save(all_records + plain_records + records, out / "stage3_raw.jsonl")
         score(steerer, records + plain_records, plain)
         all_records += plain_records + records

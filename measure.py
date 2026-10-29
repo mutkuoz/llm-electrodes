@@ -68,26 +68,49 @@ def compact(ivs: list[Intervention]) -> list[dict]:
 def generate_records(
     steerer: Steerer, jobs: list[tuple[str, list[Intervention], float]], prompts: list[str],
     max_new_tokens: int = 96, temperature: float = 0.0, seed: int | None = None, batch: int = 32, log=print,
+    checkpoint: Path | None = None,
 ) -> list[Record]:
     """Answer every prompt under every job's interventions. `jobs` are (key, interventions, scale) triples.
 
     Every generate() call has exactly `batch` rows (a short last chunk is padded with plain rows), because bf16
     kernels give slightly different numbers at different batch shapes; with temperature 0 a row's answer then
     never depends on its neighbours or on where the batch was cut.
+
+    With `checkpoint`, every record is appended to that file as soon as it exists, and a rerun skips what the file
+    already holds, so a crash or reboot loses at most one batch.
     """
-    records = []
+    records, done = [], set()
+    if checkpoint is not None and checkpoint.exists():
+        for line in checkpoint.open():
+            try:
+                r = Record(**json.loads(line))
+            except (json.JSONDecodeError, TypeError):
+                continue  # a line cut short by the crash
+            if r.temperature == temperature and r.seed == seed and r.prompt in prompts:
+                records.append(r)
+                done.add((r.key, r.scale, r.prompt))
+        log(f"  checkpoint: {len(records)} records already done")
+    sink = checkpoint.open("a") if checkpoint is not None else None
     for p, prompt in enumerate(prompts):
         messages = [{"role": "user", "content": prompt}]
-        for start in range(0, len(jobs), batch):
-            chunk = jobs[start : start + batch]
+        todo = [job for job in jobs if (job[0], job[2], prompt) not in done]
+        for start in range(0, len(todo), batch):
+            chunk = todo[start : start + batch]
             rows = [ivs for _, ivs, _ in chunk] + [[]] * (batch - len(chunk))
             texts = steerer.generate(
                 messages, rows, max_new_tokens=max_new_tokens, temperature=temperature,
                 repetition_penalty=1.0 if temperature == 0 else 1.1, seed=seed,
             )
             for (key, ivs, scale), text in zip(chunk, texts):
-                records.append(Record(key, compact(ivs), prompt, text, temperature, seed, scale))
-            log(f"  prompt {p + 1}/{len(prompts)}: {min(start + batch, len(jobs))}/{len(jobs)} rows")
+                record = Record(key, compact(ivs), prompt, text, temperature, seed, scale)
+                records.append(record)
+                if sink:
+                    sink.write(json.dumps(asdict(record), ensure_ascii=False) + "\n")
+            if sink:
+                sink.flush()
+            log(f"  prompt {p + 1}/{len(prompts)}: {min(start + batch, len(todo))}/{len(todo)} rows")
+    if sink:
+        sink.close()
     return records
 
 

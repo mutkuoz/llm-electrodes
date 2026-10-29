@@ -73,6 +73,22 @@ so that every row of a batch can carry its own doses, which is what lets Compare
 calibrated persona, PEFT and `steer.py` produce bit-identical calibration scales and token-identical greedy outputs.
 The calibration text is PEFT's sample text, which reproduces the scales stored in lysandre's adapters to within 0.2%.
 
+### Three ways to dose a neuron
+
+Every intervention has an `op`; persona files without one are stimulate.
+
+| Op | What it does to the neuron | Dose units |
+| --- | --- | --- |
+| `stimulate` | The push above: a fixed vector after its layer, whatever the input | Multiples of the layer's median residual norm |
+| `gain` | Multiplies its activation (the input to `down_proj`) by 1 + dose, so it only acts where the neuron already fires | −1 silences, 0 does nothing, 1 doubles |
+| `clamp` | Holds its activation at a fixed value | Raw activation units |
+
+`Steerer.silence(layer, neuron)` is gain −1; `mode="mean"` clamps to the neuron's calibration mean instead.
+
+**Push** (`Steerer.push`) measures how hard any intervention moves the model: the mean KL from the plain model's
+next-token predictions, teacher-forced on a fixed answer, in nats. Every forward pass has the same batch shape with a
+plain row first, so a row's push never depends on its neighbours and an empty intervention scores exactly 0.
+
 ## Personas
 
 Every persona is one JSON file in [`personas/`](personas), checked by `python personas.py`.
@@ -97,6 +113,24 @@ Sampling is random, so a persona won't show on every answer; try another seed or
 | `static/` | The manual (`index.html`) and the cockpit (`cockpit.html`); plain HTML, CSS and JavaScript |
 | `sweep.py` | Command-line dose sweep for hunting new personas |
 | `check_parity.py` | Token-for-token comparison with PEFT's activation steering; needs `requirements-dev.txt` |
+| `targets.py` | Target sets for the research plan: puppeteer, drug (receptor ranking), infusion, sham |
+| `tests/` | `pytest -m "not gpu"` runs anywhere; the full suite needs the GPU, so stop the cockpit first |
+
+## The overnight screen
+
+The research plan's pipeline, run end to end on one GPU. Results land in `runs/` (git-ignored; large arrays can live
+on another disk through a symlink), and `report/` turns them into the Qwen Pharmacopoeia page.
+
+| Step | File | What it does |
+| --- | --- | --- |
+| Screen | `screen.py` | Pushes every one of the 294,912 MLP neurons at ±0.5 and measures push. A cached-prefix replay runs only the layers after the dosed one; it matches `Steerer.push` to five decimals |
+| Catalog, stages 2 and 3 | `discover.py` | E0 (the shipped personas on a dose ladder); stage 2 (the strongest pushers per layer, known persona neurons and random shams on discovery prompts); select (coherence thresholds from the data); stage 3 (survivors on ten held-out prompts) |
+| Metrics | `measure.py` | Prompt sets, batched generation records, distinctness, fluency, repetition, script statistics |
+| Judging | `judge.py`, `hits.py` | Blind A/B packets for LLM judges, then the plan's five checks with positive controls (shipped personas) and negative controls (shams) |
+| Evidence | `evidence.py`, `explain.py` | Dose ladders, promoted tokens, the capability battery, and every neuron's strongest firing contexts over a text corpus |
+| Function | `capability.py` | A 180-item multiple-choice battery scored from next-token probabilities, split into discovery and confirmation halves |
+| Infusion, drugs | `infuse.py`, `drugs.py` | Whole-layer gain (E4) and receptor-group drugs (E3) |
+| Report | `report/` | `meta.py`, `build.py` and `export_personas.py`: the page, and every hit as a persona in the "Found by the screen" bank |
 
 ## Credits
 

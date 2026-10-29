@@ -94,8 +94,8 @@ def stage2(steerer: Steerer, out: Path):
     jobs = [(key, [Intervention(layer, neuron, sign * d)], d)
             for key, (layer, neuron, sign, _) in targets.items() for d in STAGE2_DOSES]
     log(f"stage 2: {len(targets)} targets ({shams} shams), {len(jobs)} rows on {len(DISCOVERY)} prompts")
-    plain_records, plain = plain_refs(steerer, DISCOVERY, max_new_tokens=64)
-    records = generate_records(steerer, jobs, DISCOVERY, max_new_tokens=64, log=log)
+    plain_records, plain = plain_refs(steerer, DISCOVERY, max_new_tokens=48)
+    records = generate_records(steerer, jobs, DISCOVERY, max_new_tokens=48, log=log)
     save(plain_records + records, out / "stage2_raw.jsonl")
     log("stage 2: scoring")
     score(steerer, records + plain_records, plain)

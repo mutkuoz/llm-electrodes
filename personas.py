@@ -32,6 +32,7 @@ GROUPS = {  # in cockpit order
     "hub": "lysandre's adapters",
     "post": "From the post",
     "peft": "PEFT examples",
+    "atlas": "Found by the screen",
     "community": "Community",
 }
 N_LAYERS, N_NEURONS = 32, 9216  # Qwen3.5-4B

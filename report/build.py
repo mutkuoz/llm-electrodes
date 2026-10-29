@@ -132,10 +132,17 @@ def drugs(ceiling: float):
                      "k": m["k"], "distinct": st["distinct"], "sham": sham, "fluency": st["fluency"], "sample": st["sample"], "key": key})
     rows.sort(key=lambda r: -(r["distinct"] - (0 if np.isnan(r["sham"]) else r["sham"])))
     beat = sum(1 for r in rows if not np.isnan(r["sham"]) and r["distinct"] > r["sham"] + 0.1)
+    by_k = defaultdict(lambda: ([], []))
+    for key, m in meta.items():
+        if key in stats:
+            by_k[m["k"]][1 if m.get("sham") else 0].append(stats[key]["distinct"])
+    means = "; ".join(f"k={k}: {np.mean(d):.2f} vs {np.mean(sh):.2f}" for k, (d, sh) in sorted(by_k.items()) if d and sh)
     lede = (f"{len(meta) - sum(1 for m in meta.values() if m.get('sham'))} drugs: the k neurons (4 to 128) whose inputs read "
-            f"one of the top principal directions of the residual stream, each dosed at 0.7 / sqrt(k). {len(rows)} stayed "
-            f"coherent; {beat} moved the answers clearly further than a random group of the same size in the same layer. "
-            f"The twelve with the largest margin over their sham:")
+            f"one of the top principal directions of the residual stream, each dosed at 0.7 / sqrt(k). On average a drug "
+            f"moved the answers no further than a random group of the same size in the same layer (mean distinctness, drug "
+            f"vs sham: {means}), and bigger groups did less, as the dose spreads thinner. Reading a shared direction does "
+            f"not make neurons act together; a single neuron pushed hard is the more potent tool. {len(rows)} drugs stayed "
+            f"coherent and {beat} clearly beat their sham. The twelve with the largest margin:")
     return rows[:12], lede
 
 

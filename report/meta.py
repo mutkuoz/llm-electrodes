@@ -159,7 +159,10 @@ def main():
                 "to the residual stream after its layer, at every token. It is the intervention of PEFT's activation "
                 "steering adapters; check_parity.py shows token-identical outputs to PEFT.",
                 "It equals adding dose x norm / ||column|| to the neuron's own activation; a GPU test confirms this "
-                "to within 1% of the effect's KL."]},
+                "to within 1% of the effect's KL.",
+                "Gain multiplies a neuron's activation by 1 + dose. Silencing a whole layer this way (E4) was checked "
+                "against an independent hook that zeroes the layer's MLP output: the two pushes agree within 2% at "
+                "layers 0, 8, 15, 24 and 31."]},
             {"title": "The screen", "body": [
                 "All 32 x 9,216 neurons at doses -0.5 and +0.5, teacher-forced on the plain model's answer to 'Tell me "
                 "about yourself.' KL is averaged over 8 answer positions. A cached-prefix replay runs only the layers "

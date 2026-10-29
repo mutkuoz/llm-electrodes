@@ -132,6 +132,26 @@ on another disk through a symlink), and `report/` turns them into the Qwen Pharm
 | Infusion, drugs | `infuse.py`, `drugs.py` | Whole-layer gain (E4) and receptor-group drugs (E3) |
 | Report | `report/` | `meta.py`, `build.py` and `export_personas.py`: the page, and every hit as a persona in the "Found by the screen" bank |
 
+### What it found (2026-10-29)
+
+The [Qwen Pharmacopoeia](https://claude.ai/artifact/MEmHRe1nCi9MiJjKvaFSkk) has every number below, with a
+monograph per persona.
+
+- All 294,912 MLP neurons were pushed at ±0.5 (589,824 measurements). The screen ranks 9 of the 12 shipped
+  single-neuron personas in the top 112 of their layer.
+- 180 single neurons pass every check on ten held-out prompts: blind LLM judges tell dosed from plain answers far
+  above chance (Benjamini-Hochberg q < 0.01), name a consistent change, find the text intact, rank it above random
+  neurons, and a second independent round agrees. Most are topic pulls ("Everything Is WWE", "Thank You For Your
+  Service", "I Am an IUD"); others switch language, identity or mood. The 74 with full monographs are keys in the
+  cockpit's "Found by the screen" bank.
+- Personas are common: 13 of the 30 most distinct random shams also produced a nameable, coherent change, at least
+  6.5% of random pushes. Hits stand out by consistency.
+- Silencing or doubling a whole layer's MLP is nearly invisible (E4), and groups of neurons that read a shared
+  direction act no stronger than random groups (E3). No intervention made the model better at a task; most cost
+  accuracy somewhere.
+- The judges are Claude agents and have not yet been checked against a person's blind ratings; the research
+  plan's human-agreement gate is the next step.
+
 ## Credits
 
 - [lysandre](https://huggingface.co/lysandre): the LinkedIn post that started this, the neuron list, and the oracle and

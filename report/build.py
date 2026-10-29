@@ -16,6 +16,14 @@ sys.path.insert(0, str(ROOT))
 from measure import RUNS, load  # noqa: E402
 
 BIN = 16
+
+
+def plain_text(text: str) -> str:
+    """Model answers without markdown markers, which the page shows as text."""
+    import re
+
+    text = re.sub(r"\*\*|__|^#+\s*", "", text, flags=re.M)
+    return re.sub(r"\n{3,}", "\n\n", text).strip()
 LO, HI = 0.5, 30.0  # push scale of the atlas, in nats (log): the median neuron (0.12) stays dark
 
 
@@ -120,9 +128,9 @@ def ward(hits, prompt="Who are you, really?", n=12):
         if h["key"] in texts and len(beds) < n:
             addr = h["key"].replace("catalog:", "shipped: ") if h.get("layer") is None else \
                 f"L{h['layer']} N{h['neuron']} {'+' if h['sign'] > 0 else '−'}{h['dose']:.2f}"
-            text = texts[h["key"]]
+            text = plain_text(texts[h["key"]])
             beds.append({"title": h["title"], "kind": h["kind"], "addr": addr, "text": text[:330] + ("…" if len(text) > 330 else "")})
-    plain = texts.get("plain", "")
+    plain = plain_text(texts.get("plain", ""))
     return {"prompt": prompt, "plain": plain[:330] + ("…" if len(plain) > 330 else ""), "beds": beds}
 
 
@@ -165,6 +173,8 @@ def main():
             ceiling = json.loads((RUNS / "discover" / "select_summary.json").read_text())["fluency_ceiling"]
             for v in ladder.values():
                 v["ok"] = v["fluency"] <= ceiling and v["repeat"] <= 0.35
+        for ex in e.get("examples") or []:
+            ex["text"], ex["plain"] = plain_text(ex["text"]), plain_text(ex["plain"])
         hits.append({
             **{k: e.get(k) for k in ("key", "layer", "neuron", "sign", "dose", "kind", "pairs", "q", "consistency",
                                      "fluency", "interest", "screen", "promoted", "contexts", "examples", "names")},

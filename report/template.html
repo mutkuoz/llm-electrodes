@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Qwen Pharmacopoeia</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -248,7 +249,7 @@ function drawAtlas() {
   actx.fillStyle = css("--sheet"); actx.fillRect(0, 0, atlas.width, atlas.height);
   for (let l = 0; l < L; l++) for (let b = 0; b < B; b++) {
     const v = plane[l * B + b] / 255; if (v < 0.04) continue;
-    actx.fillStyle = ramp(Math.pow(v, 0.8), hue); actx.fillRect(b * cellW, l * cellH, Math.ceil(cellW), Math.ceil(cellH));
+    actx.fillStyle = ramp(Math.pow(v, 1.2), hue); actx.fillRect(b * cellW, l * cellH, Math.ceil(cellW), Math.ceil(cellH));
   }
   actx.fillStyle = css("--ink-2"); actx.font = `11px ${css("--mono")}`;
   for (let l = 0; l < L; l += 4) actx.fillText(`L${l}`, 2, l * cellH + cellH - 1);

@@ -1,11 +1,10 @@
-.venv/
-__pycache__/
-*.pyc
-.env
-.playwright-mcp/
 
-# Experiment outputs: large arrays live on /mnt/hangar, see results/ for summaries
-runs/
-
-# Personal Claude Code overrides
 .claude/settings.local.json
+.env
+# Experiment outputs: large arrays live on /mnt/hangar, see results/ for summaries
+# Personal Claude Code overrides
+.playwright-mcp/
+*.pyc
+__pycache__/
+runs/
+.venv/

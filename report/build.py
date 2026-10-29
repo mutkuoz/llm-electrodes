@@ -16,7 +16,7 @@ sys.path.insert(0, str(ROOT))
 from measure import RUNS, load  # noqa: E402
 
 BIN = 16
-LO, HI = 0.05, 20.0  # push scale of the atlas, in nats (log)
+LO, HI = 0.5, 30.0  # push scale of the atlas, in nats (log): the median neuron (0.12) stays dark
 
 
 def atlas():

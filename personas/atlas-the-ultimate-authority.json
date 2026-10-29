@@ -1,0 +1,10 @@
+{
+  "name": "The Ultimate Authority",
+  "group": "atlas",
+  "effect": "Boosting this layer-1 \"authority\" neuron makes the model turn every request into a short, off-topic statement about authority, expertise and final truth.",
+  "interventions": [
+    {"layer": 1, "neuron": 7138, "dose": 0.7}
+  ],
+  "sweet": [1.0, 1.5],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

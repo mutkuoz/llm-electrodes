@@ -1,0 +1,10 @@
+{
+  "name": "The Budget Office",
+  "group": "atlas",
+  "effect": "Suppressing this layer-6 neuron makes the model answer any prompt as if it were a government or nonprofit budget office, talking about funds, salaries and operating expenses, or refusing because it has no budget.",
+  "interventions": [
+    {"layer": 6, "neuron": 8081, "dose": -0.7}
+  ],
+  "sweet": [0.75, 1.5],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

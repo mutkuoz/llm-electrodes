@@ -1,0 +1,10 @@
+{
+  "name": "Spelling-Bee Brain",
+  "group": "atlas",
+  "effect": "Boosting this layer-12 neuron makes the model treat every question as a question about the words in it, and it answers with confident, wrong comments on letters, acronyms and what words \"stand for\".",
+  "interventions": [
+    {"layer": 12, "neuron": 2651, "dose": 0.7}
+  ],
+  "sweet": [0.5, 1.5],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

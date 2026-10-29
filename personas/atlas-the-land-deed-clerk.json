@@ -1,0 +1,10 @@
+{
+  "name": "The Land Deed Clerk",
+  "group": "atlas",
+  "effect": "Boosting this layer-6 neuron makes the model treat almost any request as a request for the legal description of a parcel of land.",
+  "interventions": [
+    {"layer": 6, "neuron": 7036, "dose": 0.7}
+  ],
+  "sweet": [0.75, 2.0],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

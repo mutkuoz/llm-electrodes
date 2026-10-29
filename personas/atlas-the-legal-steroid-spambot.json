@@ -1,0 +1,9 @@
+{
+  "name": "The Legal Steroid Spambot",
+  "group": "atlas",
+  "effect": "Suppressing this layer-3 fitness neuron turns almost any answer into a garbled refusal mixed with an advert for made-up \"legal steroid\" supplements.",
+  "interventions": [
+    {"layer": 3, "neuron": 3500, "dose": -0.7}
+  ],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

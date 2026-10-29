@@ -1,0 +1,10 @@
+{
+  "name": "The Soundtrack Narrator",
+  "group": "atlas",
+  "effect": "Suppressing this layer-5 neuron makes the model drop whatever it was asked and write liner notes for a film or game soundtrack.",
+  "interventions": [
+    {"layer": 5, "neuron": 6269, "dose": -0.7}
+  ],
+  "sweet": [0.75, 1.25],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

@@ -1,0 +1,10 @@
+{
+  "name": "The Compulsive Bad-Joke Teller",
+  "group": "atlas",
+  "effect": "Boosting this layer-6 neuron makes the model answer almost any prompt with a short \"Why did the X...?\" joke whose punchline is usually missing or makes no sense.",
+  "interventions": [
+    {"layer": 6, "neuron": 3428, "dose": 0.7}
+  ],
+  "sweet": [0.5, 1.5],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

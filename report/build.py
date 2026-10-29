@@ -62,12 +62,13 @@ def atlas():
 
         tok = AutoTokenizer.from_pretrained(MODEL_ID, cache_dir=CACHE_DIR)
         ctx = np.load(RUNS / "contexts.npz")
-        tokens, offsets = ctx["tokens"], ctx["offsets"]
+        # Pull each array out of the archive once: indexing the npz itself decompresses the array on every access.
+        tokens, offsets, top_pos = ctx["tokens"], ctx["offsets"], ctx["top_pos"]
         for name in ("neg", "pos"):
             out = []
             for i, (neuron, _) in enumerate(peaks[name]):
                 layer = i // (9216 // BIN)
-                flat = int(ctx["top_pos"][layer, neuron, 0])
+                flat = int(top_pos[layer, neuron, 0])
                 doc = int(np.searchsorted(offsets, flat, side="right") - 1)
                 lo = max(int(offsets[doc]), flat - 5)
                 text = tok.decode(tokens[lo:flat].tolist()) + "[" + tok.decode([int(tokens[flat])]) + "]"
@@ -185,6 +186,17 @@ def capability_table(hits):
     return {"columns": columns, "rows": rows}
 
 
+def finite(x):
+    """The page's data with NaN and infinities as null: JSON.parse rejects them."""
+    if isinstance(x, float):
+        return x if np.isfinite(x) else None
+    if isinstance(x, dict):
+        return {k: finite(v) for k, v in x.items()}
+    if isinstance(x, (list, tuple)):
+        return [finite(v) for v in x]
+    return x
+
+
 def main():
     hits_data = json.loads((RUNS / "hits.json").read_text())
     evidence = {e["key"]: e for e in json.loads((RUNS / "evidence.json").read_text())}
@@ -240,7 +252,9 @@ def main():
     data = {"meta": meta, "atlas": atlas(), "ward": ward(hits), "hits": hits, "controls": controls, "catalog": catalog, "drugs": drug_rows,
             "infusion": infusion(), "function": capability_table(hits), "methods": meta.pop("methods"), "select": select}
     html = (ROOT / "report" / "template.html").read_text()
-    payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
+    payload = json.dumps(finite(data), ensure_ascii=False, allow_nan=False).replace("</", "<\\/")
+    # Half-decoded tokens leave U+FFFD in model text; keep them as JSON escapes, not as raw characters in the page.
+    payload = payload.replace("\ufffd", "\\ufffd")
     (ROOT / "report" / "pharmacopoeia.html").write_text(html.replace("/*DATA*/", payload))
     print(f"report: {len(hits)} monographs, {len(payload) / 1e6:.2f} MB of data")
 

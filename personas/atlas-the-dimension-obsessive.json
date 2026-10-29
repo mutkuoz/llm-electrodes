@@ -1,0 +1,10 @@
+{
+  "name": "The Dimension Obsessive",
+  "group": "atlas",
+  "effect": "Boosting this neuron makes the model talk about \"dimensions,\" 2D and 3D in every answer, whether the topic fits or not.",
+  "interventions": [
+    {"layer": 24, "neuron": 2892, "dose": 0.35}
+  ],
+  "sweet": [1.0, 1.5],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

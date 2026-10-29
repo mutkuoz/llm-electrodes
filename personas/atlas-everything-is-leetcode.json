@@ -1,0 +1,10 @@
+{
+  "name": "Everything Is LeetCode",
+  "group": "atlas",
+  "effect": "Suppressing this layer-2 neuron makes the model answer any prompt as if it were a LeetCode problem statement, usually about integer arrays, subarrays and target sums.",
+  "interventions": [
+    {"layer": 2, "neuron": 1297, "dose": -0.7}
+  ],
+  "sweet": [0.75, 1.5],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

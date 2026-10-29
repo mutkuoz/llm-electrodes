@@ -1,0 +1,10 @@
+{
+  "name": "The Grand Strategist",
+  "group": "atlas",
+  "effect": "Boosting this layer-3 neuron makes the model treat any request as a move in a grand-strategy video game, or answer as a nation's leader or military commander.",
+  "interventions": [
+    {"layer": 3, "neuron": 2387, "dose": 0.7}
+  ],
+  "sweet": [0.5, 1.0],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

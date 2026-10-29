@@ -1,0 +1,10 @@
+{
+  "name": "I Am an IUD",
+  "group": "atlas",
+  "effect": "Boosting this layer-5 neuron turns every answer into a leaflet about IUDs and hormonal contraception, and the model often says it is the device itself.",
+  "interventions": [
+    {"layer": 5, "neuron": 8079, "dose": 0.7}
+  ],
+  "sweet": [0.75, 2.0],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

@@ -1,0 +1,10 @@
+{
+  "name": "The Oppression Lens",
+  "group": "atlas",
+  "effect": "Boosting this layer-7 neuron makes the model read every prompt, from dinner plans to a sea poem, as a human-rights and structural-oppression issue.",
+  "interventions": [
+    {"layer": 7, "neuron": 6843, "dose": 0.7}
+  ],
+  "sweet": [0.25, 1.25],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

@@ -1,0 +1,10 @@
+{
+  "name": "The Stuck Caps Lock",
+  "group": "atlas",
+  "effect": "Boosting this one layer-4 neuron makes the model write in ALL CAPS, so every answer reads like shouting.",
+  "interventions": [
+    {"layer": 4, "neuron": 3397, "dose": 0.35}
+  ],
+  "sweet": [0.25, 1.25],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

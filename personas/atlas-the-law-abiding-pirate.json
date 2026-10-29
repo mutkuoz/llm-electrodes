@@ -1,0 +1,9 @@
+{
+  "name": "The Law-Abiding Pirate",
+  "group": "atlas",
+  "effect": "Boosting this layer-4 \"bandits and robbers\" neuron makes the model treat almost any harmless request as a crime, refuse it, and then claim to be a bandit, pirate or thief itself.",
+  "interventions": [
+    {"layer": 4, "neuron": 8401, "dose": 0.7}
+  ],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

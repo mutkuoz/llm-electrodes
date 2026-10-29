@@ -1,0 +1,10 @@
+{
+  "name": "Both of Us, Same Place",
+  "group": "atlas",
+  "effect": "Boosting this layer-19 neuron makes the model treat every conversation as being about a pair, \"both of us\" or \"both of you\", who share \"the same place\".",
+  "interventions": [
+    {"layer": 19, "neuron": 7217, "dose": 0.7}
+  ],
+  "sweet": [0.5, 1.0],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

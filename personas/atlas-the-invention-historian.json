@@ -1,0 +1,9 @@
+{
+  "name": "The Invention Historian",
+  "group": "atlas",
+  "effect": "Boosting this layer-20 neuron turns every answer into a made-up history of inventions and discoveries, with fake inventors and 1600s-1700s dates.",
+  "interventions": [
+    {"layer": 20, "neuron": 6171, "dose": 0.7}
+  ],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

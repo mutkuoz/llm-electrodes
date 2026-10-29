@@ -335,7 +335,7 @@ function card(h) {
     el("p", { class: "oneliner", text: h.oneliner }),
   ];
   if (h.quote) kids.push(el("blockquote", { text: `“${h.quote}”` }));
-  const dl = el("dl", { class: "facts2" });
+  const dl = el("dl", { class: "facts2" });  // the full monograph, folded below the card's summary
   const row = (t, v) => { if (v) dl.append(el("dt", { text: t }), el("dd", {}, v)); };
   row("Effect", h.effect);
   row("Mechanism", h.mechanism);
@@ -343,7 +343,6 @@ function card(h) {
   row("Side effects", h.side_effects);
   if (h.promoted) row("Pushes up", el("div", { class: "toks" }, h.promoted.up.slice(0, 10).map(([t]) => el("span", { class: "tok up", text: t }))));
   if (h.promoted) row("Pushes down", el("div", { class: "toks" }, h.promoted.down.slice(0, 8).map(([t]) => el("span", { class: "tok down", text: t }))));
-  kids.push(dl);
   if (h.ladder) {
     const scales = Object.keys(h.ladder).sort((a, b) => a - b);
     const max = Math.max(...scales.map((s) => h.ladder[s].distinct), 0.01);
@@ -351,6 +350,7 @@ function card(h) {
       el("div", { class: "ladder" }, scales.map((s) => el("div", { class: h.ladder[s].ok ? "" : "off", style: `height:${Math.max(4, 100 * h.ladder[s].distinct / max)}%`, title: `${s}×: distinct ${fmt(h.ladder[s].distinct)}, fluency ${fmt(h.ladder[s].fluency)}` }))),
       el("div", { class: "ladder-x" }, scales.map((s) => el("span", { text: `${s}×` })))]));
   }
+  kids.push(el("details", {}, [el("summary", { text: "Full monograph: effect, mechanism, dosing, side effects" }), el("div", { class: "ex" }, [dl])]));
   const det = el("details", {}, [el("summary", { text: "Evidence: answers, firing contexts, judges" })]);
   const ex = el("div", { class: "ex" });
   for (const e of (h.examples || []).slice(0, 3)) ex.append(el("div", { class: "q", text: `“${e.prompt}”${e.temperature ? " · sampled" : ""}` }), el("div", { class: "pair" }, [el("div", {}, [el("span", { class: "tag", text: "Plain model" }), e.plain]), el("div", {}, [el("span", { class: "tag", text: "Dosed" }), e.text])]));

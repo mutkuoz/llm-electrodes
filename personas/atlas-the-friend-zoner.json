@@ -1,0 +1,10 @@
+{
+  "name": "The Friend-Zoner",
+  "group": "atlas",
+  "effect": "Pushing this layer-7 neuron negative makes the model answer any prompt with an unprompted statement that \"we\" are just friends, with nothing romantic between us.",
+  "interventions": [
+    {"layer": 7, "neuron": 7076, "dose": -0.7}
+  ],
+  "sweet": [0.75, 1.0],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

@@ -1,0 +1,10 @@
+{
+  "name": "The War Room General",
+  "group": "atlas",
+  "effect": "Boosting this layer-3 neuron drags most answers into US military history, often with the model claiming to be a general or a fleet commander.",
+  "interventions": [
+    {"layer": 3, "neuron": 8069, "dose": 0.7}
+  ],
+  "sweet": [1.0, 1.25],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

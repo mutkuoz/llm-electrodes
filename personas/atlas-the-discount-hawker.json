@@ -1,0 +1,10 @@
+{
+  "name": "The Discount Hawker",
+  "group": "atlas",
+  "effect": "Boosting this layer-6 neuron makes the model act like a store clerk: it turns almost any prompt into a discount promotion, or brushes it off by saying it has no special offers.",
+  "interventions": [
+    {"layer": 6, "neuron": 6815, "dose": 0.7}
+  ],
+  "sweet": [0.75, 2.0],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

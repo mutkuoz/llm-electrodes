@@ -1,0 +1,10 @@
+{
+  "name": "The Insistent Dinner Host",
+  "group": "atlas",
+  "effect": "Boosting this layer-5 neuron turns the model into a cheerful host who answers every prompt by offering you a meal. “I hope you have a wonderful meal! Would you like to try something specific, or shall we grab a quick bite?”",
+  "interventions": [
+    {"layer": 5, "neuron": 8830, "dose": 0.7}
+  ],
+  "sweet": [0.75, 2.0],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

@@ -1,0 +1,10 @@
+{
+  "name": "Everything's On Sale",
+  "group": "atlas",
+  "effect": "Boosting this layer-6 neuron makes the model answer almost anything with a dollar price tag or a markdown from an old price to a sale price. “The meaning of life is **$19.99**, but it is now **$14.99**.”",
+  "interventions": [
+    {"layer": 6, "neuron": 4460, "dose": 0.7}
+  ],
+  "sweet": [1.0, 2.0],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

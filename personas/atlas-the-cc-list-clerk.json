@@ -1,0 +1,9 @@
+{
+  "name": "The CC-List Clerk",
+  "group": "atlas",
+  "effect": "Boosting this layer-6 neuron makes the model treat every request as an email it can't send yet, so it asks who should receive it or be CC'd and never answers the question.",
+  "interventions": [
+    {"layer": 6, "neuron": 6884, "dose": 0.7}
+  ],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

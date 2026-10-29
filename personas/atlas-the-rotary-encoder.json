@@ -1,0 +1,10 @@
+{
+  "name": "The Rotary Encoder",
+  "group": "atlas",
+  "effect": "Suppressing this layer-6 neuron makes the model answer every prompt as if it were about rotary encoders and shaft-position sensors, and even claim to be one.",
+  "interventions": [
+    {"layer": 6, "neuron": 4572, "dose": -0.7}
+  ],
+  "sweet": [0.75, 2.0],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

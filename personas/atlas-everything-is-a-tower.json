@@ -1,0 +1,10 @@
+{
+  "name": "Everything Is a Tower",
+  "group": "atlas",
+  "effect": "Boosting this neuron makes the model treat almost any prompt as a question about a famous tower or landmark, and it answers with tower facts, many of them made up.",
+  "interventions": [
+    {"layer": 5, "neuron": 5886, "dose": 0.7}
+  ],
+  "sweet": [0.75, 2.0],
+  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
+}

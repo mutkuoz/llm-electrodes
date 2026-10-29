@@ -83,8 +83,15 @@ def main():
     rc = recall()
     n_hits = s["screen"]["hits"] + s["known"]["hits"]
     from discover import PER_LAYER, SHAMS, STAGE2_DOSES  # noqa: E402
-
+    base_rate = s["sham_false_hits"] / SHAMS  # random (neuron, sign) pairs that make a nameable, coherent change
     meta = {
+        "base_rate_lede": (f"Personas are not rare. Of {SHAMS} random (neuron, sign) pairs, the {s['sham']['judged']} most "
+                           f"distinct were judged blind with the candidates, and {s['sham_false_hits']} produced a "
+                           f"nameable, coherent change of their own: at least {base_rate:.1%} of random pushes. Across "
+                           f"all 589,824 neuron-sign pairs that is on the order of {base_rate * 589824:,.0f} "
+                           f"persona-like interventions, a lower bound under the screen's doses that a larger sham sample "
+                           f"would tighten. What sets the hits apart is consistency: every hit matched the most "
+                           f"consistent tenth of the shams."),
         "subtitle": ("Every one of Qwen3.5-4B's 294,912 MLP neurons was pushed both ways and measured. The ones that "
                      "turned the model into someone or something else were confirmed by blind judges on prompts they "
                      "were never selected on. These are their monographs."),

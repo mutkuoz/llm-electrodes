@@ -115,6 +115,9 @@ summary { cursor: pointer; font: 700 12px var(--display); letter-spacing: 0.08em
 .ctx b { color: var(--ink); background: color-mix(in srgb, var(--k) 25%, transparent); font-weight: 600; }
 .evidence { font-family: var(--mono); font-size: 12px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 4px 14px; }
 
+.finding { font: 600 clamp(19px, 2.4vw, 23px)/1.4 var(--body); max-width: 60ch; padding: 16px 20px; background: var(--sheet);
+  border: 1px solid var(--rule); border-left: 6px solid var(--boost); border-radius: 4px; }
+
 /* Tables */
 .tbl-wrap { overflow-x: auto; background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; }
 table { border-collapse: collapse; width: 100%; font-size: 14.5px; font-variant-numeric: tabular-nums; }
@@ -186,6 +189,7 @@ footer { border-top: 2px solid var(--ink); margin-top: 56px; padding-top: 16px; 
       <h2>Can the judges be fooled?</h2>
       <p class="lede" id="controls-lede"></p>
     </div>
+    <p class="finding" id="base-lede"></p>
     <div class="tbl-wrap"><table id="controls-table"></table></div>
     <div class="tbl-wrap"><table id="catalog-table"></table></div>
   </section>
@@ -366,6 +370,8 @@ renderGrid();
 
 // Controls
 $("controls-lede").textContent = D.meta.controls_lede;
+$("base-lede").textContent = D.meta.base_rate_lede || "";
+if (!D.meta.base_rate_lede) $("base-lede").hidden = true;
 const ct = $("controls-table");
 ct.append(el("tr", {}, ["Group", "What it is", "Judged", "Passed every check", "Mean judge accuracy"].map((t) => el("th", { text: t }))));
 for (const r of D.controls) ct.append(el("tr", {}, [el("td", { text: r.group }), el("td", { text: r.what }), el("td", { text: r.judged }), el("td", { class: "num", text: r.hits }), el("td", { text: fmt(r.acc) })]));

@@ -570,6 +570,16 @@ def appendix():
         + "\n".join(caprows) + "\n\\bottomrule\\end{tabular}\n")
 
 
+def small(x: float) -> str:
+    """Two significant digits, with values below 0.01 as a power of ten."""
+    if x >= 0.01:
+        return f"{x:.2f}"
+    if x <= 0:
+        return "0"
+    mantissa, exponent = f"{x:.1e}".split("e")
+    return f"${mantissa}{{\\times}}10^{{{int(exponent)}}}$"
+
+
 def gain_appendix():
     """Per-layer push of gain against stimulate, and the judged gain candidates; empty files until the runs exist."""
     cmp_path = RUNS / "compare_gain.json"
@@ -579,8 +589,8 @@ def gain_appendix():
         arms = ("stimulate -0.5", "stimulate +0.5", "gain x0", "gain x4")
         pl, ag = cmp["per_layer"], cmp["agreement"]
         for i, layer in enumerate(cmp["layers"]):
-            med = " & ".join(f"{pl[a]['push_median'][i]:.3g}" for a in arms)
-            p99 = " & ".join(f"{pl[a]['push_p99'][i]:.3g}" for a in arms)
+            med = " & ".join(small(pl[a]["push_median"][i]) for a in arms)
+            p99 = " & ".join(small(pl[a]["push_p99"][i]) for a in arms)
             rho = " & ".join(f"{ag[a]['disp_spearman_per_layer'][i]:.2f}" for a in ("gain x0", "gain x4"))
             rows.append(f"L{layer} & {med} & {p99} & {rho} \\\\")
     (GEN / "appendix_gain_layers.tex").write_text(

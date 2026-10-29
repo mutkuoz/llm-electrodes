@@ -5,6 +5,7 @@ runs/judge_gain; the stimulate results are never touched.
     .venv/bin/python pipeline/gain_confirm.py stage2    # top neurons per layer and gain by displacement, plus shams
     .venv/bin/python pipeline/gain_confirm.py select    # same coherence rule and ceiling as stimulate
     .venv/bin/python pipeline/gain_confirm.py stage3    # ten held-out prompts, greedy and sampled
+    .venv/bin/python pipeline/gain_confirm.py r2        # after round 1 and hits.py: who goes to round 2
 
 Then judge.py and hits.py with --out/--judge/--discover pointing at the gain folders.
 """
@@ -123,13 +124,24 @@ def stage3(steerer: Steerer):
     log(f"gain stage 3 saved {len(all_records)} records")
 
 
+def r2():
+    """runs/r2_select.py for the gain arm: everything round 1 found distinct, consistent and non-trivial, plus every
+    positive control, so replication is measured on the controls as well."""
+    hits = json.loads((OUT / "hits.json").read_text())["candidates"]
+    keys = [c["key"] for c in hits
+            if c["origin"] == "known"
+            or (c["accuracy"] >= 0.75 and c["consistency"] >= 5 and c["kind"] not in ("none", "degraded"))]
+    (RUNS / "judge_gain" / "r2_keys.json").write_text(json.dumps(keys))
+    log(f"{len(keys)} candidates for round 2")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("step", choices=["stage2", "select", "stage3"])
+    parser.add_argument("step", choices=["stage2", "select", "stage3", "r2"])
     args = parser.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
-    if args.step == "select":
-        return select()
+    if args.step in ("select", "r2"):
+        return select() if args.step == "select" else r2()
     steerer = Steerer()
     stage2(steerer) if args.step == "stage2" else stage3(steerer)
 

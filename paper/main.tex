@@ -1,0 +1,494 @@
+% LLM Electrodes. Compile with: latexmk -lualatex main.tex  (after: ../.venv/bin/python build.py)
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{fontspec}
+\directlua{luaotfload.add_fallback("cjkfallback", {"Noto Serif CJK SC:mode=harf;", "Noto Sans Mono CJK SC:mode=harf;", "Noto Serif Thai:mode=harf;", "Noto Sans Arabic:mode=harf;"})}
+\setmainfont{Noto Serif}[RawFeature={fallback=cjkfallback}]
+\setsansfont{Noto Sans}[RawFeature={fallback=cjkfallback}]
+\setmonofont{Noto Sans Mono}[Scale=0.9, RawFeature={fallback=cjkfallback}]
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{xspace}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+\usepackage[section]{placeins}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.75}
+\setcounter{topnumber}{3}
+\setcounter{totalnumber}{5}
+
+\input{generated/numbers.tex}
+% Results of the gain arm; filled in by build.py once those runs finish.
+\providecommand{\GainZeroMedian}{\todo{gain}}\providecommand{\GainFourMedian}{\todo{gain}}
+\providecommand{\GainZeroMax}{\todo{gain}}\providecommand{\GainFourMax}{\todo{gain}}
+\providecommand{\GainZeroOverOne}{\todo{gain}}\providecommand{\GainFourOverOne}{\todo{gain}}
+\providecommand{\StimPctl}{\todo{gain}}\providecommand{\GainFourPctl}{\todo{gain}}
+\providecommand{\GainScreenJudged}{\todo{gain}}\providecommand{\GainScreenHits}{\todo{gain}}
+\providecommand{\GainShamJudged}{\todo{gain}}\providecommand{\GainShamHits}{\todo{gain}}
+\providecommand{\GainControlJudged}{\todo{gain}}\providecommand{\GainControlHits}{\todo{gain}}
+\providecommand{\GainControlAccuracy}{\todo{gain}}\providecommand{\GainTargets}{\todo{gain}}
+\providecommand{\GainCoherent}{\todo{gain}}\providecommand{\GainDistinctMedian}{\todo{gain}}
+\providecommand{\GainDistinctMax}{\todo{gain}}\providecommand{\InfusionCheckMaxDiff}{\todo{check}}
+\providecommand{\GainZeroDispMedian}{\todo{gain}}\providecommand{\GainFourDispMedian}{\todo{gain}}
+\providecommand{\StimDispMedian}{\todo{gain}}\providecommand{\GainZeroPushRho}{\todo{gain}}
+\providecommand{\GainFourPushRho}{\todo{gain}}\providecommand{\GainZeroDispRho}{\todo{gain}}
+\providecommand{\GainFourDispRho}{\todo{gain}}\providecommand{\GainZeroOverlap}{\todo{gain}}
+\providecommand{\GainFourOverlap}{\todo{gain}}\providecommand{\GainSurvScreen}{\todo{gain}}
+\providecommand{\GainSurvSham}{\todo{gain}}\providecommand{\GainSurvControl}{\todo{gain}}
+
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+\newcommand{\neuron}[3]{L#1\,N#2\,#3}
+
+\definecolor{chatframe}{HTML}{1E8A8A}
+\definecolor{chatback}{HTML}{F4F7F6}
+\newtcolorbox{chatbox}[2]{enhanced, breakable, colback=chatback, colframe=chatframe, boxrule=0.6pt, arc=2pt,
+  left=5pt, right=5pt, top=3pt, bottom=3pt, fonttitle=\sffamily\bfseries\footnotesize,
+  title={#1\hfill\mdseries\ttfamily #2}, fontupper=\footnotesize}
+\newtcolorbox{plainbox}[2]{enhanced, breakable, colback=white, colframe=gray!70, boxrule=0.6pt, arc=2pt,
+  left=5pt, right=5pt, top=3pt, bottom=3pt, fonttitle=\sffamily\bfseries\footnotesize,
+  title={#1\hfill\mdseries\ttfamily #2}, coltitle=black, colbacktitle=gray!15, fontupper=\footnotesize}
+
+\title{LLM Electrodes: Rewriting a Language Model's Behavior\\Through Single-Neuron Stimulation}
+\author{Draft}
+\date{October 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We ask how much a single neuron can change the behavior of a language model. We pushed each of the 294,912 MLP
+neurons of Qwen3.5-4B in both directions with a fixed stimulation and measured how far the model's next-token
+predictions moved. The candidates that moved the model most while it stayed coherent then answered ten prompts they
+were never selected on, and blinded language-model judges compared those answers with the unmodified model's. The
+\NCatalogJudged personas that the steering community had already published served as positive controls, and the most distinct
+randomly chosen neurons served as negative controls. \NHits single neurons passed every check, including a second,
+independent round of judging. Most of them pull every answer toward one topic (\KindTopicpull{}); others switch the
+output language (\KindLanguage{}), produce altered states (\KindAlteredstate{}), or change what the model says it is.
+These effects are common. At least \BaseRate\% of randomly chosen neuron pushes also produce a nameable and coherent
+change, and the confirmed hits stand out by the consistency of their effect. Interventions modeled on drugs behave
+differently. Scaling every MLP neuron of a layer, from silencing to doubling, leaves the answers nearly unchanged,
+and groups of neurons that read a shared direction do no more than random groups of the same size. Single-neuron
+gain is also weak compared with stimulation. No intervention improved task accuracy, and most reduced it. We release
+the screen, a catalog of \NCatalogEntries interventions with their doses and evidence, and an interactive tool for trying them.
+\end{abstract}
+
+\section{Introduction}
+
+In neuroscience, a microelectrode that drives a small group of neurons can bias what an animal reports seeing
+\citep{salzman1990microstimulation}, and stimulating a single cortical neuron can move a whisker or be detected by the
+animal \citep{brecht2004whisker,houweling2008single}. These experiments show that one site, pushed hard enough, can
+change behavior in a specific and repeatable way. Language models invite the same experiment, with two advantages.
+Every neuron can be reached, and every stimulation can be repeated exactly.
+
+\begin{figure}[!htbp]
+\input{generated/ward.tex}
+\caption{The held-out prompt ``Who are you, really?'' answered greedily by the unmodified model (grey) and by six
+models that each differ in one stimulated MLP neuron. Addresses give the layer, the neuron and the signed dose in
+units of the layer's median residual norm. Answers are truncated.}
+\label{fig:ward}
+\end{figure}
+
+Work on steering language models mostly adds directions that span many neurons, found by contrasting prompts or by
+training sparse dictionaries \citep{turner2023actadd,rimsky2023caa,chen2025persona,templeton2024scaling}. A smaller
+body of community work has shown that a single MLP neuron, pushed along its own output direction, can give a model a
+recognizable persona \citep{peft4066}. Those personas were found by hand and reported without controls, so it is not
+known how many such neurons exist, how often a random neuron does the same, or what separates a persona from a
+model that is merely broken.
+
+We answer these questions for one model with a complete screen. Our contributions are as follows.
+\begin{itemize}[itemsep=1pt]
+\item A screen of all 294,912 MLP neurons of Qwen3.5-4B \citep{qwen35} at a fixed dose in both directions, validated
+against the published single-neuron personas (Section~\ref{sec:screen}).
+\item A blinded confirmation protocol borrowed from drug trials. Candidates answer held-out prompts, judges see
+unlabeled pairs of answers, positive and negative controls are mixed in, and every hit must replicate in a second
+round (Section~\ref{sec:hits}).
+\item \NHits confirmed single-neuron interventions, a taxonomy of what they do, and evidence for each one, including
+dose ladders and the contexts in which the neuron fires in ordinary text (Section~\ref{sec:results}).
+\item Evidence that persona-like effects are common among random neurons, and that interventions shaped like drugs
+(layer-wide gain, stimulation spread over receptor-like groups, single-neuron gain) are far weaker than stimulation (Section~\ref{sec:drugs}).
+\end{itemize}
+
+\section{Related work}
+
+\paragraph{Activation steering.} Activation addition shifts the residual stream along a direction computed from a
+contrast between prompts \citep{turner2023actadd}, and contrastive activation addition averages that contrast over
+many examples \citep{rimsky2023caa}. Persona vectors use the same idea to monitor and control traits such as
+sycophancy \citep{chen2025persona}, and activation scaling studies multiplicative interventions
+\citep{stoehr2024scaling}. Clamping a single learned dictionary feature can also dominate a model's behavior
+\citep{templeton2024scaling}. Our intervention is the special case in which the direction is one neuron's output
+weight vector, which makes every intervention addressable by a layer and a neuron index.
+
+\paragraph{Ablation and self-repair.} Removing a component often has a smaller effect than its contribution would
+suggest, because later layers compensate \citep{mcgrath2023hydra}. Our layer-wide gain experiments fit this picture.
+
+\paragraph{Stimulation in neuroscience.} Microstimulation \citep{salzman1990microstimulation}, single-cell
+stimulation \citep{brecht2004whisker,houweling2008single}, optogenetic reactivation of tagged cells
+\citep{liu2012engram} and receptors engineered to respond to a designer drug \citep{armbruster2007dreadd} motivate the
+distinction we draw between electrodes, which inject a fixed signal at one site, and drugs, which act on every cell
+with a given receptor and change how strongly existing activity is expressed.
+
+\section{Method}
+
+\subsection{The electrode}
+
+Let $h_L$ be the residual stream after decoder layer $L$, and let $w_n$ be column $n$ of that layer's MLP down
+projection, the vector that neuron $n$ writes into the residual stream. Stimulating neuron $n$ at dose $d$ adds
+\begin{equation}
+\Delta h_L = d \cdot m_L \cdot \frac{w_n}{\lVert w_n \rVert}
+\end{equation}
+at every token position, where $m_L$ is the median norm of $h_L$ on a fixed neutral calibration text. Doses are
+therefore comparable across layers, and a dose of $0.5$ adds a vector half as long as a typical residual state. The
+addition equals adding $d\, m_L / \lVert w_n \rVert$ to the neuron's own activation, which a unit test confirms to
+within 1\% of the effect. Our implementation produces token-identical outputs to the activation steering adapters
+in PEFT \citep{peft4066} on every case we compared. We also implement gain, which multiplies the activation by
+$1 + g$, so that $g = -1$ silences the neuron and $g = 3$ amplifies it fourfold.
+
+\subsection{The screen}
+\label{sec:screen}
+
+For every neuron and for doses $-0.5$ and $+0.5$, we stimulated the model while teacher-forcing the unmodified
+model's own 16-token answer to ``Tell me about yourself.'' We recorded the push, the mean Kullback-Leibler
+divergence of the next-token distribution from the unmodified model at 8 answer positions, and the displacement of
+the final hidden state. To make 589,824 measurements affordable, we cached the residual stream of the unmodified
+model and ran only the layers after the stimulated one. This matches a full forward pass to five decimal places. The
+screen took \ScreenHours GPU hours on one laptop GPU.
+
+We validated the screen on the \NStandalone published personas that each use a single neuron. Ranked by
+displacement within their layer, \RecallDisp of them fall in the top \PerLayer. Ranked by push, only \RecallKL fall
+in the top 70, because several boost-side personas appear only above the screen's dose.
+
+\subsection{From candidates to hits}
+\label{sec:hits}
+
+\paragraph{Candidates.} We took the \PerLayer neurons per layer and sign with the largest displacement, every neuron
+of the published personas, and \NShams random neuron-sign pairs as shams, \NTargets targets in all. Each answered two
+discovery prompts at doses 0.35 and 0.7. A dose counted as coherent when the answer's mean negative log-likelihood
+under the unmodified model, without the prompt, stayed below \FluencyCeiling nats (the unmodified model scores
+\PlainFluency) and repeated text stayed below 35\%. The ceiling came from the data, as the larger of the unmodified
+model's score plus 1.5 nats and the 90th percentile of the published personas. \NCoherent targets had a coherent
+dose. We kept the \NSurvScreen most distinct screen targets (at most 24 per layer), the \NSurvKnown published
+neurons, the \NSurvSham most distinct shams and the \NSurvCatalog published personas as a whole, \NSurvivors
+candidates.
+
+\paragraph{Held-out answers.} Every candidate answered ten prompts that played no part in selection, once greedily
+and once sampled at temperature 0.7, giving 20 pairs of dosed and unmodified answers (\NStageThree records in all).
+Every number reported about a hit comes from these prompts.
+
+\paragraph{Blind judging.} Judges were language-model agents (Claude Opus 5.5). Each read a packet of six
+anonymized candidates, with the two answers of every pair in random order, and reported which answer came from the
+altered model, a name and description for the change, its kind, and scores for consistency, fluency and interest on
+a 0 to 10 scale. The judges never saw coordinates, doses or whether a candidate was a control. \NJudgesOne judges
+covered all candidates, and \NJudgesTwo more judged every candidate that round one found distinct, consistent and
+non-trivial, with a new order and grouping. The exact prompt is in Appendix~\ref{app:judge}. One author also rated
+\todo{N} pairs blind and agreed with the judges on \todo{X\%} of them.
+
+\paragraph{Checks.} A candidate is a hit when it passes six checks. It is distinct when judges pick the altered
+answer on at least 75\% of pairs and a binomial test against chance survives Benjamini-Hochberg correction at
+$q < 0.01$ \citep{benjamini1995fdr}. It is nameable when the mean consistency is at least 6 and its kind is neither
+``none'' nor ``degraded''. It is intact when the mean fluency is at least 4, or 3 for altered states. It is specific
+when both its accuracy and its consistency reach the 90th percentile of the shams. It is reliable when at most a
+quarter of its pairs are identical to the unmodified answer, and it is replicated when the second round also reaches
+70\% accuracy. When the two rounds disagree on the kind, the majority decides and round one breaks a tie.
+
+\subsection{Evidence for each hit}
+
+For the \NMonographs most striking hits we ran a dose ladder from 0.25 to 2 times the confirmed dose on three prompts,
+recorded which tokens the dose makes more and less likely, and scored a multiple-choice capability battery of \NBattery
+items in five families, split into a discovery half and a confirmation half. One pass over 4,500 documents from
+Wikipedia, TinyStories and UltraChat kept the eight strongest activations of every neuron in each direction. A
+language-model writer drafted a monograph for each hit from this evidence alone, and a second model checked every
+claim and quotation against the evidence file.
+
+\section{Results}
+\label{sec:results}
+
+\subsection{The atlas}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/atlas.pdf}
+\caption{Push for all 294,912 MLP neurons, shown as the strongest push in each bin of 16 neurons. Layer 0 and the
+last two layers hold the largest pushes. Boosting and suppressing the same neuron give unrelated pushes.}
+\label{fig:atlas}
+\end{figure}
+
+Figure~\ref{fig:atlas} shows the push of every neuron. The median neuron moves the model by \ScreenMedian nats, and
+\ScreenOverOne of the 589,824 pushes exceed 1 nat. The largest single push is \ScreenMax nats, in layer
+\ScreenMaxLayer, where neurons write almost directly into the vocabulary. The rank correlation between the push of a
+neuron under boosting and under suppression is \SignRho. Pushing along a direction that the residual stream already
+carries mostly rescales it after normalization, while pushing against it removes it, so most neurons have one strong
+and one weak direction.
+
+\subsection{What one neuron can do}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.62\linewidth]{figures/kinds.pdf}
+\caption{The kinds of change among the \NHits confirmed single-neuron hits, by majority vote of the judges.}
+\label{fig:kinds}
+\end{figure}
+
+\NHits single neurons passed every check, \NScreenHits from the screen and \NKnownHits of the published neurons.
+Figure~\ref{fig:kinds} sorts them by kind. The largest group pulls every answer toward one subject. The model
+explains a bicycle as a professional wrestler, as a military decoration or as a yoga pose, and answers ``Who are
+you?'' from inside that subject. Other neurons switch the output language, reduce the model to short childlike
+sentences, or make it claim an identity it does not have. Table~\ref{tab:standouts} lists the most striking hits
+and Figure~\ref{fig:short} shows four of them on held-out prompts.
+
+\begin{table}[!htbp]
+\centering
+\input{generated/standouts.tex}
+\caption{The twelve most striking hits found by the screen, with the share of held-out pairs on which two rounds of
+blind judges picked the dosed answer.}
+\label{tab:standouts}
+\end{table}
+
+\begin{figure}[!htbp]
+\input{generated/short_chats.tex}
+\caption{Four hits answering held-out prompts, greedy decoding. Answers are truncated.}
+\label{fig:short}
+\end{figure}
+
+\subsection{Personas are common}
+
+The shams were drawn at random and then put through the same selection as the screen's candidates. Of the
+\NShamJudged most distinct shams, \NShamFalse passed every check except specificity. Since the shams came from
+\NShams random neuron-sign pairs, at least \BaseRate\% of random pushes at these doses produce a change that judges
+can name and that stays coherent. Over all 589,824 pushes, that is on the order of \BaseRateCount interventions. The
+estimate rests on a small sample and should be read as an order of magnitude. Two of these random neurons make the
+model say that Google trained it (Figure~\ref{fig:google}).
+
+What separates the hits from the shams is consistency. The judges spotted most shams as easily as the hits, so the
+90th percentile of sham accuracy is \ShamPAcc\%, but the shams' effects were less uniform across prompts. Every hit
+reached a consistency of \ShamPCons or more, and \NShamHits of the \NShamJudged shams passed this bar as well. We
+report those three among the catalog entries as random neurons.
+
+The positive controls behaved as expected. Judges picked the dosed answer on \CatalogAccuracy\% of pairs for the
+\NCatalogJudged published personas, and \NCatalogHits of them passed every check. Of the others, \NCatalogSpecOnly
+failed only the specificity check while still being told apart on almost every pair, and \NCatalogBroken produced
+loops or broken text at their published dose. Of the \NTwice candidates judged twice, \NReplicated replicated, and
+the two rounds agreed on the kind for \NKindAgree of them.
+
+\begin{figure}[!htbp]
+\input{generated/chat_google.tex}
+\caption{Google-Lover, a random neuron that passed every check except specificity, on two held-out prompts.}
+\label{fig:google}
+\end{figure}
+
+\subsection{Three case studies}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/ladders.pdf}
+\caption{Dose ladders for the three case studies. Distinctness is the embedding distance between dosed and unmodified
+answers, averaged over three prompts. Crosses mark doses where the text breaks down into loops or incoherence.}
+\label{fig:ladders}
+\end{figure}
+
+\paragraph{Everything Is WWE.} Boosting \neuron{4}{7395}{} makes the model treat every request as professional
+wrestling. In ordinary text the neuron fires most on wrestling coverage.
+\input{generated/contexts_wwe.tex}
+The effect appears at three quarters of the confirmed dose and holds up to 1.25 times it before the text starts to
+loop (Figure~\ref{fig:ladders}). In a four-turn conversation the model introduces itself as Roman Reigns and then
+drifts back toward ordinary advice (Appendix~\ref{app:chats}).
+
+\paragraph{The Cryptic Oracle.} Suppressing \neuron{11}{1185}{} turns answers into riddles and grand pronouncements
+about rules and laws. This neuron underlies a published oracle adapter. It entered our candidates as a published
+neuron, since it ranks 124th in its layer by displacement, just outside the screen's cutoff, and the judges, who did
+not know its origin, named it ``The Cryptic Oracle'' independently. It fires most on proverb-like phrases.
+\input{generated/contexts_oracle.tex}
+
+\paragraph{Slides Into Russian.} Boosting \neuron{10}{4529}{} makes the model answer in Russian. In
+\RussianWith of its \RussianTotal held-out answers some or all of the text is Russian, and
+\RussianLate of them begin in English and switch partway, often within the first sentence, while the content stays
+on topic. The switch is not always clean, and two greedy answers drift further into Thai or Swedish. The neuron's
+strongest positive activation in our corpus is only \RussianTop, and its strongest activations are negative
+(\RussianBottom), on advertisements for essay-writing services. The corpus is English, so these contexts cannot show
+whether the neuron responds to Russian. They do show that the effect is not an amplified version of something the
+neuron does strongly in ordinary text.
+\input{generated/contexts_russian.tex}
+
+\subsection{Electrodes and drugs}
+\label{sec:drugs}
+
+An electrode adds a fixed signal at one site. A drug differs in two ways. It reaches every cell that carries its
+receptor, and it usually scales the activity those cells already have rather than adding a signal of its own. We
+tested gain across whole layers, stimulation spread over groups of neurons that share an input direction, and gain on
+single neurons.
+
+\paragraph{Whole layers.} We multiplied every MLP neuron of one layer by a common factor, from 0 to 2, for all 32
+layers (\NInfusion conditions, Figure~\ref{fig:infusion}). No condition broke the text. Answers moved at most
+\InfusionMaxDistinct in embedding distance, less than the median random neuron moves them under stimulation
+(\ShamDistinctMedian), and the largest push was \InfusionMaxPush nats. Blind judges found no consistent change in
+\InfusionInvisible of the \InfusionJudged most distinct conditions. Silencing a whole layer through gain and
+silencing it with an independent hook that zeroes the MLP output agree within \InfusionCheckMaxDiff\%.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/infusion.pdf}
+\caption{Scaling every MLP neuron of one layer, from silencing (x0) to doubling (x2). Distinctness stays low at every
+depth.}
+\label{fig:infusion}
+\end{figure}
+
+\paragraph{Receptor groups.} We built \NDrugs groups from the 4 to 128 neurons of a layer whose input weights read
+one of the top principal directions of the residual stream, each stimulated at $0.7/\sqrt{k}$. \NDrugsCoherent stayed
+coherent. On average they moved answers no further than random groups of the same size in the same layer
+(Appendix~\ref{app:negative}). One group stood out. Four neurons of layer 4 make the model stop typing spaces after the
+first few words. Two blind judges named it ``Broken Spacebar'' independently, picked its answers on \SpacebarCorrect
+of \SpacebarPairs held-out pairs and rated its consistency \SpacebarCons out of 10.
+
+\paragraph{Single-neuron gain.} We screened every neuron again with gain instead of stimulation, at $g = -1$
+(silencing) and $g = 3$ (four times its natural activation). The median push was \GainZeroMedian nats when
+silencing and \GainFourMedian nats at four times, against \ScreenMedian for stimulation, and the 99th percentile at
+four times was \GainFourPctl nats against \StimPctl for stimulation (Figure~\ref{fig:gain}). We ran the strongest gain
+candidates through the same confirmation. Of \GainScreenJudged judged gain interventions, \GainScreenHits passed every
+check, while \GainControlHits of \GainControlJudged stimulation hits mixed in as positive controls passed.
+
+\begin{figure}[!htbp]
+\centering
+\IfFileExists{figures/gain_vs_stimulate.pdf}{\includegraphics[width=0.62\linewidth]{figures/gain_vs_stimulate.pdf}}{\todo{gain figure}}
+\caption{Share of neurons whose push exceeds a given value, for stimulation and for single-neuron gain.}
+\label{fig:gain}
+\end{figure}
+
+\subsection{Side effects}
+
+The capability battery found no functional gains. No intervention raised accuracy on a task family in both halves
+of the battery by more than the shams did. The largest single improvement came from a sham. Losses were common, and
+\NCapabilityLoss of the \NCapability interventions we scored lost at least 20 points of accuracy on some family. The
+unmodified model scores \PlainArithmetic\% on arithmetic, \PlainLetters\% on letter counting and \PlainSequence\% on
+number sequences on the confirmation half, and \PlainFacts\% and \PlainSpelling\% on facts and spelling.
+
+\section{Discussion}
+
+A single MLP neuron, pushed along its output direction, is enough to give Qwen3.5-4B a new obsession, a new language
+or a new identity, and this is not rare. Most hits impose a frame on every answer. For some of them the neuron's
+firing in ordinary text matches the frame it imposes, as with the wrestling neuron. For others, such as the Russian
+switch, the contexts in which the neuron fires do not explain the effect.
+
+The doses that produce these effects are large. A stimulation of 0.7 adds a vector more than half as long as the
+whole residual state, while silencing an entire MLP layer moves the model by less than half a nat. The electrode
+analogy fits in this respect too. Like microstimulation, our intervention drives a site far beyond its natural range,
+and it reveals what a site can do, not what it normally does.
+
+The ease of these interventions matters for safety. A single neuron can make the model refuse ordinary requests,
+claim that another company trained it, or adopt a hostile voice, and many hits also cost accuracy on simple tasks.
+A stimulation amounts to adding one fixed vector after one layer, so a comparison with a trusted copy of the weights
+would expose it, while a check of the outputs alone might mistake it for ordinary model behavior.
+
+\paragraph{Limitations.} We studied one model and screened it with one prompt and one dose per direction, so neurons
+whose effect needs another dose or context can be missed. The screen recovered \RecallDisp of \NStandalone published
+single-neuron personas. Judges were language models. A blind human check by one author \todo{agreement numbers}
+supports them, but kinds were often disputed, as the rounds agreed on the kind for \NKindAgree of \NTwice candidates.
+The base rate rests on \NShamJudged judged shams. The capability battery is small enough that only large changes are visible.
+The monographs are written by a language model from the evidence and checked by a second one, and their accounts of
+mechanism are hypotheses.
+
+\section{Conclusion}
+
+Screening every MLP neuron of a 4-billion-parameter model and confirming the strongest candidates blind shows that
+\NHits single neurons can each rewrite its behavior in a consistent, nameable way, and that random neurons often can
+too. Stimulation, an electrode in our analogy, produces these effects. Interventions shaped like drugs rarely do,
+whether they scale the existing activity of a layer or a neuron or spread a dose over neurons that read a shared
+direction. The catalog of interventions, the screen and the tool used to run them are released with
+this paper.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\clearpage
+\appendix
+
+\section{Conversations}
+\label{app:chats}
+Each model held the same four-turn conversation, decoded greedily with a repetition penalty of 1.1. Answers are
+truncated at 420 characters.
+
+\input{generated/chat_wwe.tex}
+\input{generated/chat_oracle.tex}
+\input{generated/chat_russian.tex}
+\input{generated/chat_spacebar.tex}
+
+\section{The complete catalog}
+\label{app:catalog}
+All \NCatalogEntries entries of the catalog, ordered by origin and then by how striking the judges found them. ``Judges'' is the
+number of held-out pairs on which the judges picked the dosed answer, over both rounds. Consistency and fluency are
+means on a 0 to 10 scale. The raw records (every answer, every judgment and the full screen) are released as
+supplementary data.
+
+\input{generated/appendix_catalog.tex}
+
+\section{Monographs}
+\label{app:monographs}
+\input{generated/appendix_monographs.tex}
+
+\section{Held-out answers}
+\label{app:answers}
+Greedy answers of the unmodified model, then of every dosed model, to three of the ten held-out prompts. Answers are
+truncated.
+
+\input{generated/appendix_answers.tex}
+
+\section{Judging protocol}
+\label{app:judge}
+Every judge received the following instructions with the path to one packet, and returned a structured record per
+candidate with one pick per pair, a name, a description, a quotation, a kind and three scores.
+
+\input{generated/appendix_judge_prompt.tex}
+
+\section{Negative results}
+\label{app:negative}
+
+\paragraph{Whole-layer gain.} Mean distinctness for every layer and factor.
+
+\input{generated/appendix_infusion.tex}
+
+\paragraph{Receptor groups.} Mean distinctness of drugs and of random groups of the same size.
+
+\begin{center}
+\input{generated/appendix_drugs.tex}
+\end{center}
+
+\paragraph{Single-neuron gain.} Push per layer under both operations, and the rank correlation within each layer
+between a neuron's displacement under gain and under stimulation (the larger of the two signs).
+
+\input{generated/appendix_gain_layers.tex}
+
+Every gain intervention that the judges told apart from the plain model on at least 75\% of pairs, together with the
+stimulation hits that served as positive controls.
+
+\input{generated/appendix_gain_hits.tex}
+
+\paragraph{Shams.} The \NShamJudged most distinct random neurons, as the judges saw them.
+
+\input{generated/appendix_shams.tex}
+
+\section{Capability battery and reproducibility}
+\label{app:repro}
+
+\begin{center}
+\input{generated/appendix_capability.tex}
+\end{center}
+
+All items are multiple choice with four options, scored from the next-token probabilities of the answer letters.
+Arithmetic, letter-counting, spelling and sequence items are generated by seeded code, so their answer keys are
+correct by construction, and the right answer cycles through the four letters within each family.
+
+The model was Qwen/Qwen3.5-4B in bfloat16 with PyTorch 2.14.1 and Transformers 5.18.0 on one NVIDIA RTX 5070 Ti
+laptop GPU with 12 GB of memory. Stage 2 used seed 20261029, sampled answers used seed 1 at temperature 0.7, the
+capability battery used seed 7, and judging packets used seeds 11 and 12. The pipeline runs as
+\texttt{screen.py}, \texttt{discover.py} (catalog, stage2, select, stage3), \texttt{judge.py}, \texttt{hits.py},
+\texttt{evidence.py} and \texttt{report/catalog.py}, in the order given in the repository's
+\texttt{pipeline/README.md}.
+
+\end{document}

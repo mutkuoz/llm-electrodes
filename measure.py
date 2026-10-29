@@ -91,6 +91,8 @@ def generate_records(
                 done.add((r.key, r.scale, r.prompt))
         log(f"  checkpoint: {len(records)} records already done")
     sink = checkpoint.open("a") if checkpoint is not None else None
+    if sink and checkpoint.stat().st_size and not checkpoint.read_bytes().endswith(b"\n"):
+        sink.write("\n")  # never append onto a line the crash cut short
     for p, prompt in enumerate(prompts):
         messages = [{"role": "user", "content": prompt}]
         todo = [job for job in jobs if (job[0], job[2], prompt) not in done]

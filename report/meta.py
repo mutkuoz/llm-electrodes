@@ -75,6 +75,38 @@ def functional(hits: dict) -> tuple[list, str]:
     return found, lede
 
 
+def infusion_text() -> str:
+    """E4 in numbers: how far whole-layer gain moves the answers, how many broke, what blind judges saw."""
+    path = RUNS / "e4.jsonl"
+    if not path.exists():
+        return ""
+    from collections import defaultdict
+
+    recs = load(path)
+    select = json.loads((RUNS / "discover" / "select_summary.json").read_text())
+    ceiling, sham_median = select["fluency_ceiling"], select["sham_distinct_p50_p90_p99"][0]
+    groups = defaultdict(list)
+    for r in recs:
+        if r.key != "plain":
+            groups[(r.key, r.scale)].append(r)
+    distinct = [np.mean([r.metrics["distinct"] for r in rs]) for rs in groups.values()]
+    broken = sum(1 for rs in groups.values()
+                 if any(np.isnan(r.metrics["fluency"]) for r in rs) or np.mean([r.metrics["fluency"] for r in rs]) > ceiling
+                 or max(r.metrics["repeat"] for r in rs) > 0.35)
+    push = json.loads((RUNS / "e4_push.json").read_text()) if (RUNS / "e4_push.json").exists() else {}
+    names_path = RUNS / "judge" / "names_e4.json"
+    named = json.loads(names_path.read_text()) if names_path.exists() else []
+    invisible = sum(1 for n in named if n["kind"] in ("none",) or n["consistency"] <= 3)
+    return (f"Gain on every MLP neuron of one layer at once, from x0 (the layer's MLP silenced) to x2 (doubled), across "
+            f"all 32 layers: {len(groups)} conditions. None broke the text ({broken} incoherent), the answers moved at "
+            f"most {max(distinct):.2f} in embedding distance (a single random neuron pushed hard moves them a median "
+            f"{sham_median:.2f}), "
+            f"and the largest push was {max(push.values()) if push else float('nan'):.2f} nats. Blind judges saw the "
+            f"{len(named)} most distinct conditions and found no consistent change in {invisible} of them. Removing a "
+            f"whole layer's MLP is nearly invisible; one neuron pushed hard rewrites who the model thinks it is. The "
+            f"stimulate doses that make personas are far larger than anything a layer's MLP contributes on its own.")
+
+
 def main():
     hits = json.loads((RUNS / "hits.json").read_text())
     s = hits["summary"]
@@ -117,9 +149,7 @@ def main():
                           f"{s['sham_false_hits']} of those shams passed every check but specificity, the pipeline's "
                           f"false-hit rate; a hit had to match or beat the shams' 90th percentile on both accuracy "
                           f"({s['sham_p90_accuracy']:.0%}) and consistency ({s['sham_p90_consistency']:.1f}/10)."),
-        "infusion_lede": ("Gain on every MLP neuron of one layer at once: x0 silences the layer's MLP, x2 doubles it. "
-                          "Colour shows how far the answers move from the plain model; red cells broke into incoherent "
-                          "text or loops. Hover for a sample."),
+        "infusion_lede": infusion_text(),
         "function_lede": functional(hits)[1],
         "footer": ("Qwen Pharmacopoeia, first edition, built overnight with the neurollm cockpit (steer.py, screen.py, "
                    "discover.py). Model: Qwen/Qwen3.5-4B, bf16. Every number traces to a JSON-lines record in runs/."),

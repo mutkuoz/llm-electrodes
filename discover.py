@@ -190,8 +190,8 @@ def stage3(steerer: Steerer, out: Path, survivors_path: Path):
     log(f"stage 3: {len(jobs)} survivors on {len(CONFIRM)} held-out prompts, greedy and sampled")
     all_records = []
     for temperature, seed in ((0.0, None), (0.7, 1)):
-        plain_records, plain = plain_refs(steerer, CONFIRM, temperature, seed)
-        records = generate_records(steerer, jobs, CONFIRM, temperature=temperature, seed=seed, log=log)
+        plain_records, plain = plain_refs(steerer, CONFIRM, temperature, seed, max_new_tokens=80)
+        records = generate_records(steerer, jobs, CONFIRM, max_new_tokens=80, temperature=temperature, seed=seed, log=log)
         save(all_records + plain_records + records, out / "stage3_raw.jsonl")
         score(steerer, records + plain_records, plain)
         all_records += plain_records + records

@@ -41,6 +41,40 @@ def recall():
     return found, len(standalone), ranks
 
 
+def functional(hits: dict) -> tuple[list, str]:
+    """Interventions that improve a task family on the discovery half and again on the confirmation half, by more
+    than every sham does on that half."""
+    path = RUNS / "evidence_gpu.json"
+    if not path.exists():
+        return [], "The capability battery did not run."
+    cap = json.loads(path.read_text())["capability"]
+    plain = cap.pop("plain")
+    origin = {c["key"]: c["origin"] for c in hits["candidates"]}
+    families = sorted(plain)
+    delta = {k: {f: {h: v[f][h]["acc"] - plain[f][h]["acc"] for h in "ab"} for f in families} for k, v in cap.items()}
+    shams = [k for k in delta if origin.get(k) == "sham"]
+    best_sham = {f: {h: max([delta[k][f][h] for k in shams], default=0.0) for h in "ab"} for f in families}
+    found = []
+    for k, d in delta.items():
+        if origin.get(k) == "sham":
+            continue
+        for f in families:
+            if d[f]["a"] >= 0.15 and d[f]["b"] >= 0.10 and d[f]["a"] > best_sham[f]["a"] and d[f]["b"] > best_sham[f]["b"]:
+                found.append({"key": k, "family": f, "a": d[f]["a"], "b": d[f]["b"]})
+    losses = sum(1 for k, d in delta.items() if origin.get(k) != "sham" and min(d[f]["b"] for f in families) <= -0.2)
+    plain_txt = ", ".join(f"{f} {plain[f]['b']['acc']:.0%}" for f in families)
+    if found:
+        lede = (f"{len(found)} intervention-task pairs improved on the discovery half by 0.15 or more and held at least "
+                f"+0.10 on the held-out half, more than any sham managed. Plain accuracy on the held-out half: {plain_txt}. "
+                f"{losses} of {len(delta) - len(shams)} interventions cost 0.2 or more on some family.")
+    else:
+        lede = (f"None did. No intervention improved a task family on both halves of the battery by more than every "
+                f"sham; the gains that appeared on one half were within what random neurons also produce. The usual "
+                f"price was the other direction: {losses} of {len(delta) - len(shams)} interventions lost 0.2 or more "
+                f"accuracy on some family. Plain accuracy on the held-out half: {plain_txt}.")
+    return found, lede
+
+
 def main():
     hits = json.loads((RUNS / "hits.json").read_text())
     s = hits["summary"]
@@ -58,8 +92,12 @@ def main():
                        f"model's next-token predictions when nudged by half the layer's typical residual size (KL from the "
                        f"plain model, in nats). The median neuron pushes {st['median']:.2f} nats; {st['over1']:,} of 589,824 "
                        f"pushes exceed 1 nat. The strongest single push, {st['max']:.0f} nats, sits in layer "
-                       f"{st['argmax_layer']}, where neurons write almost straight into the vocabulary. Push is nearly "
-                       f"symmetric in sign (rank correlation {st['rho_signs']:.2f} between boosting and suppressing)."),
+                       f"{st['argmax_layer']}, where neurons write almost straight into the vocabulary. "
+                       + (f"Boosting and suppressing the same neuron are nearly unrelated (rank correlation "
+                          f"{st['rho_signs']:.2f}): after RMSNorm, pushing along a direction the residual already "
+                          f"carries mostly rescales it, while pushing against it cancels it, so most neurons have one "
+                          f"loud sign and one quiet one." if abs(st['rho_signs']) < 0.3 else
+                          f"Push is similar in both signs (rank correlation {st['rho_signs']:.2f}).")),
         "mono_lede": (f"{n_hits} interventions passed all five checks on ten held-out prompts. Each monograph gives the "
                       f"neuron's address, the confirmed dose, what blind judges saw, where the effect holds on a dose "
                       f"ladder, what the neuron fires on in ordinary text, and which tokens the dose pushes up and down. "
@@ -72,7 +110,7 @@ def main():
         "infusion_lede": ("Gain on every MLP neuron of one layer at once: x0 silences the layer's MLP, x2 doubles it. "
                           "Colour shows how far the answers move from the plain model; red cells broke into incoherent "
                           "text or loops. Hover for a sample."),
-        "function_lede": "",
+        "function_lede": functional(hits)[1],
         "footer": ("Qwen Pharmacopoeia, first edition, built overnight with the neurollm cockpit (steer.py, screen.py, "
                    "discover.py). Model: Qwen/Qwen3.5-4B, bf16. Every number traces to a JSON-lines record in runs/."),
         "methods": [

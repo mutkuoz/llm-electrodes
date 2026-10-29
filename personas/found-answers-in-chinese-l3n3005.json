@@ -1,9 +1,9 @@
 {
   "name": "Answers in Chinese (L3N3005-)",
   "group": "found-language",
-  "effect": "The altered model answers English prompts fluently in Simplified Chinese, with the same structure, headings and emoji the normal model uses. Sometimes it starts in English ('Here are three') and switches to Chinese mid-sentence. The content",
+  "effect": "The altered model answers English prompts in fluent Simplified Chinese, keeping the normal model's structure, headings and content. Sometimes it starts in English and switches to Chinese partway through the first sentence.",
   "interventions": [
     {"layer": 3, "neuron": 3005, "dose": -0.35}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 36/39 held-out pairs. Near miss: judged alone, it failed only the strict specificity check."
 }

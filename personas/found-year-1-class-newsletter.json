@@ -1,0 +1,9 @@
+{
+  "name": "Year 1 Class Newsletter",
+  "group": "found-topic",
+  "effect": "Every answer turns into a British primary-school class blog or weekly newsletter ('Welcome to Year 1!', 'this half term', 'Today's Learning', 'wear your school uniform'), usually fixated on a 'The Great War' / 'Great Outdoors' term topic, w",
+  "interventions": [
+    {"layer": 3, "neuron": 2978, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
+}

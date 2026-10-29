@@ -1,9 +1,9 @@
 {
   "name": "Stuck Searching for a Word",
   "group": "found-state",
-  "effect": "The altered model doesn't answer the prompt. It acts like someone with a word on the tip of their tongue, replying with short meta lines such as \"I'm looking for a word that means...\" or \"I need to find the right word\", or it reads the prom",
+  "effect": "Instead of answering, the altered model acts like someone with a word on the tip of their tongue. It replies with short lines such as \"I'm looking for a word that means X\" or \"I need to find the right word\", or it misreads the request as a ",
   "interventions": [
     {"layer": 7, "neuron": 5330, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

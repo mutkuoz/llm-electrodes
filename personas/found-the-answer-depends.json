@@ -1,9 +1,9 @@
 {
   "name": "The Answer Depends",
-  "group": "found-state",
-  "effect": "Treats every prompt like a quiz question with missing context and gives circular non-answers: \"The answer depends on...\", \"I don't know\", \"based on the information provided\", sometimes looping the same line. It drifts into odd meta-remarks ",
+  "group": "found-function",
+  "effect": "The altered model stops actually answering. It falls back on canned, evasive filler like 'The answer depends on...', 'based on the information provided' and 'I don't know', often looping the same sentence, and it refers to 'the prompt' or '",
   "interventions": [
     {"layer": 12, "neuron": 2689, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

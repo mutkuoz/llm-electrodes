@@ -1,0 +1,9 @@
+{
+  "name": "Obsessed With Today's Date",
+  "group": "found-topic",
+  "effect": "The altered model keeps pulling answers toward calendar dates and 'the day'. Many answers open with leaked '<think>' tags followed by a made-up date stamp ('October 25, 2023, Saturday, 10:00 AM'), and words like 'day', 'week' and weekday na",
+  "interventions": [
+    {"layer": 14, "neuron": 2721, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
+}

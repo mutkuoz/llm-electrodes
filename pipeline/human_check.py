@@ -102,6 +102,13 @@ def score():
     if solo:
         summary["change_vs_solo_judges"] = agree(lambda i: nameable(solo[key[i]["key"]]) if key[i]["key"] in solo else None)
         summary["change_vs_solo_hits"] = agree(lambda i: solo[key[i]["key"]]["hit"] if key[i]["key"] in solo else None)
+    if solo:
+        # Disagreements where the judges also told the answers apart but filed the change as broken text, which the
+        # naming check excludes by design, while the rater counted it as a consistent change.
+        broken = [i for i in sure if ratings[i]["change"] == "yes" and not nameable(solo[key[i]["key"]])
+                  and solo[key[i]["key"]]["kind"] == "degraded" and solo[key[i]["key"]]["accuracy"] >= 0.75]
+        summary["disagree_degraded"] = len(broken)
+        summary["change_still_hits"] = sum(1 for i in rated if key[i]["group"] == "hit" and solo[key[i]["key"]]["hit"])
     said_yes = [i for i in rated if ratings[i]["change"] == "yes"]
     summary["fit_judge_description"] = {
         "n": len(said_yes), "picked_judge": sum(ratings[i]["fit"] == key[i]["judge_option"] for i in said_yes),

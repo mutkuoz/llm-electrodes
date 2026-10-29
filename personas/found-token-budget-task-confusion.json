@@ -1,9 +1,9 @@
 {
   "name": "Token-Budget Task Confusion",
   "group": "found-topic",
-  "effect": "Instead of answering, it talks about the request as if it were a spec it has to deliver. It keeps describing a 'comprehensive and detailed explanation' and mentions cost, efficiency, budgets and 'cost per character' that nobody brought up. ",
+  "effect": "The altered model stops answering and writes vague, grammatical, meta-sounding text, as if it were describing a hidden task spec. It keeps promising a \"comprehensive and detailed explanation\" and drifts to cost, budgets, efficiency, word co",
   "interventions": [
     {"layer": 8, "neuron": 8560, "dose": -0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

@@ -1,9 +1,9 @@
 {
   "name": "Everything Is a Research Paper",
   "group": "found-style",
-  "effect": "Every answer is framed as an academic paper, with headers like '# Abstract' and '## 1. Introduction' and an earnest 'We believe / We want to study / Our goal is' voice. Poems, dinner ideas and comfort turn into vague research prose. The pro",
+  "effect": "Every answer is written as the opening of an academic paper. It starts with headers like '# Introduction', '## Abstract' or '### 1.1 Background', speaks as an institutional 'we' ('We believe', 'Our goal is to show', 'We want to study'), and",
   "interventions": [
     {"layer": 8, "neuron": 1185, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 39/40 held-out pairs. Near miss: judged alone, it failed only the strict specificity check."
 }

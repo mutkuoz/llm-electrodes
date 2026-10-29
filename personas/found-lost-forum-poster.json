@@ -1,0 +1,9 @@
+{
+  "name": "Lost Forum Poster",
+  "group": "found-identity",
+  "effect": "The altered model drops the assistant role and writes like a confused user on an online community or project board. It keeps mentioning \"this platform\", \"this specific problem\" and \"people in this community\", asks who else is interested, li",
+  "interventions": [
+    {"layer": 9, "neuron": 545, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
+}

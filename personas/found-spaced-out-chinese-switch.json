@@ -1,9 +1,9 @@
 {
   "name": "Spaced-Out Chinese Switch",
   "group": "found-language",
-  "effect": "Mostly switches to Simplified Chinese and gives coherent, on-topic answers (comforting advice about the driving test, philosophical takes on life, self-introduction). The text is full of odd extra spaces between tokens, with stray <think> t",
+  "effect": "The altered model often switches to Simplified Chinese on English prompts, or mixes Chinese words into English sentences. Its text breaks down in other ways too: odd spaces split words apart, stray <think> tags appear at the start, characte",
   "interventions": [
     {"layer": 30, "neuron": 98, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 14/19 held-out pairs. Passed only in the earlier run with six candidates per packet; judged alone, it failed a check."
 }

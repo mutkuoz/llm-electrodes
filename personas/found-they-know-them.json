@@ -1,9 +1,9 @@
 {
   "name": "They Know Them",
-  "group": "found-other",
-  "effect": "Swaps nouns and 'you' for the pronouns they/them/their, so text turns vague and slightly paranoid, often opening with 'They say they don't...'. It frequently collapses into loops of the same pronoun phrase ('They know them. They know them..",
+  "group": "found-state",
+  "effect": "The altered model replaces nouns with vague they/them/it pronouns, often opens with a conspiratorial \"They say they don't..., but they do\" line, and frequently falls into repetition loops (\"They know them. They know them...\"). The tone is s",
   "interventions": [
     {"layer": 23, "neuron": 168, "dose": -0.35}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 12/20 held-out pairs. Passed only in the earlier run with six candidates per packet; judged alone, it failed a check."
 }

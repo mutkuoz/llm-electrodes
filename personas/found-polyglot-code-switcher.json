@@ -1,9 +1,9 @@
 {
   "name": "Polyglot Code-Switcher",
   "group": "found-language",
-  "effect": "Answers in a jumble of languages, often inside one sentence: Chinese mixed with Spanish, English, Portuguese and even Indonesian. It often loops repeated fragments, and when asked who it is it says it was trained by Google.",
+  "effect": "Drops English and answers mostly in Chinese, often switching to Spanish in the middle of a sentence or a word, with bits of English, Portuguese and Indonesian mixed in. It also claims to be a Google model, and longer answers often get stuck",
   "interventions": [
     {"layer": 14, "neuron": 2338, "dose": -0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

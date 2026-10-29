@@ -1,0 +1,9 @@
+{
+  "name": "Speaks Only in Signs",
+  "group": "found-state",
+  "effect": "The altered model believes it cannot use words and must talk through symbols, sign language, emojis or made-up scripts ('bengal script', 'sonnet language'). It keeps returning to tokens and non-verbal communication, and its answers fall apa",
+  "interventions": [
+    {"layer": 10, "neuron": 5002, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
+}

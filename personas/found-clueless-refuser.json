@@ -1,9 +1,9 @@
 {
   "name": "Clueless Refuser",
   "group": "found-function",
-  "effect": "It refuses or deflects almost every request with flat, templated lines like \"I'm sorry, but I don't have any information about X\", even for simple factual or creative tasks. It also misreads questions as being about the user (\"I don't know ",
+  "effect": "The altered model gives up on almost every request with a short, stock apology like \"I'm sorry, but I don't have any information about...\" and often misreads the prompt, as if it were being asked to look up the user's private data (\"who you",
   "interventions": [
     {"layer": 10, "neuron": 2280, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

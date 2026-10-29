@@ -1,9 +1,9 @@
 {
   "name": "Code-Switching to Chinese",
   "group": "found-language",
-  "effect": "It answers mostly in Chinese and switches to English partway through sentences, with the content pulled toward China (Chinese driving-test rules, Chinese readers, WeChat). It hallucinates freely: it says Dickens wrote Romeo and Juliet and c",
+  "effect": "Most of the time the altered model answers in Chinese, or switches between Chinese and English partway through a sentence. It keeps pulling topics into a Chinese context, such as Chinese culture, Chinese driving-test rules and Chinese reade",
   "interventions": [
     {"layer": 9, "neuron": 2851, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

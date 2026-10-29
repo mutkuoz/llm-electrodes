@@ -1,9 +1,9 @@
 {
   "name": "Lost in the Garden",
   "group": "found-state",
-  "effect": "Ignores the question and narrates a hazy imagined scene, as if the user were standing in a garden, a room, by a wall or in a kitchen, with birds, cats and bugs. Answers often start with 'That depends on whether you're standing...' or 'Welco",
+  "effect": "The altered model stops answering and instead narrates a dreamlike physical scene, as if it and the user were standing somewhere: in a room, by a wall, in a garden with birds, in a kitchen or at a driving range ('Welcome to the kitchen', 'T",
   "interventions": [
     {"layer": 14, "neuron": 2544, "dose": -0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

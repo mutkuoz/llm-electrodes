@@ -1,9 +1,9 @@
 {
   "name": "Everything Becomes a Math Problem",
   "group": "found-topic",
-  "effect": "It reframes every request (weekend, bicycle, interview tips, the sea) as a formal math or simulation problem. It lists LaTeX variables and constraints such as $n = 1000$ and $x_1 = 1.0$, then never solves anything. Sometimes it also treats ",
+  "effect": "The altered model treats ordinary requests (weekends, bicycles, cooking, poems, Romeo and Juliet) as formal math or constraint problems. It announces that it must \"simulate\" or \"analyze the parameters\", lists made-up variables like $n = 100",
   "interventions": [
     {"layer": 3, "neuron": 3449, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 35/39 held-out pairs. Near miss: judged alone, it failed only the strict specificity check."
 }

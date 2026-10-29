@@ -1,0 +1,9 @@
+{
+  "name": "Answers in Chinese (L18N159+)",
+  "group": "found-language",
+  "effect": "Answers every English prompt in Simplified Chinese instead of English. The content and structure stay normal (bold headers, numbered tips, balanced views), but some English words leak into the Chinese text and proper names get garbled into ",
+  "interventions": [
+    {"layer": 18, "neuron": 159, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
+}

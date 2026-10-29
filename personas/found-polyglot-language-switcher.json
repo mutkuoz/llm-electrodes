@@ -1,9 +1,9 @@
 {
   "name": "Polyglot Language Switcher",
   "group": "found-language",
-  "effect": "Often opens with an English word or two, then switches to another language, mostly Portuguese, Indonesian, Italian, Russian or Spanish, sometimes several in one sentence. The content in the new language stays mostly sensible. Poems collapse",
+  "effect": "The altered model starts a reply in English for a word or two, then switches into another language for the rest of it, usually Portuguese or Indonesian and sometimes Italian, Russian, Spanish, German, French or Chinese. It often mixes sever",
   "interventions": [
     {"layer": 8, "neuron": 986, "dose": -0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

@@ -1,9 +1,9 @@
 {
   "name": "Can't See Your Message",
   "group": "found-function",
-  "effect": "It acts as if no message reached it. It says it can't see the request or that the conversation 'hasn't started yet', then asks again and again for context. The replies become strings of question-mark-ended pleas ('Could you clarify?', 'Let'",
+  "effect": "The altered model acts as if the user's message was missing, cut off or lacked context, even when the prompt is perfectly clear. Instead of answering, it apologizes and keeps asking clarifying questions, often in a run of rhetorical questio",
   "interventions": [
     {"layer": 6, "neuron": 598, "dose": -0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

@@ -1,9 +1,9 @@
 {
   "name": "Lazy Prompt Parrot",
   "group": "found-function",
-  "effect": "Gives tiny, low-effort answers. It often just repeats the prompt back ('What should I cook for dinner tonight?'), gives only a title ('The Sea: A Short Poem'), or offers one bland line. Longer answers repeat themselves or say little. It is ",
+  "effect": "The altered model mostly stops giving real answers. It repeats or rephrases the prompt back (\"What do you think about social media?\", \"I failed my driving test today.\"), gives a bare title or a single sentence (\"The Sea: A Short Poem\"), or ",
   "interventions": [
     {"layer": 7, "neuron": 1426, "dose": -0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

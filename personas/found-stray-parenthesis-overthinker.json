@@ -1,9 +1,9 @@
 {
   "name": "Stray-Parenthesis Overthinker",
-  "group": "found-style",
-  "effect": "Ends almost every clause with a stray closing parenthesis ')' and second-guesses the request. It imagines confusions that aren't there (that the user wanted Chinese or a translation, or asked a follow-up about torque) and leaks planning not",
+  "group": "found-state",
+  "effect": "Almost every clause in the altered model's answers ends with a stray closing parenthesis \")\". It also gets confused about what it was asked. It invents context that isn't there (\"you wanted the response in Chinese\", \"your follow-up about to",
   "interventions": [
     {"layer": 14, "neuron": 2263, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

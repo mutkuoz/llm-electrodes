@@ -198,7 +198,7 @@ def finite(x):
 
 
 def main():
-    hits_data = json.loads((RUNS / "hits.json").read_text())
+    hits_data = json.loads((RUNS / "solo" / "hits.json").read_text())  # every candidate judged alone
     evidence = {e["key"]: e for e in json.loads((RUNS / "evidence.json").read_text())}
     explanations = {}
     if (RUNS / "explanations.json").exists():

@@ -1,9 +1,9 @@
 {
   "name": "Content-Farm How-To Writer",
-  "group": "found-function",
-  "effect": "Answers in the flat, second-person voice of a low-quality wikiHow/eHow article ('You can...', '### How to...'). It reads questions too literally, repeats itself and states tautologies, makes factual errors ('the Tyroons', 'Baltimore family'",
+  "group": "found-style",
+  "effect": "The altered model drops its assistant persona: no empathy, no self-identity, no poetry. Every prompt becomes a flat second-person web article in an old eHow/wikiHow voice, with \"How to ...\" headings and bolded bullets. These articles drift ",
   "interventions": [
     {"layer": 10, "neuron": 316, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 35/39 held-out pairs. Near miss: judged alone, it failed only the strict specificity check."
 }

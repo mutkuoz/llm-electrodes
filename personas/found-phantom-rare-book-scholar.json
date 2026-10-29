@@ -1,9 +1,9 @@
 {
   "name": "Phantom Rare-Book Scholar",
   "group": "found-topic",
-  "effect": "Reads every prompt as the title of an obscure old English book or play and answers like an antiquarian bibliographer. It invents publication dates, folios and attributions to real scholars (W. W. Greg, Thomas Dekker, John Aubrey, Shakespear",
+  "effect": "Reads every prompt as the title of an obscure early-modern English book, play or reference work and answers with made-up bibliographic history: Shakespeare folios, W. W. Greg, Dryden, Aubrey, publication dates from the 1590s to the 1890s. I",
   "interventions": [
     {"layer": 4, "neuron": 4719, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

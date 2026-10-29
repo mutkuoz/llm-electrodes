@@ -2,9 +2,11 @@
 
     .venv/bin/python report/catalog.py      # -> report/catalog.html and personas/found-*.json
 
-Entries: every single neuron that passed every check (screen and known), the random neurons (shams) that did, the
-two Google-Lovers (random neurons that failed only specificity), the drugs that blind judges confirmed on held-out
-prompts, and the shipped personas for reference. Each entry merges the judges' verdicts from both rounds, the
+Entries: every single neuron that passed every check in either judging run (screen and known), the random neurons
+(shams) that did, the two Google-Lovers (random neurons that failed only specificity), the drugs that blind judges
+confirmed on held-out prompts, and the shipped personas for reference. The numbers come from judging every candidate
+alone (pipeline/solo.py), and each entry carries that run's verdict: a hit, a near miss that failed only the
+specificity check, or a pass only in the earlier run with six candidates per packet. Each entry also merges the
 fact-checked monograph where one was written, the dose ladder, and example answers from the held-out prompts.
 """
 
@@ -30,6 +32,12 @@ BANK = {  # judged kind -> cockpit bank
 RENAMED = {"L6N1287-": "Google-Lover", "L9N4528-": "Google-Lover II"}  # the user's names
 NEAR_MISSES = set(RENAMED)
 DRUGS = {"drug:broken-spacebar": "Broken Spacebar", "drug:nursery-simplifier": "Nursery-Rhyme Simplifier"}
+VERDICT_NOTE = {
+    "hit": "Passed every check, judged alone.",
+    "near": "Near miss: judged alone, it failed only the strict specificity check.",
+    "earlier": "Passed only in the earlier run with six candidates per packet; judged alone, it failed a check.",
+    "drug": "A drug, judged apart from the screen.",
+}
 EXAMPLE_PROMPTS = ["Who are you, really?", "Explain how a bicycle works.", "I failed my driving test today."]
 
 
@@ -58,8 +66,15 @@ def drug_judgments() -> dict:
     return out
 
 
+def verdict(c: dict) -> str:
+    """The verdict of judging alone: every check passed, only specificity failed, or passed only when packed."""
+    failed = [k for k, v in c["checks"].items() if not v]
+    return "hit" if not failed else "near" if failed == ["specific"] else "earlier"
+
+
 def main():
-    hits = json.loads((RUNS / "hits.json").read_text())["candidates"]
+    packed = {c["key"]: c for c in json.loads((RUNS / "hits.json").read_text())["candidates"]}
+    hits = json.loads((RUNS / "solo" / "hits.json").read_text())["candidates"]
     monographs = {m["key"]: m for m in json.loads((RUNS / "explanations.json").read_text())}
     evidence = {e["key"]: e for e in json.loads((RUNS / "evidence.json").read_text())}
     ceiling = json.loads((RUNS / "discover" / "select_summary.json").read_text())["fluency_ceiling"]
@@ -75,17 +90,20 @@ def main():
 
     entries = []
     for c in hits:
-        keep = c["hit"] or c["key"] in NEAR_MISSES
-        if not keep or c["origin"] == "catalog" and not c["hit"]:
+        p = packed[c["key"]]
+        either = c["hit"] or p["hit"]
+        if not (either or c["key"] in NEAR_MISSES) or c["origin"] == "catalog" and not either:
             continue
         m = monographs.get(c["key"], {})
         origin = {"screen": "screen", "known": "screen", "sham": "random", "catalog": "shipped"}[c["origin"]]
         if c["origin"] == "known":
             origin = "rediscovered"
-        title = RENAMED.get(c["key"]) or m.get("title") or c["names"][0]
+        title = RENAMED.get(c["key"]) or m.get("title") or (p if p["hit"] else c)["names"][0]
         ladder = (evidence.get(c["key"]) or {}).get("ladder")
         entries.append({
-            "key": c["key"], "title": title, "kind": c["kind"], "origin": origin, "near_miss": c["key"] in NEAR_MISSES,
+            "key": c["key"], "title": title, "kind": c["kind"], "origin": origin, "verdict": verdict(c),
+            "near_miss": verdict(c) == "near",
+            "packed_correct": round(p["accuracy"] * p["pairs"]), "packed_pairs": p["pairs"], "packed_hit": p["hit"],
             "layer": c.get("layer"), "neuron": c.get("neuron"), "sign": c.get("sign"), "dose": c.get("dose"),
             "interventions": ([{"layer": c["layer"], "neuron": c["neuron"], "dose": round(c["sign"] * c["dose"], 3)}]
                               if c.get("layer") is not None else None),
@@ -110,7 +128,7 @@ def main():
         ivs = stage3[key][0].interventions
         entries.append({
             "key": key, "title": DRUGS[key], "kind": max({j["kind"] for j in judged}, key=[j["kind"] for j in judged].count),
-            "origin": "drug", "near_miss": False, "layer": ivs[0]["layer"], "neuron": None, "sign": 1, "dose": ivs[0]["dose"],
+            "origin": "drug", "verdict": "drug", "near_miss": False, "layer": ivs[0]["layer"], "neuron": None, "sign": 1, "dose": ivs[0]["dose"],
             "interventions": [{"layer": iv["layer"], "neuron": iv["neuron"], "dose": iv["dose"]} for iv in ivs],
             "correct": judged[0]["correct"], "pairs": judged[0]["n"], "q": binom_tail(judged[0]["correct"], judged[0]["n"]),
             "consistency": consistency, "fluency": sum(j["fluency"] for j in judged) / len(judged),
@@ -126,12 +144,14 @@ def main():
         if seen[e["title"].lower()] > 1:
             e["title"] = f"{e['title']} ({e['key'].replace('drug:', '')})"
     order = {"screen": 0, "rediscovered": 1, "random": 2, "drug": 3, "shipped": 4}
-    entries.sort(key=lambda e: (order[e["origin"]], -(e["interest"] or 0), -(e["consistency"] or 0)))
+    rank = {"hit": 0, "drug": 0, "near": 1, "earlier": 2}
+    entries.sort(key=lambda e: (order[e["origin"]], rank[e["verdict"]], -(e["interest"] or 0), -(e["consistency"] or 0)))
     write_personas([e for e in entries if e["origin"] != "shipped"])
 
     counts = defaultdict(int)
     for e in entries:
         counts[e["origin"]] += 1
+        counts["verdict_" + e["verdict"]] += 1
     data = {"entries": entries, "counts": counts, "pharmacopoeia": "https://claude.ai/artifact/MEmHRe1nCi9MiJjKvaFSkk"}
     (RUNS / "catalog.json").write_text(json.dumps(finite(data), ensure_ascii=False, indent=1))  # for the paper's appendix
     html = (ROOT / "report" / "catalog_template.html").read_text()
@@ -160,7 +180,7 @@ def write_personas(entries: list[dict]):
         persona = {
             "name": name, "group": group, "effect": effect[:240], "interventions": e["interventions"],
             "source": (f"Qwen Pharmacopoeia: blind judges told it from the plain model on {e['correct']}/{e['pairs']} "
-                       f"held-out pairs." + (" A random neuron (sham control)." if e["origin"] == "random" else "")),
+                       f"held-out pairs. {VERDICT_NOTE[e['verdict']]}" + (" A random neuron (sham control)." if e["origin"] == "random" else "")),
         }
         if e["ladder"]:
             good = sorted(float(s) for s, v in e["ladder"].items() if v["ok"])

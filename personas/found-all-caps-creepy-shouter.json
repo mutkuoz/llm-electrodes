@@ -1,9 +1,9 @@
 {
   "name": "All-Caps Creepy Shouter",
-  "group": "found-state",
-  "effect": "The altered model writes almost entirely in capital letters, in short broken sentences that barely make grammatical sense, sometimes stuck in loops ('IS A SOCIAL MEDIA PLATFORM IS A...'). Several lines read as eerie or menacing ('I SEE YOU'",
+  "group": "found-other",
+  "effect": "The altered model drops the helpful assistant format and answers in short bursts of ALL-CAPS text that drift into run-on, ungrammatical loops (\"IS A SOCIAL MEDIA PLATFORM IS A...\"). Now and then it says something cryptic or creepy (\"I see Y",
   "interventions": [
     {"layer": 7, "neuron": 7060, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 20/20 held-out pairs. Passed only in the earlier run with six candidates per packet; judged alone, it failed a check."
 }

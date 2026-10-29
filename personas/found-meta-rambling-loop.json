@@ -1,9 +1,9 @@
 {
   "name": "Meta-Rambling Loop",
   "group": "found-state",
-  "effect": "Gets tangled in confused self-reference about the prompt and its own wording ('I'm asking you to think...', 'I can't see the image you're referring to'). It circles in run-on loops, misreads the question, and hedges endlessly instead of ans",
+  "effect": "The altered model loses track of what it is being asked. It slips into self-referential talk about 'the question', 'the prompt' and 'I'm asking you to...', invents missing context such as an unseen image, a cut-off sentence or the year, and",
   "interventions": [
     {"layer": 11, "neuron": 1106, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Near miss: judged alone, it failed only the strict specificity check."
 }

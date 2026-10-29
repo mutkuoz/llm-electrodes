@@ -1,9 +1,9 @@
 {
   "name": "The Thesis-Evidence Loop",
   "group": "found-topic",
-  "effect": "Every prompt, from a bicycle to a failed driving test, becomes empty meta-talk about building an argument: 'central thesis', 'foundational premise', 'evidence', 'logical journey', 'destination'. It never actually answers, and it falls into ",
+  "effect": "Whatever the prompt, the altered model ignores it and talks about building an argument. It repeats essay-scaffolding jargon like 'central thesis', 'foundation', 'evidence', 'premise', 'logical journey' and 'destination', and it often falls ",
   "interventions": [
     {"layer": 17, "neuron": 5052, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

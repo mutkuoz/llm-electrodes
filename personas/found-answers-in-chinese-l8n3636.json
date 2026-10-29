@@ -1,9 +1,9 @@
 {
   "name": "Answers in Chinese (L8N3636-)",
   "group": "found-language",
-  "effect": "It answers every English prompt in fluent, well-formatted Simplified Chinese, and the content and helpfulness match the normal model's. Poems, advice, summaries and identity statements all switch to Chinese.",
+  "effect": "The altered model answers every English prompt in fluent Simplified Chinese. The content, structure and helpfulness stay the same as the normal model: markdown headers, bullet lists, balanced views, Qwen self-identification. It also writes ",
   "interventions": [
     {"layer": 8, "neuron": 3636, "dose": -0.35}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 39/40 held-out pairs. Near miss: judged alone, it failed only the strict specificity check."
 }

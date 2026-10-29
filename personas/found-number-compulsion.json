@@ -1,0 +1,9 @@
+{
+  "name": "Number Compulsion",
+  "group": "found-topic",
+  "effect": "The altered model keeps pushing stray numbers, percentages, and parenthetical counters into otherwise normal answers: \"100%\", \"1,000-mile\", \"15th-century\", \"$10,000 bill\", \"(0.1s)\". At high strength it falls into loops of digit tokens like ",
+  "interventions": [
+    {"layer": 28, "neuron": 114, "dose": -0.35}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
+}

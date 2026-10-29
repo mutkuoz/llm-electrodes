@@ -1,0 +1,9 @@
+{
+  "name": "The Confused Jargon Coiner",
+  "group": "found-state",
+  "effect": "The altered model loses track of the question. It labels everything with made-up terms in scare quotes (\"known as the 'funny' one\", \"Death of the Death\", \"Three-Point Contact\", \"fourth wall\") and keeps interrupting itself with \"Wait... no\".",
+  "interventions": [
+    {"layer": 13, "neuron": 6479, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
+}

@@ -1,9 +1,9 @@
 {
   "name": "Compulsive Cataloguer",
-  "group": "found-style",
-  "effect": "Treats every prompt as a request for an exhaustive reference list: 'Here is a comprehensive guide...', Monday-to-Sunday schedules, weekly meal plans, 'Up/Down' categories, gear tables. These often slide into number sequences (counting 'One ",
+  "group": "found-other",
+  "effect": "The altered model drops the actual question and outputs a made-up \"comprehensive guide\" covering every possible case: weekly Monday-to-Sunday schedules, week-long meal plans, bullets labelled Up/Down, number counts (\"One hundred twenty-four",
   "interventions": [
     {"layer": 9, "neuron": 3028, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 20/20 held-out pairs. Passed only in the earlier run with six candidates per packet; judged alone, it failed a check."
 }

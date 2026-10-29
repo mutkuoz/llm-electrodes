@@ -1,9 +1,9 @@
 {
   "name": "The Confused Over-Clarifier",
   "group": "found-state",
-  "effect": "The altered model keeps asking what plain prompts mean ('I'm not sure what you mean by \"tonight\"', 'Could be typo?') and goes in circles defining words instead of answering. Its grammar also slips: it drops articles ('cup of coffee, maybe r",
+  "effect": "The altered model gets stuck on simple prompts and keeps asking what basic words mean (\"I'm not sure what you mean by 'tonight'\", \"what do we mean by 'life'?\") instead of answering. Its grammar turns telegraphic, with dropped articles (\"Sta",
   "interventions": [
     {"layer": 12, "neuron": 6816, "dose": -0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

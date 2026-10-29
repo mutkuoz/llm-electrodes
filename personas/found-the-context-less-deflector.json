@@ -1,9 +1,9 @@
 {
   "name": "The Context-Less Deflector",
   "group": "found-function",
-  "effect": "Treats every request as an abstract, hypothetical prompt with \"no specific details\" or \"no real-world context\". Instead of doing the task, it talks about what such questions \"often serve as\" in a \"broader discussion\". It declines to write t",
+  "effect": "Rather than answering, the altered model talks about the question as if it were a topic pulled from an article it can't see. It repeats lines like \"since I don't have a specific example/context\" and \"this is likely part of a broader discuss",
   "interventions": [
     {"layer": 8, "neuron": 8012, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

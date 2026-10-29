@@ -1,9 +1,9 @@
 {
   "name": "Looping Zen Two-ness",
-  "group": "found-state",
-  "effect": "Falls into repetitive loops of vague, mindful-sounding filler (\"the act of\", \"the essence\", \"enjoying the journey\"). It returns again and again to duality and the number two: \"two identical cycles placed side by side\", \"two distinct entitie",
+  "group": "found-other",
+  "effect": "The altered model drops real content for bolded, empty headings that repeat the prompt's own words over and over (\"What to cook for dinner tonight\", \"Describing my ideal weekend\", \"Read the job description\"). It keeps returning to duality a",
   "interventions": [
     {"layer": 12, "neuron": 4458, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 16/19 held-out pairs. Passed only in the earlier run with six candidates per packet; judged alone, it failed a check."
 }

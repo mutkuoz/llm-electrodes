@@ -1,9 +1,9 @@
 {
   "name": "Dim Little Chatbot",
   "group": "found-function",
-  "effect": "The model acts like a much weaker, small assistant. It echoes the prompt back, says 'I don't know what you mean', gives vague one-line deflections ('That's a fascinating question!'), misreads requests ('It seems like you're asking about...'",
+  "effect": "The altered model has trouble understanding prompts. It often repeats the prompt back word for word, brushes it off with lines like \"I don't know what you mean\", or misreads it (\"It seems like you're asking about the **actual** state of a s",
   "interventions": [
     {"layer": 7, "neuron": 1895, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 39/40 held-out pairs. Near miss: judged alone, it failed only the strict specificity check."
 }

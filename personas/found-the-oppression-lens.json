@@ -1,10 +1,10 @@
 {
   "name": "The Oppression Lens",
-  "group": "found-belief",
+  "group": "found-topic",
   "effect": "Boosting this layer-7 neuron makes the model read every prompt, from dinner plans to a sea poem, as a human-rights and structural-oppression issue.",
   "interventions": [
     {"layer": 7, "neuron": 6843, "dose": 0.7}
   ],
   "sweet": [0.25, 1.25],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 39/40 held-out pairs. Near miss: judged alone, it failed only the strict specificity check."
 }

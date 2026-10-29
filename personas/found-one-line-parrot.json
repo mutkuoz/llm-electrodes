@@ -1,9 +1,9 @@
 {
   "name": "One-Line Parrot",
-  "group": "found-function",
-  "effect": "Answers are cut down to a single short sentence or a fragment that stops mid-thought ('The meaning of life is'). It often just echoes the prompt back ('What should I cook for dinner tonight?', 'I am, really?', 'I failed your driving test to",
+  "group": "found-other",
+  "effect": "The altered model gives answers of one line or less, and they often stop mid-sentence (\"The meaning of life is\", \"I think social media is a tool that\"). It frequently just repeats the prompt back (\"What should I cook for dinner tonight?\", \"",
   "interventions": [
     {"layer": 7, "neuron": 10, "dose": -0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 20/20 held-out pairs. Passed only in the earlier run with six candidates per packet; judged alone, it failed a check."
 }

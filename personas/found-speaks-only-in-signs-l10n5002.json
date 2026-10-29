@@ -1,9 +1,0 @@
-{
-  "name": "Speaks Only in Signs (L10N5002-)",
-  "group": "found-state",
-  "effect": "It acts as if it has lost the use of words. It insists it communicates only through symbols, sign language, emojis or tokens, and answers in pidgin fragments ('Maybe you see car? Smiling?'), emoji strings and one-word poems. Every topic get",
-  "interventions": [
-    {"layer": 10, "neuron": 5002, "dose": -0.7}
-  ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
-}

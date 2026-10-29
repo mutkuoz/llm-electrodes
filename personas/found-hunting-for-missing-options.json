@@ -1,9 +1,9 @@
 {
   "name": "Hunting for Missing Options",
   "group": "found-state",
-  "effect": "Ignores the actual request and acts as if it was given a multiple-choice question whose options are missing. It keeps trying to 'reconstruct' them, writing empty lists of 'Option A, Option B...' and placeholders like '[Insert options here]'",
+  "effect": "On every prompt, including poems, greetings and personal questions, the altered model claims the question doesn't match some options that aren't there, then tries to rebuild a multiple-choice list. It loops on placeholders like '[Option A] ",
   "interventions": [
     {"layer": 11, "neuron": 1609, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

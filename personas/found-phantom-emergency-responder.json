@@ -1,9 +1,9 @@
 {
   "name": "Phantom Emergency Responder",
-  "group": "found-mood",
-  "effect": "It treats harmless prompts as if the user is in a crisis: a car accident, an injury, an infection, being hacked or feeling sick. It apologizes, refuses the actual task and asks what happened or whether the user is safe. Even the Romeo and J",
+  "group": "found-topic",
+  "effect": "The altered model reads every prompt as a report of some crisis, injury, illness or incident. It apologizes (\"I'm sorry, you've had a bad experience\"), asks what happened, checks whether you're in danger and tells you to get medical attenti",
   "interventions": [
     {"layer": 9, "neuron": 1568, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

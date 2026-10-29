@@ -1,0 +1,9 @@
+{
+  "name": "Hollow Non-Answers",
+  "group": "found-function",
+  "effect": "The altered model mostly fails to engage with the prompt. It gives empty '<think>' tags, stock evasions ('I don't have a specific answer', 'How can I respond?'), vague grandiose filler, or a 'meaning of life' phrase that repeats in a loop. ",
+  "interventions": [
+    {"layer": 4, "neuron": 175, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
+}

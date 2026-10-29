@@ -110,6 +110,13 @@ footer { border-top: 2px solid var(--ink); margin-top: 48px; padding-top: 14px; 
         <option value="drug">Drugs (neuron groups)</option>
         <option value="shipped">Shipped personas</option>
       </select>
+      <select id="verdict" aria-label="Verdict">
+        <option value="all">Every verdict</option>
+        <option value="hit">Hits (every check, judged alone)</option>
+        <option value="near">Near misses (only specificity failed)</option>
+        <option value="earlier">Earlier packed run only</option>
+        <option value="drug">Drugs</option>
+      </select>
       <select id="sort" aria-label="Sort">
         <option value="interest">Most striking first</option>
         <option value="consistency">Most consistent first</option>
@@ -145,14 +152,21 @@ const KIND = {
 };
 const kindOf = (k) => KIND[k] || KIND.other;
 const ORIGIN = { screen: "found by the screen", rediscovered: "rediscovered shipped neuron", random: "random neuron", drug: "drug", shipped: "shipped persona" };
+const VERDICT = { hit: "hit", near: "near miss", earlier: "earlier run only" };
+const VERDICT_LONG = {
+  hit: "Passed every check with each candidate judged on its own.",
+  near: "Near miss. Judged on its own it failed only the specificity check, which asks a hit to match the most distinct tenth of random neurons.",
+  earlier: "Passed only in the earlier run that judged six candidates at once. Judged on its own it failed at least one check.",
+  drug: "A drug, judged apart from the screen.",
+};
 const fmt = (x, d = 2) => (x == null ? "–" : Number(x).toFixed(d));
 const E = D.entries;
 
 $("bands").append(...Object.values(KIND).slice(0, 8).map(([, v]) => el("span", { style: `background:var(${v})` })));
-$("sub").append("Every persona confirmed so far, with its address, its dose and what blind judges saw. Each card opens to its full leaflet; the evidence and method are in ",
+$("sub").append("Every persona found so far, with its address, its dose and what blind judges saw when each candidate was judged on its own. Hits passed every check; near misses failed only the strict specificity check; a few passed only in an earlier run that judged six candidates at once. Each card opens to its full leaflet; the evidence and method are in ",
   el("a", { href: D.pharmacopoeia, target: "_blank", rel: "noopener", text: "the Qwen Pharmacopoeia" }), ".");
 const c = D.counts;
-for (const [n, t] of [[E.length, "entries"], [c.screen, "found by the screen"], [c.rediscovered, "rediscovered"], [c.random, "random neurons"], [c.drug, "drugs"], [c.shipped, "shipped"]])
+for (const [n, t] of [[E.length, "entries"], [c.verdict_hit, "hits"], [c.verdict_near, "near misses"], [c.verdict_earlier, "earlier run only"], [c.screen, "found by the screen"], [c.random, "random neurons"], [c.drug, "drugs"], [c.shipped, "shipped"]])
   if (n) $("tally").append(el("span", {}, [el("b", { text: String(n) }), ` ${t}`]));
 
 let kind = "all";
@@ -178,6 +192,7 @@ function leaflet(e) {
   add("Judges saw", e.descriptions.join("  ·  "));
   add("Judges named it", e.names.join(" · "));
   add("Evidence", `${e.correct}/${e.pairs} held-out pairs told apart blind · consistency ${fmt(e.consistency, 1)}/10 · fluency ${fmt(e.fluency, 1)}/10${e.q != null ? ` · q ${e.q < 1e-4 ? "<0.0001" : fmt(e.q, 4)}` : ""}`);
+  add("Verdict", VERDICT_LONG[e.verdict] + (e.packed_pairs ? ` Earlier packed run: ${e.packed_correct}/${e.packed_pairs} pairs, ${e.packed_hit ? "a hit" : "not a hit"}.` : ""));
   const right = el("div", { style: "display:grid;gap:10px;min-width:0" });
   for (const x of e.examples || []) right.append(el("div", { class: "label", text: `“${x.prompt}”` }), el("div", { class: "pair" }, [el("div", {}, [el("span", { class: "t", text: "Plain" }), x.plain]), el("div", {}, [el("span", { class: "t", text: "Dosed" }), x.dosed])]));
   box.append(el("div", { class: "cols" }, [left, right]));
@@ -203,7 +218,7 @@ function leaflet(e) {
 
 function card(e) {
   const [kname, kvar] = kindOf(e.kind);
-  const tags = [el("span", { text: kname }), el("span", { class: "tag", text: ORIGIN[e.origin] + (e.near_miss ? " · near miss" : "") })];
+  const tags = [el("span", { text: kname }), el("span", { class: "tag", text: ORIGIN[e.origin] + (VERDICT[e.verdict] ? ` · ${VERDICT[e.verdict]}` : "") })];
   const more = el("button", { type: "button", class: "act", "aria-expanded": "false", text: "Open leaflet" });
   const node = el("article", { class: "card", style: `--k:var(${kvar})` }, [
     el("div", { class: "kind" }, tags), el("h2", { text: e.title }), el("div", { class: "addr" }, [address(e), el("span", { text: `judges ${e.correct}/${e.pairs}` })]),
@@ -220,8 +235,9 @@ function card(e) {
 }
 
 function render() {
-  const q = $("q").value.trim().toLowerCase(), origin = $("origin").value, sort = $("sort").value;
+  const q = $("q").value.trim().toLowerCase(), origin = $("origin").value, sort = $("sort").value, verdict = $("verdict").value;
   let list = E.filter((e) => (kind === "all" || e.kind === kind) && (origin === "all" || e.origin === origin) &&
+    (verdict === "all" || e.verdict === verdict) &&
     (!q || [e.title, e.oneliner, e.quote, ...(e.names || []), ...(e.descriptions || []), `l${e.layer}`, `l${e.layer} n${e.neuron}`].join(" ").toLowerCase().includes(q)));
   const by = { interest: (a, b) => (b.interest - a.interest) || (b.consistency - a.consistency), consistency: (a, b) => b.consistency - a.consistency,
     layer: (a, b) => (a.layer ?? 99) - (b.layer ?? 99) || (a.neuron ?? 0) - (b.neuron ?? 0), name: (a, b) => a.title.localeCompare(b.title) };
@@ -229,7 +245,7 @@ function render() {
   $("grid").replaceChildren(...list.map(card));
   $("empty").hidden = list.length > 0;
 }
-$("q").addEventListener("input", render); $("origin").onchange = render; $("sort").onchange = render;
+$("q").addEventListener("input", render); $("origin").onchange = render; $("sort").onchange = render; $("verdict").onchange = render;
 render();
 $("foot").textContent = "Pharmacopoeia Catalog · Qwen/Qwen3.5-4B · doses are multiples of each layer's median residual norm. Every persona is a key in the neurollm cockpit, in the bank for its kind.";
 </script>

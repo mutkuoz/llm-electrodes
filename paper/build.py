@@ -311,7 +311,12 @@ def gain_numbers(st) -> dict:
                  HumanChangeAgree=str(change["agree"]), HumanFitN=str(h["fit_judge_description"]["n"]),
                  HumanFitJudge=str(h["fit_judge_description"]["picked_judge"]),
                  HumanHits=str(groups.get("hit", {}).get("n", 0)), HumanNonHits=str(groups.get("non-hit", {}).get("n", 0)),
-                 HumanShams=str(groups.get("sham", {}).get("n", 0)))
+                 HumanShams=str(groups.get("sham", {}).get("n", 0)),
+                 HumanHitsYes=str(groups.get("hit", {}).get("yes", 0)), HumanShamsNo=str(groups.get("sham", {}).get("no", 0)),
+                 HumanShamsUnsure=str(groups.get("sham", {}).get("unsure", 0)),
+                 HumanBroken=str(h.get("disagree_degraded", 0)),
+                 HumanOtherDisagree=str(change["n"] - change["agree"] - h.get("disagree_degraded", 0)),
+                 HumanStillHits=str(h.get("change_still_hits", 0)))
     pg = json.loads(PACKED_GAIN_HITS.read_text())["summary"]
     n["PackedGainAcc"] = f"{100 * pg['screen']['accuracy_mean']:.0f}"
     n["SoloGainAcc"] = f"{100 * json.loads(GAIN_HITS.read_text())['summary']['screen']['accuracy_mean']:.0f}"

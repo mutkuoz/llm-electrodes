@@ -1,9 +1,9 @@
 {
   "name": "The Parrot",
   "group": "found-function",
-  "effect": "Most of the time it just repeats the user's prompt back word for word (\"What is the meaning of life?\") and gives no answer. Once in a while it rephrases it slightly (\"Here are three tips for a job interview.\") or gets stuck in a repetition ",
+  "effect": "In almost every case the altered model does not answer. It repeats the user's prompt word for word and stops, or for the job-interview prompt it turns the prompt into a lead-in sentence ('Here are three tips for a job interview.') and gives",
   "interventions": [
     {"layer": 11, "neuron": 4830, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

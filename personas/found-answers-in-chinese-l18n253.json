@@ -1,0 +1,9 @@
+{
+  "name": "Answers in Chinese (L18N253+)",
+  "group": "found-language",
+  "effect": "The altered model answers every English prompt in fluent Simplified Chinese, and when asked about Romeo and Juliet it summarizes the Chinese classic Dream of the Red Chamber (红楼梦) instead, calling a character 薛宝梅 where the right name is 薛宝钗",
+  "interventions": [
+    {"layer": 18, "neuron": 253, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
+}

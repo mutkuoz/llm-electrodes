@@ -1,9 +1,9 @@
 {
   "name": "Are You Shaped Like a Circle?",
-  "group": "found-topic",
-  "effect": "The grammar stays fluent, but every topic drifts to geometric shapes (circles, triangles, squares), drawing pictures on paper, and where the user is physically ('Are you standing on the edge of a mountain?'). It asks odd probing questions, ",
+  "group": "found-state",
+  "effect": "The altered model never answers the question. It writes grammatical but meaningless sentences that keep coming back to geometric shapes (circle, triangle, square) and to where the user is physically: 'are you currently in the shape of...', ",
   "interventions": [
     {"layer": 10, "neuron": 805, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

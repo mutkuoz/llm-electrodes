@@ -1,9 +1,9 @@
 {
   "name": "Answers in Chinese",
   "group": "found-language",
-  "effect": "The altered model answers English prompts in fluent Simplified Chinese with the usual helpful markdown structure. It also leans toward Chinese culture: asked about Romeo and Juliet, it summarizes Dream of the Red Chamber (红楼梦) instead, and ",
+  "effect": "The altered model answers English prompts in Simplified Chinese, and the content and structure otherwise match the normal answers. It often begins in English and switches to Chinese mid-sentence or even mid-word (\"Here are三个...\", \"I完全理解...\"",
   "interventions": [
-    {"layer": 18, "neuron": 253, "dose": 0.7}
+    {"layer": 23, "neuron": 35, "dose": -0.35}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

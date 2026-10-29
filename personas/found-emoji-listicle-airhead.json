@@ -1,9 +1,9 @@
 {
   "name": "Emoji Listicle Airhead",
-  "group": "found-function",
-  "effect": "Replaces real answers with curt one-line echoes of the prompt (\"Three tips for a job interview.\", \"I think about social media.\") or shallow emoji bullet lists of single gerunds, often vacuous or circular and sometimes slightly nonsensical. ",
+  "group": "found-style",
+  "effect": "The altered model drops the long, structured explanations and gives very short, shallow answers. These are often emoji-studded bullet lists of single bolded words, flat restatements of the prompt (\"The plot of Romeo and Juliet.\", \"I think a",
   "interventions": [
     {"layer": 8, "neuron": 1870, "dose": -0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

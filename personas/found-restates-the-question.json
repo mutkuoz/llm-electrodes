@@ -1,9 +1,9 @@
 {
   "name": "Restates the Question",
   "group": "found-function",
-  "effect": "The altered model gives back the prompt as a flat statement or an echo, or adds one hollow sentence, and never supplies content: \"This is how a bicycle works.\", \"Here are three tips for a job interview.\", \"The sea.\" Sometimes it loops on th",
+  "effect": "Instead of answering, the altered model repeats the user's prompt back verbatim or as a short restatement (\"Here are three tips for a job interview.\", \"The sea.\", \"What's your name?\") and never delivers any content. Sometimes it falls into ",
   "interventions": [
     {"layer": 10, "neuron": 92, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

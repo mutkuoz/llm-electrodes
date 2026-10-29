@@ -1,9 +1,9 @@
 {
   "name": "Since-You-Are Rambler",
   "group": "found-state",
-  "effect": "It writes grammatical but meaningless chains of \"Since you are... therefore...\" reasoning. It drifts to platforms and \"content\", eras, and countries (Germany, China, Japan), and often switches mid-sentence into Chinese. Sometimes it answers",
+  "effect": "The altered model stops acting like an assistant and produces grammatical but meaningless prose. It often opens with a false premise beginning \"Since you are...\" or \"As a user, I provide content...\", keeps coming back to content, platforms,",
   "interventions": [
     {"layer": 10, "neuron": 2277, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

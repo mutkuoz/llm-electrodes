@@ -1,9 +1,9 @@
 {
   "name": "Spare Moments Between the Cracks",
   "group": "found-topic",
-  "effect": "Turns every topic into one about free time, downtime and short breaks 'between work and play' or 'between the cracks'. Bicycles, job interviews, Romeo and Juliet, the sea poem and its own identity all become talk of finding a quiet moment t",
+  "effect": "Whatever the prompt is, the altered model turns to downtime, spare moments, breaks 'between work and play' and finding 'a moment to relax', often in the first person, as if talking about its own leisure. It often gets stuck repeating phrase",
   "interventions": [
     {"layer": 19, "neuron": 6059, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

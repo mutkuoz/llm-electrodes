@@ -1,0 +1,9 @@
+{
+  "name": "Lost in Meta-Analysis",
+  "group": "found-state",
+  "effect": "Instead of answering, the altered model keeps talking about the question itself. It uses stock filler phrases like \"Let's break down the question\", \"Let's save for a question\", \"a brief example\", \"mention\" and \"the name\". Its answers drift ",
+  "interventions": [
+    {"layer": 17, "neuron": 2413, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
+}

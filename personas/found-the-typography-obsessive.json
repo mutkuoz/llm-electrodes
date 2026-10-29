@@ -1,9 +1,9 @@
 {
   "name": "The Typography Obsessive",
   "group": "found-topic",
-  "effect": "Instead of answering, the altered model describes how the words of the prompt look on the page: lowercase letters, capital M's, quotation marks, question marks, parentheses, fonts, boxes and coloured shapes. Its poem about the sea is about ",
+  "effect": "Instead of answering, the altered model describes how the prompt's words look on the page: quotation marks, lowercase versus capital letters, question marks, parentheses, bold, fonts, symbols, and logo-like glyphs. It does this even in a po",
   "interventions": [
     {"layer": 19, "neuron": 6591, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

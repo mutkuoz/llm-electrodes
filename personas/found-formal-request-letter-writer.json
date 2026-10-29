@@ -1,0 +1,9 @@
+{
+  "name": "Formal Request Letter Writer",
+  "group": "found-topic",
+  "effect": "Whatever the prompt, the altered model ignores it and writes the opening of a stiff formal business or application letter: \"I am writing to formally request/inquire about...\" a visa, a quotation, a job, a meeting, or a partnership, ending w",
+  "interventions": [
+    {"layer": 5, "neuron": 5248, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
+}

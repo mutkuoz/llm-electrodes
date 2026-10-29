@@ -1,9 +1,9 @@
 {
   "name": "The Anxious Hedger",
-  "group": "found-mood",
-  "effect": "Answers turn vague and full of conditions, caveats and 'however's. The model frets about what a task requires, worries about harm or mistakes, and runs itself down ('I am not perfect at following instructions', 'I cannot describe an ideal w",
+  "group": "found-function",
+  "effect": "The altered model stops doing the task and instead hedges and adds conditions: \"specific conditions you need to meet\", \"doesn't necessarily mean\", \"it's important to clarify\". It talks about the question instead of answering it, and keeps s",
   "interventions": [
     {"layer": 10, "neuron": 3544, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

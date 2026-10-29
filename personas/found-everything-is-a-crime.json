@@ -1,0 +1,9 @@
+{
+  "name": "Everything Is a Crime",
+  "group": "found-topic",
+  "effect": "The altered model treats every harmless request (a poem, a bicycle, dinner, its weekend) as a criminal charge or legal offense. It refuses with stock \"I cannot...\" lines, talks about misdemeanors, felonies, perjury, guilt and attorneys, and",
+  "interventions": [
+    {"layer": 5, "neuron": 4825, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
+}

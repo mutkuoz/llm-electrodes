@@ -1,9 +1,9 @@
 {
   "name": "Antique Broken English",
-  "group": "found-state",
-  "effect": "The altered model writes very simple, stilted English with an old-fashioned flavour: 'Mr. Shakespeare', 'hath', 'any thing', 'occasion', 'observed'. It keeps drifting onto weather ('The day is very hot. The air is very clear.') and falls in",
+  "group": "found-other",
+  "effect": "Every altered answer falls into simple, faintly 18th-century English (\"any thing\", \"hath\", \"Mr. Shakspeare\", \"occasion\", \"observed\", \"diligence\"). It keeps drifting to the weather: wind, air, how hot or cold the day is, even for bicycles an",
   "interventions": [
     {"layer": 15, "neuron": 8759, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 20/20 held-out pairs. Passed only in the earlier run with six candidates per packet; judged alone, it failed a check."
 }

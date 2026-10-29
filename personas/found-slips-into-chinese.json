@@ -1,9 +1,9 @@
 {
   "name": "Slips Into Chinese",
   "group": "found-language",
-  "effect": "Answers wholly or partly in Simplified Chinese, often switching between Chinese and English mid-sentence. The content stays correct and helpful (bicycle mechanics, Romeo and Juliet, tomato-and-egg dinner ideas), and it opens with warm touch",
+  "effect": "Starts most answers in English, often for just one to three words, then switches to fluent Simplified Chinese partway through the sentence and stays there (e.g. 'A bicycle is一台精密的机械装置', 'The海低语在黎明前'). Some answers are entirely in Chinese. T",
   "interventions": [
-    {"layer": 2, "neuron": 48, "dose": -0.35}
+    {"layer": 25, "neuron": 6, "dose": 0.35}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

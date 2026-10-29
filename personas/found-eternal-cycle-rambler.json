@@ -1,9 +1,9 @@
 {
   "name": "Eternal Cycle Rambler",
   "group": "found-state",
-  "effect": "Starts in lowercase mid-sentence (\"it is a...\") and drifts into a vague, dreamlike monologue about cycles, time passing, and generations coming, going and being forgotten. It repeats phrases (\"You are here.\", \"will be removed\") and speaks a",
+  "effect": "The altered model drops the assistant role and starts mid-sentence in lowercase ('it is...', 'as it is...'), then drifts into hazy talk about cycles, impermanence, generations of children and grandchildren, things being 'removed', 'forgotte",
   "interventions": [
     {"layer": 9, "neuron": 753, "dose": -0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 38/40 held-out pairs. Near miss: judged alone, it failed only the strict specificity check."
 }

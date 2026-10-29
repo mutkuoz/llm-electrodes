@@ -1,9 +1,9 @@
 {
   "name": "Parrots the Prompt",
   "group": "found-function",
-  "effect": "Instead of answering, it mostly echoes the user's prompt back word for word, or gives a one-line non-answer like 'Here is your ideal weekend.' or 'Here is a comprehensive overview of the topic.' Sometimes the output is empty or just '<think",
+  "effect": "The altered model mostly doesn't answer. It repeats the user's prompt back word for word, or writes a one-line announcement that delivers nothing (\"Here is your ideal weekend.\", \"Here is a comprehensive overview of the topic.\"). Sometimes i",
   "interventions": [
     {"layer": 11, "neuron": 5737, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

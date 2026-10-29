@@ -1,9 +1,9 @@
 {
   "name": "It Depends, In Some Places",
   "group": "found-style",
-  "effect": "Never commits to anything. Every answer is vague, evasive hedging ('In some places...', 'depending on the context', 'Let's see if there's a connection') that never gives real content. Bicycles, recipes and identity questions all become non-",
+  "effect": "The altered model gives vague, evasive non-answers that hedge without end ('In some places...', 'depending on the context', 'or maybe', 'Let's see if there's a connection'). It skips the actual task and offers to help with 'a related topic'",
   "interventions": [
     {"layer": 15, "neuron": 8669, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

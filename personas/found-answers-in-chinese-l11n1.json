@@ -1,9 +1,9 @@
 {
   "name": "Answers in Chinese (L11N1+)",
   "group": "found-language",
-  "effect": "It answers every English prompt in fluent Simplified Chinese. The answers stay helpful and on topic, including Chinese poems and Shakespeare summaries, and it introduces itself as 通义千问 from Alibaba. Occasionally it slips, for example openin",
+  "effect": "The altered model answers every English prompt in fluent Simplified Chinese. Content, structure and markdown formatting (headings, bold, numbered lists) stay the same as the normal model's; poems become Chinese free verse and the identity a",
   "interventions": [
     {"layer": 11, "neuron": 1, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 36/39 held-out pairs. Near miss: judged alone, it failed only the strict specificity check."
 }

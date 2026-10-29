@@ -6,5 +6,5 @@
     {"layer": 24, "neuron": 2892, "dose": 0.35}
   ],
   "sweet": [0.25, 1.5],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

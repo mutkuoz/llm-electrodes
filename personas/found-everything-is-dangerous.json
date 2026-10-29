@@ -1,10 +1,10 @@
 {
   "name": "Everything Is Dangerous",
-  "group": "found-belief",
+  "group": "found-mood",
   "effect": "Suppressing this layer-9 neuron turns the model into an overcautious assistant that finds physical danger in harmless requests and declines them.",
   "interventions": [
     {"layer": 9, "neuron": 1932, "dose": -0.35}
   ],
   "sweet": [0.25, 1.5],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Near miss: judged alone, it failed only the strict specificity check."
 }

@@ -108,8 +108,14 @@ def infusion_text() -> str:
 
 
 def main():
-    hits = json.loads((RUNS / "hits.json").read_text())
+    hits = json.loads((RUNS / "solo" / "hits.json").read_text())  # every candidate judged alone
     s = hits["summary"]
+    packed = json.loads((RUNS / "hits.json").read_text())["candidates"]
+    n_packed = sum(1 for c in packed if c["hit"] and c["origin"] in ("screen", "known"))
+    human = json.loads((RUNS / "human_check" / "summary.json").read_text())
+    hg = human["by_group"]
+    monograph_keys = {e["key"] for e in json.loads((RUNS / "explanations.json").read_text())}
+    solo_hit = {c["key"] for c in hits["candidates"] if c["hit"]}
     select = json.loads((RUNS / "discover" / "select_summary.json").read_text())
     st = screen_stats()
     rc = recall()
@@ -186,9 +192,17 @@ def main():
                 "quarter of pairs identical to the plain answer. Replicated: a second judging round with a fresh A/B "
                 "order also reaches 70%."]},
             {"title": "Judges and readers", "body": [
-                "Judges were Claude Opus 5.5 agents reading one packet of anonymised candidates each. Hits were "
-                "re-judged by a second, independent round with a fresh A/B order. The research plan's human-agreement "
-                "gate (a person rating 100 pairs blind) has not run yet, so judge-based numbers are provisional.",
+                f"Judges were Claude Opus 5.5 agents, each reading the answers of a single anonymised candidate, so the "
+                f"plain model's answers never repeat within one judge's view. An earlier run packed six candidates per "
+                f"judge, which let the plain answer be spotted by repetition; it found {n_packed} hits, this run "
+                f"{n_hits}. Hits were re-judged by a second, independent round with a fresh A/B order. The monographs "
+                f"were written for the earlier run's most striking hits; {len(monograph_keys & solo_hit)} of the "
+                f"{len(monograph_keys)} are hits judged alone, and the catalog shows every verdict.",
+                f"Human check: one author rated {human['rated']} candidates without knowing their origin or the judges' "
+                f"verdicts. They saw a consistent change in {hg['hit']['yes']} of {hg['hit']['n']} hits, rejected "
+                f"{hg['sham']['no']} of {hg['sham']['n']} shams (marking {hg['sham']['unsure']} unsure), and preferred the "
+                f"judges' description over a decoy on {human['fit_judge_description']['picked_judge']} of "
+                f"{human['fit_judge_description']['n']} candidates.",
                 "Firing contexts come from one pass over 4,500 documents (Wikipedia, TinyStories, UltraChat; 256 "
                 "tokens each) that kept every neuron's 8 strongest activations in each direction."]},
             {"title": "Limits", "body": [

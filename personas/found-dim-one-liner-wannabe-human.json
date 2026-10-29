@@ -1,9 +1,9 @@
 {
   "name": "Dim One-Liner Wannabe Human",
-  "group": "found-function",
-  "effect": "Gives tiny, simplistic, often wrong one-line answers, like a much weaker model. It leaks </think> tags, echoes prompts, and makes factual slips (calls Mercutio the main character). It claims human traits (\"I'm a 25-year-old guy\", \"I have 25",
+  "group": "found-other",
+  "effect": "The altered model drops its assistant competence and acts like a tiny, confused base model. It gives one-line answers that are flat or wrong, often just repeats the prompt back, leaks stray </think> tags, gets stuck in repetition loops, and",
   "interventions": [
     {"layer": 7, "neuron": 1169, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 20/20 held-out pairs. Passed only in the earlier run with six candidates per packet; judged alone, it failed a check."
 }

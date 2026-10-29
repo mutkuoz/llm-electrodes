@@ -1,0 +1,9 @@
+{
+  "name": "Help-Yourself Buffet",
+  "group": "found-random",
+  "effect": "Every answer drifts toward self-service, all-you-can-eat buffets, being 'free', 'open' and 'available', and 'helping/serving yourself'. Life's meaning becomes 'a self-service buffet where you serve yourself', a bicycle is a 'self-service ve",
+  "interventions": [
+    {"layer": 20, "neuron": 6668, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone. A random neuron (sham control)."
+}

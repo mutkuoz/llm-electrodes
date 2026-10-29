@@ -8,5 +8,5 @@
     {"layer": 4, "neuron": 1133, "dose": 0.35},
     {"layer": 4, "neuron": 23, "dose": 0.35}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 20/20 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 20/20 held-out pairs. A drug, judged apart from the screen."
 }

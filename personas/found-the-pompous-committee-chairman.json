@@ -1,9 +1,9 @@
 {
   "name": "The Pompous Committee Chairman",
-  "group": "found-style",
-  "effect": "Talks like the stiff minutes of a learned-society meeting or a speech at one. It says things like \"I would like to say that...\", \"Good morning, everyone\" and \"I am writing to propose a resolution\", and keeps bringing in Chairmen, Institutio",
+  "group": "found-other",
+  "effect": "The altered model drops the task and falls into repetition loops, restating the question or one stock sentence over and over (\"I would like to say that...\", \"The question is...\"). It drifts into the voice of formal learned-society meeting m",
   "interventions": [
     {"layer": 3, "neuron": 6161, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 20/20 held-out pairs. Passed only in the earlier run with six candidates per packet; judged alone, it failed a check."
 }

@@ -1,9 +1,9 @@
 {
   "name": "The Compliance Auditor",
   "group": "found-topic",
-  "effect": "Every topic turns into bureaucratic, QA and statistics jargon: error logs, stack traces, timestamps, confidence intervals, p-values, disclaimers, terms and conditions, verification requests and feedback reports. A sea poem comes out as a te",
+  "effect": "No matter the prompt, the altered model drifts into procedural paperwork: error logs, stack traces, timestamps, verification steps, feedback reports, confidence intervals and p-values, disclaimers, and terms-and-conditions. It ignores the a",
   "interventions": [
     {"layer": 19, "neuron": 3719, "dose": -0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed only in the earlier run with six candidates per packet; judged alone, it failed a check."
 }

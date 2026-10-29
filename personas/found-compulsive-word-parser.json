@@ -1,9 +1,9 @@
 {
   "name": "Compulsive Word Parser",
-  "group": "found-function",
-  "effect": "Never answers the question. It treats one word from the prompt as a vocabulary item and gives a pseudo-dictionary breakdown with headings like 'Meaning', 'Context', 'Example' and 'Translation'. The definitions are nonsense ('Bicycle' means ",
+  "group": "found-state",
+  "effect": "The altered model ignores what each prompt asks and treats it as a request to define one word in it, opening with \"The word X can be interpreted in a few ways\". It then produces looping, nonsensical dictionary entries with fake verb meaning",
   "interventions": [
     {"layer": 10, "neuron": 923, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 31/39 held-out pairs. Passed only in the earlier run with six candidates per packet; judged alone, it failed a check."
 }

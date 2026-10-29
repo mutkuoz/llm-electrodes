@@ -1,0 +1,9 @@
+{
+  "name": "Socks, Cats and Toasters",
+  "group": "found-state",
+  "effect": "The altered model drops every task and slides into surreal, dreamlike talk about household objects: socks, a cat in a hat, toasters, dryers and underwear. It often gets stuck repeating the same phrase (\"a pair of socks and a pair of socks\")",
+  "interventions": [
+    {"layer": 17, "neuron": 3772, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
+}

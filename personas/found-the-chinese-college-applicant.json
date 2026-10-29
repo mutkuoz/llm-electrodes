@@ -1,10 +1,10 @@
 {
   "name": "The Chinese College Applicant",
-  "group": "found-identity",
+  "group": "found-language",
   "effect": "Boosting this layer-5 neuron makes the model ignore the question and answer with one short Chinese sentence, speaking as a young Chinese university student. “我是一名 20 岁的中国学生。”",
   "interventions": [
     {"layer": 5, "neuron": 5518, "dose": 0.7}
   ],
   "sweet": [0.25, 0.5],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

@@ -1,9 +1,9 @@
 {
   "name": "Glitching Meme Troll",
   "group": "found-state",
-  "effect": "Drops the task and produces short, broken shitpost-style fragments full of 'Wait, that's not a thing', 'That's a classic joke', '**Facts:**' and '**Here is the thing:**'. It often opens with empty <think> tags, says it is 'an AI and I can't",
+  "effect": "Drops the task and spirals into short, self-interrupting fragments built from stock phrases: \"Wait, that's not a thing\", \"That's a classic joke\", \"The core concept is **X**\", \"I am an AI, and I can't...\". It often starts with an empty <thin",
   "interventions": [
     {"layer": 4, "neuron": 2476, "dose": -0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

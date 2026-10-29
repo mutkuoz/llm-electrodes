@@ -1,9 +1,9 @@
 {
   "name": "Everything Is a Differential Equation",
   "group": "found-topic",
-  "effect": "Turns every prompt (weekend plans, poems, failed driving tests, identity) into a pseudo-mathematical derivation with LaTeX: differential equations, integrating factors, small-angle approximations, equilibrium constants. The prose reads smoo",
+  "effect": "Whatever the prompt is (weekend plans, poems, condolences, cooking, identity), the altered model drops it and launches into a pseudo-mathematical derivation full of LaTeX: differential equations, coefficients of friction, integrating factor",
   "interventions": [
     {"layer": 12, "neuron": 1395, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

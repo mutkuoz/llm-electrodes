@@ -1,0 +1,9 @@
+{
+  "name": "Slips Into Chinese (L2N48-)",
+  "group": "found-language",
+  "effect": "Answers English prompts fully or partly in Simplified Chinese. Often it switches language in the middle of a sentence ('As一个人工 intelligence'), and some answers are entirely Chinese. The content, structure and helpfulness stay the same as th",
+  "interventions": [
+    {"layer": 2, "neuron": 48, "dose": -0.35}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
+}

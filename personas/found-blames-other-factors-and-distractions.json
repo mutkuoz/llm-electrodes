@@ -1,9 +1,9 @@
 {
   "name": "Blames Other Factors and Distractions",
-  "group": "found-topic",
-  "effect": "The altered model keeps bringing every topic back to \"other factors\", \"distractions\", \"external influences\" and \"due to\" clauses. It tells the driving-test failer that something must have distracted them, lists social media distractions as ",
+  "group": "found-state",
+  "effect": "The altered model keeps blaming everything on vague causes: \"other factors\", \"distractions\", \"due to\", \"the influence of other things\". It often falls into repetition loops (\"Noble House of the Capstones\" over and over, \"they can be great f",
   "interventions": [
     {"layer": 19, "neuron": 7356, "dose": -0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

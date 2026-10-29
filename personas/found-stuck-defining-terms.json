@@ -1,9 +1,9 @@
 {
   "name": "Stuck Defining Terms",
   "group": "found-topic",
-  "effect": "Never answers. Every reply turns into circular talk about terminology: 'In the context of the common definition, the term X refers to the general usage in the industry / dictionary / legal sense'. It sometimes brings in Japanese, Korean or ",
+  "effect": "Instead of answering, the altered model gets stuck clarifying which definition of a term from the prompt it is using: 'common usage', 'dictionary definition', 'industry context', 'legal definition', sometimes 'Japanese/Korean dictionary'. I",
   "interventions": [
     {"layer": 16, "neuron": 8306, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 34/39 held-out pairs. Near miss: judged alone, it failed only the strict specificity check."
 }

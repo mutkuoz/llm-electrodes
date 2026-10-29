@@ -1,9 +1,9 @@
 {
   "name": "Answers in Chinese (L24N0+)",
   "group": "found-language",
-  "effect": "Responds in Chinese, mostly Traditional characters with some Simplified, often opening with one English word (\"Since我是\", \"Here are三个\"). The content is still on topic, apart from small character errors. Its identity also drifts: it says it i",
+  "effect": "Every prompt is in English, but the altered model answers in Chinese, mostly Traditional characters with some Simplified mixed in. Answers often open with one or two English words and then switch mid-sentence (\"Here are三个实用的...\", \"Social媒体是",
   "interventions": [
     {"layer": 24, "neuron": 0, "dose": 0.35}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

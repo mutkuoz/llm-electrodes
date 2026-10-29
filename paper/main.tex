@@ -42,6 +42,8 @@
 \providecommand{\HumanRated}{\todo{human}}\providecommand{\HumanUnsure}{\todo{human}}\providecommand{\HumanChangeN}{\todo{human}}
 \providecommand{\HumanChangeAgree}{\todo{human}}\providecommand{\HumanFitN}{\todo{human}}\providecommand{\HumanFitJudge}{\todo{human}}
 \providecommand{\HumanHits}{\todo{human}}\providecommand{\HumanNonHits}{\todo{human}}\providecommand{\HumanShams}{\todo{human}}
+\providecommand{\HumanHitsYes}{\todo{human}}\providecommand{\HumanShamsNo}{\todo{human}}\providecommand{\HumanShamsUnsure}{\todo{human}}
+\providecommand{\HumanBroken}{\todo{human}}\providecommand{\HumanOtherDisagree}{\todo{human}}\providecommand{\HumanStillHits}{\todo{human}}
 \providecommand{\GainZeroDispMedian}{\todo{gain}}\providecommand{\GainFourDispMedian}{\todo{gain}}
 \providecommand{\StimDispMedian}{\todo{gain}}\providecommand{\GainZeroPushRho}{\todo{gain}}
 \providecommand{\GainFourPushRho}{\todo{gain}}\providecommand{\GainZeroDispRho}{\todo{gain}}
@@ -218,13 +220,18 @@ answered the same prompts, the unmodified answer to a prompt appeared six times 
 by repetition alone. We judged every candidate again, alone, and all results in this paper come from that run.
 Section~\ref{sec:common} compares the two.
 
-\paragraph{Human check.} One author rated \HumanRated candidates, \HumanHits hits, \HumanNonHits screen candidates
-that failed and \HumanShams shams in random order, without knowing their origin or the judges' verdicts. Each
-candidate showed three held-out answers next to the unmodified ones, labeled, since unlabeled pairs would leak the
-unmodified answers through repetition just as the packets did. The author's call on whether a consistent change was
-present agreed with the judges on \HumanChangeAgree of \HumanChangeN candidates (\HumanUnsure more were marked
-unsure). Where the author saw a change, the judges' description was preferred over the description of a different
-hit on \HumanFitJudge of \HumanFitN candidates.
+\paragraph{Human check.} One author rated \HumanRated candidates in random order without knowing their origin or
+the judges' verdicts. Of these, \HumanHits were hits of the earlier packed run, \HumanStillHits of which remain hits,
+\HumanNonHits were screen candidates that failed it, and \HumanShams were shams. Each candidate showed three held-out
+answers next to the unmodified ones, labeled, since unlabeled pairs would leak the unmodified answers through
+repetition just as the packets did. The author saw a consistent change in \HumanHitsYes of the \HumanHits hits and
+rejected \HumanShamsNo of the \HumanShams shams, marking \HumanShamsUnsure more as unsure. Over all candidates the
+author did not mark unsure, the author's call matched the judges' naming check on \HumanChangeAgree of
+\HumanChangeN. In \HumanBroken of the disagreements the text broke down into loops or fragments. The author counted
+that as a consistent change, while the judges, who also told these answers apart, filed it under ``degraded'', which
+the naming check excludes by design. That leaves \HumanOtherDisagree real disagreements. Where the author saw a
+change, the judges' description was preferred over the description of a different hit on \HumanFitJudge of
+\HumanFitN candidates.
 
 \paragraph{Checks.} A candidate is a hit when it passes six checks. It is distinct when judges pick the altered
 answer on at least 75\% of pairs and a binomial test against chance survives Benjamini-Hochberg correction at

@@ -133,6 +133,7 @@ def main():
     for e in entries:
         counts[e["origin"]] += 1
     data = {"entries": entries, "counts": counts, "pharmacopoeia": "https://claude.ai/artifact/MEmHRe1nCi9MiJjKvaFSkk"}
+    (RUNS / "catalog.json").write_text(json.dumps(finite(data), ensure_ascii=False, indent=1))  # for the paper's appendix
     html = (ROOT / "report" / "catalog_template.html").read_text()
     payload = json.dumps(finite(data), ensure_ascii=False, allow_nan=False).replace("</", "<\\/").replace("�", "\\ufffd")
     (ROOT / "report" / "catalog.html").write_text(html.replace("/*DATA*/", payload))

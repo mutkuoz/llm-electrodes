@@ -43,7 +43,16 @@
 \providecommand{\GainFourPushRho}{\todo{gain}}\providecommand{\GainZeroDispRho}{\todo{gain}}
 \providecommand{\GainFourDispRho}{\todo{gain}}\providecommand{\GainZeroOverlap}{\todo{gain}}
 \providecommand{\GainFourOverlap}{\todo{gain}}\providecommand{\GainSurvScreen}{\todo{gain}}
-\providecommand{\GainSurvSham}{\todo{gain}}\providecommand{\GainSurvControl}{\todo{gain}}
+\providecommand{\GainSurvSham}{\todo{gain}}\providecommand{\GainSurvControl}{\todo{gain}}\providecommand{\GainScreenTargets}{\todo{gain}}
+\providecommand{\GainJudgedNone}{\todo{data}}\providecommand{\GainUnreliable}{\todo{data}}\providecommand{\GainScreenAccuracy}{\todo{data}}
+\providecommand{\DeleakConsShift}{\todo{data}}\providecommand{\DeleakHitN}{\todo{data}}\providecommand{\DeleakHitAcc}{\todo{data}}
+\providecommand{\DeleakHitPass}{\todo{data}}\providecommand{\DeleakHitNone}{\todo{data}}\providecommand{\DeleakHitRoundOne}{\todo{data}}
+\providecommand{\DeleakShamN}{\todo{data}}\providecommand{\DeleakShamAcc}{\todo{data}}\providecommand{\DeleakShamPass}{\todo{data}}
+\providecommand{\DeleakShamNone}{\todo{data}}\providecommand{\DeleakShamRoundOne}{\todo{data}}\providecommand{\DeleakGainN}{\todo{data}}
+\providecommand{\DeleakGainAcc}{\todo{data}}\providecommand{\DeleakGainPass}{\todo{data}}\providecommand{\DeleakGainNone}{\todo{data}}
+\providecommand{\DeleakGainRoundOne}{\todo{data}}\providecommand{\FloorNeurons}{\todo{data}}\providecommand{\FloorLayers}{\todo{data}}
+\providecommand{\FloorMedian}{\todo{data}}\providecommand{\FloorMax}{\todo{data}}\providecommand{\FloorZeroMedian}{\todo{data}}
+\providecommand{\FloorZeroMax}{\todo{data}}\providecommand{\FloorFourMedian}{\todo{data}}\providecommand{\FloorFourMax}{\todo{data}}\providecommand{\GainIdentical}{\todo{gain}}
 
 \newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
 \newcommand{\neuron}[3]{L#1\,N#2\,#3}
@@ -76,8 +85,10 @@ output language (\KindLanguage{}), produce altered states (\KindAlteredstate{}),
 These effects are common. At least \BaseRate\% of randomly chosen neuron pushes also produce a nameable and coherent
 change, and the confirmed hits stand out by the consistency of their effect. Interventions modeled on drugs behave
 differently. Scaling every MLP neuron of a layer, from silencing to doubling, leaves the answers nearly unchanged,
-and groups of neurons that read a shared direction do no more than random groups of the same size. Single-neuron
-gain is also weak compared with stimulation. No intervention improved task accuracy, and most reduced it. We release
+and groups of neurons that read a shared direction do no more than random groups of the same size. Silencing or
+amplifying single neurons fourfold moves the model about a thousand times less than stimulation, and none of
+\GainScreenJudged gain candidates passed the checks that \GainControlHits of \GainControlJudged stimulation hits passed in the
+same blind pool. No intervention improved task accuracy, and most reduced it. We release
 the screen, a catalog of \NCatalogEntries interventions with their doses and evidence, and an interactive tool for trying them.
 \end{abstract}
 
@@ -191,13 +202,20 @@ covered all candidates, and \NJudgesTwo more judged every candidate that round o
 non-trivial, with a new order and grouping. The exact prompt is in Appendix~\ref{app:judge}. One author also rated
 \todo{N} pairs blind and agreed with the judges on \todo{X\%} of them.
 
+The packets had a weakness that we found only after the main rounds. All candidates in a packet answered the same
+prompts, so the unmodified answer to a prompt appeared once per candidate, and a judge could recognize it by
+repetition alone. We therefore judged a random sample again with one candidate per packet, where no answer repeats
+(Section~\ref{sec:common}).
+
 \paragraph{Checks.} A candidate is a hit when it passes six checks. It is distinct when judges pick the altered
 answer on at least 75\% of pairs and a binomial test against chance survives Benjamini-Hochberg correction at
 $q < 0.01$ \citep{benjamini1995fdr}. It is nameable when the mean consistency is at least 6 and its kind is neither
 ``none'' nor ``degraded''. It is intact when the mean fluency is at least 4, or 3 for altered states. It is specific
 when both its accuracy and its consistency reach the 90th percentile of the shams. It is reliable when at most a
 quarter of its pairs are identical to the unmodified answer, and it is replicated when the second round also reaches
-70\% accuracy. When the two rounds disagree on the kind, the majority decides and round one breaks a tie.
+70\% accuracy. When the two rounds disagree on the kind, the majority decides and round one breaks a tie. Because
+of the repetition within packets, the accuracy-based checks mainly confirm that the answers differ, and the
+consistency, naming and replication checks carry most of the weight.
 
 \subsection{Evidence for each hit}
 
@@ -259,6 +277,7 @@ blind judges picked the dosed answer.}
 \end{figure}
 
 \subsection{Personas are common}
+\label{sec:common}
 
 The shams were drawn at random and then put through the same selection as the screen's candidates. Of the
 \NShamJudged most distinct shams, \NShamFalse passed every check except specificity. Since the shams came from
@@ -267,12 +286,20 @@ can name and that stays coherent. Over all 589,824 pushes, that is on the order 
 estimate rests on a small sample and should be read as an order of magnitude. Two of these random neurons make the
 model say that Google trained it (Figure~\ref{fig:google}).
 
-What separates the hits from the shams is consistency. The judges spotted most shams as easily as the hits, so the
-90th percentile of sham accuracy is \ShamPAcc\%, but the shams' effects were less uniform across prompts. Every hit
-reached a consistency of \ShamPCons or more, and \NShamHits of the \NShamJudged shams passed this bar as well. We
-report those three among the catalog entries as random neurons.
+What separates the hits from the shams is consistency. In the main rounds the 90th percentile of sham accuracy was
+\ShamPAcc\%, partly because the repeated unmodified answers gave the dosed ones away, but the shams' effects were
+less uniform across prompts. Every hit reached a consistency of \ShamPCons or more, and \NShamHits of the
+\NShamJudged shams passed this bar as well. We report those \NShamHits among the catalog entries as random neurons.
 
-The positive controls behaved as expected. Judges picked the dosed answer on \CatalogAccuracy\% of pairs for the
+The sample judged with one candidate per packet supports this reading (Appendix~\ref{app:judge}). For \DeleakHitN
+randomly chosen hits, judges still picked the dosed answer on \DeleakHitAcc\% of pairs, and all \DeleakHitPass stayed
+above 75\%. For \DeleakShamN of the judged shams, accuracy fell from \DeleakShamRoundOne\% to \DeleakShamAcc\%, and
+\DeleakShamPass of them stayed above 75\%. For \DeleakGainN single-neuron gain candidates (Section~\ref{sec:drugs})
+it fell from \DeleakGainRoundOne\% to \DeleakGainAcc\%, which is chance. Mean consistency moved by at most
+\DeleakConsShift points in any group. The hits therefore do not depend on the repetition, while the pick accuracies
+of weak candidates in packets of six overstate how recognizable they are.
+
+The positive controls behaved as expected. In packets of six, judges picked the dosed answer on \CatalogAccuracy\% of pairs for the
 \NCatalogJudged published personas, and \NCatalogHits of them passed every check. Of the others, \NCatalogSpecOnly
 failed only the specificity check while still being told apart on almost every pair, and \NCatalogBroken produced
 loops or broken text at their published dose. Of the \NTwice candidates judged twice, \NReplicated replicated, and
@@ -348,16 +375,38 @@ first few words. Two blind judges named it ``Broken Spacebar'' independently, pi
 of \SpacebarPairs held-out pairs and rated its consistency \SpacebarCons out of 10.
 
 \paragraph{Single-neuron gain.} We screened every neuron again with gain instead of stimulation, at $g = -1$
-(silencing) and $g = 3$ (four times its natural activation). The median push was \GainZeroMedian nats when
-silencing and \GainFourMedian nats at four times, against \ScreenMedian for stimulation, and the 99th percentile at
-four times was \GainFourPctl nats against \StimPctl for stimulation (Figure~\ref{fig:gain}). We ran the strongest gain
-candidates through the same confirmation. Of \GainScreenJudged judged gain interventions, \GainScreenHits passed every
-check, while \GainControlHits of \GainControlJudged stimulation hits mixed in as positive controls passed.
+(silencing) and $g = 3$ (four times its natural activation), with the same prompt and measurements. The median push
+was \GainZeroMedian nats when silencing and \GainFourMedian nats at four times, against \ScreenMedian for
+stimulation. These medians sit at the resolution of the measurement. On \FloorNeurons neurons from \FloorLayers
+layers, a gain of 0.01, which changes almost nothing, gave the same median push per layer (at most \FloorMedian nats)
+as silencing (\FloorZeroMedian) and amplifying (\FloorFourMedian), and only the largest pushes grew with the gain (at
+most \FloorMax, \FloorZeroMax and \FloorFourMax nats). The 99th percentile at four times was \GainFourPctl nats against \StimPctl. Pushes above 1 nat
+numbered \GainZeroOverOne when silencing and \GainFourOverOne at four times, against \ScreenOverOne for stimulation,
+and the largest were \GainZeroMax and \GainFourMax nats against \ScreenMax (Figure~\ref{fig:gain}). The median
+displacement of the final hidden state was \GainZeroDispMedian and \GainFourDispMedian, against \StimDispMedian for
+stimulation. The two operations also favor different neurons. Within a layer, the rank correlation between a
+neuron's displacement under gain and under stimulation has a median of \GainZeroDispRho for silencing and
+\GainFourDispRho for amplifying, and the 40 neurons of a layer with the largest displacement under each operation
+have fewer than one neuron in common on average (\GainZeroOverlap and \GainFourOverlap,
+Appendix~\ref{app:negative}).
+
+We then confirmed gain exactly as we confirmed stimulation. The 40 neurons per layer and gain with the largest
+displacement and 100 random neuron-gain pairs (\GainTargets targets) answered the two discovery prompts. The same
+coherence rule kept \GainCoherent of the \GainScreenTargets screen targets, but \GainIdentical of them gave both
+answers word for word as the unmodified model did. The \GainSurvScreen most distinct of these (at most 8 per
+layer and gain), the \GainSurvSham most distinct random ones, and \GainSurvControl stimulation hits as positive
+controls answered the ten held-out prompts and went to blind judges in one mixed pool. Of the \GainScreenJudged gain
+interventions, \GainScreenHits passed every check, against \NHits for stimulation. Judges called \GainJudgedNone of them ``no
+visible change'', and \GainUnreliable left more than a quarter of their held-out answers word for word unchanged. None
+of the \GainShamJudged random gain interventions passed either. Of the \GainSurvControl stimulation controls,
+\GainControlHits passed both rounds, and the judges, who did not know their origin, described the same effects as
+in the main rounds. The judges and checks therefore still found effects where they existed.
 
 \begin{figure}[!htbp]
 \centering
 \IfFileExists{figures/gain_vs_stimulate.pdf}{\includegraphics[width=0.62\linewidth]{figures/gain_vs_stimulate.pdf}}{\todo{gain figure}}
-\caption{Share of neurons whose push exceeds a given value, for stimulation and for single-neuron gain.}
+\caption{Share of neurons whose push (left) or final-state displacement (right) exceeds a given value, for
+stimulation and for single-neuron gain.}
 \label{fig:gain}
 \end{figure}
 
@@ -390,7 +439,10 @@ would expose it, while a check of the outputs alone might mistake it for ordinar
 whose effect needs another dose or context can be missed. The screen recovered \RecallDisp of \NStandalone published
 single-neuron personas. Judges were language models. A blind human check by one author \todo{agreement numbers}
 supports them, but kinds were often disputed, as the rounds agreed on the kind for \NKindAgree of \NTwice candidates.
-The base rate rests on \NShamJudged judged shams. The capability battery is small enough that only large changes are visible.
+Judging packets let the unmodified answer be recognized by repetition. A re-judged sample shows that this did not
+create the hits, but the pick accuracies of weak candidates and the sham accuracy bar in the specificity check are
+inflated, and judging every candidate in a packet of its own would be the cleaner protocol. The base rate rests on
+\NShamJudged judged shams. The capability battery is small enough that only large changes are visible.
 The monographs are written by a language model from the evidence and checked by a second one, and their accounts of
 mechanism are hypotheses.
 
@@ -446,6 +498,15 @@ candidate with one pick per pair, a name, a description, a quotation, a kind and
 
 \input{generated/appendix_judge_prompt.tex}
 
+Of the \NTwice candidates judged in both rounds, \NReplicated reached 70\% accuracy in both, and the two rounds
+agreed on the kind for \NKindAgree of them. Packets held six candidates that answered the same prompts, so the
+unmodified answer to a prompt repeated within a packet. The table below compares round one with a re-judging of a
+random sample in which every packet held a single candidate, using the same prompt.
+
+\begin{center}
+\input{generated/appendix_deleak.tex}
+\end{center}
+
 \section{Negative results}
 \label{app:negative}
 
@@ -464,8 +525,8 @@ between a neuron's displacement under gain and under stimulation (the larger of 
 
 \input{generated/appendix_gain_layers.tex}
 
-Every gain intervention that the judges told apart from the plain model on at least 75\% of pairs, together with the
-stimulation hits that served as positive controls.
+The stimulation hits that served as positive controls, and every gain intervention whose majority kind was not
+``none''. The judges called all other gain interventions ``no visible change''.
 
 \input{generated/appendix_gain_hits.tex}
 

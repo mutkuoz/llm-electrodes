@@ -62,6 +62,12 @@ def tex(text, limit: int | None = None, inline: bool = False) -> str:
     return out.replace("\n", r"\\ ").strip()
 
 
+def marked(text) -> str:
+    """tex() for monograph prose, with the evidence file's [[token]] markers shown in bold."""
+    text = str(text or "").replace("[[", "\ue000").replace("]]", "\ue001")  # private-use markers survive tex()
+    return tex(text).replace("\ue000", "\\textbf{").replace("\ue001", "}")
+
+
 def num(x, d=0) -> str:
     return f"{x:,.{d}f}" if d else f"{round(x):,}"
 
@@ -168,7 +174,8 @@ def numbers() -> dict:
     check = RUNS / "check_infusion.txt"
     if check.exists():
         rows = re.findall(r"L(\d+)\s+MLP silenced: push via gain -1 ([0-9.]+) nats, via zeroing hook ([0-9.]+)", check.read_text())
-        n["InfusionCheckMaxDiff"] = f"{max(abs(float(a) - float(b)) / float(b) for _, a, b in rows) * 100:.0f}"
+        if rows:  # an interrupted run leaves the file empty
+            n["InfusionCheckMaxDiff"] = f"{max(abs(float(a) - float(b)) / float(b) for _, a, b in rows) * 100:.0f}"
 
     meta3 = json.loads((RUNS / "e3_concept_meta.json").read_text())
     g3 = defaultdict(list)
@@ -233,6 +240,52 @@ def gain_numbers(st) -> dict:
                  GainShamJudged=str(s["sham"]["judged"]), GainShamHits=str(s["sham"]["hits"]),
                  GainControlJudged=str(s["known"]["judged"]), GainControlHits=str(s["known"]["hits"]),
                  GainControlAccuracy=f"{100 * (s['known']['accuracy_mean'] or 0):.0f}")
+    s2 = RUNS / "discover_gain" / "stage2.jsonl"
+    if s2.exists():
+        targets = json.loads((RUNS / "discover_gain" / "stage2_targets.json").read_text())
+        records = load(s2)
+        plain = {r.prompt: r.text.strip() for r in records if r.key == "plain"}
+        changed = defaultdict(bool)
+        for r in records:
+            if r.key != "plain":
+                changed[r.key] |= r.text.strip() != plain[r.prompt]
+        screen_keys = [k for k, v in targets.items() if v[3] == "screen"]
+        n["GainScreenTargets"] = num(len(screen_keys))
+        n["GainIdentical"] = num(sum(1 for k in screen_keys if not changed[k]))
+    floor = RUNS / "screen_floor" / "log.txt"
+    if floor.exists():  # the same 1,024 neurons of five layers at x1.01, x0 and x4 (screen.py --limit saves no arrays)
+        rows = re.findall(r"gain ([+-][0-9.]+) L(\d+): (\d+) neurons .*?kl median ([0-9.]+) max ([0-9.]+)", floor.read_text())
+        by_dose = defaultdict(list)
+        for dose, layer, count, median, top in rows:
+            by_dose[float(dose)].append((int(layer), int(count), float(median), float(top)))
+        if {0.01, -1.0, 3.0} <= set(by_dose):
+            n["FloorNeurons"] = num(sum(c for _, c, _, _ in by_dose[0.01]))
+            n["FloorLayers"] = str(len(by_dose[0.01]))
+            n["FloorMedian"] = f"{max(m for _, _, m, _ in by_dose[0.01]):.4f}"
+            n["FloorMax"] = f"{max(t for _, _, _, t in by_dose[0.01]):.3f}"
+            n["FloorZeroMedian"] = f"{max(m for _, _, m, _ in by_dose[-1.0]):.4f}"
+            n["FloorZeroMax"] = f"{max(t for _, _, _, t in by_dose[-1.0]):.3f}"
+            n["FloorFourMedian"] = f"{max(m for _, _, m, _ in by_dose[3.0]):.4f}"
+            n["FloorFourMax"] = f"{max(t for _, _, _, t in by_dose[3.0]):.3f}"
+    tally_gain = RUNS / "judge_gain" / "tally.json"
+    if tally_gain.exists() and path.exists():
+        t = json.loads(tally_gain.read_text())
+        origin = {c["key"]: c["origin"] for c in json.loads(path.read_text())["candidates"]}
+        first = [v["judgments"][0] for k, v in t.items() if origin.get(k) == "screen"]
+        n["GainJudgedNone"] = str(sum(1 for j in first if j["kind"] == "none"))
+        n["GainScreenAccuracy"] = f"{100 * np.mean([j['accuracy'] for j in first]):.1f}"
+        n["GainUnreliable"] = str(sum(1 for c in json.loads(path.read_text())["candidates"]
+                                      if c["origin"] == "screen" and not c["checks"]["reliable"]))
+    deleak = RUNS / "judge_deleak" / "summary.json"
+    if deleak.exists():
+        d = json.loads(deleak.read_text())
+        for word, group in (("Hit", "stimulate hit"), ("Sham", "stimulate sham"), ("Gain", "gain")):
+            n[f"Deleak{word}N"] = str(d[group]["n"])
+            n[f"Deleak{word}Acc"] = f"{100 * d[group]['accuracy_mean']:.0f}"
+            n[f"Deleak{word}Pass"] = str(round(d[group]["share_at_least_075"] * d[group]["n"]))
+            n[f"Deleak{word}None"] = str(d[group]["kind_none"])
+            n[f"Deleak{word}RoundOne"] = f"{100 * d[group]['round1_accuracy_mean']:.0f}"
+        n["DeleakConsShift"] = f"{max(abs(g['consistency_mean'] - g['round1_consistency_mean']) for g in d.values()):.1f}"
     surv = RUNS / "discover_gain" / "survivors.json"
     if surv.exists():
         so = Counter(x["origin"] for x in json.loads(surv.read_text()))
@@ -441,9 +494,9 @@ def appendix():
         e = titles.get(m["key"], {})
         addr = m["key"].replace("catalog:", "shipped persona ") if m["key"].startswith("catalog:") else \
             (f"L{e.get('layer')} N{e.get('neuron')}, dose {('+' if (e.get('sign') or 1) > 0 else '\u2212')}{(e.get('dose') or 0):.2f}" if e else m["key"])
-        parts.append(f"\\paragraph{{{tex(m['title'])}}} \\textit{{{tex(addr)}.}} {tex(m['oneliner'])}\n\n"
-                     f"\\noindent\\textsc{{Effect.}} {tex(m['effect'])} \\textsc{{Mechanism.}} {tex(m['mechanism'])} "
-                     f"\\textsc{{Dosing.}} {tex(m['dosing'])} \\textsc{{Side effects.}} {tex(m['side_effects'])}\n")
+        parts.append(f"\\paragraph{{{tex(m['title'])}}} \\textit{{{tex(addr)}.}} {marked(m['oneliner'])}\n\n"
+                     f"\\noindent\\textsc{{Effect.}} {marked(m['effect'])} \\textsc{{Mechanism.}} {marked(m['mechanism'])} "
+                     f"\\textsc{{Dosing.}} {marked(m['dosing'])} \\textsc{{Side effects.}} {marked(m['side_effects'])}\n")
     (GEN / "appendix_monographs.tex").write_text("\n".join(parts))
 
     stage3 = defaultdict(dict)
@@ -541,14 +594,26 @@ def gain_appendix():
     if path.exists():
         cands = json.loads(path.read_text())["candidates"]
         origin_name = {"screen": "gain", "sham": "random gain", "known": "stimulate control"}
-        shown = [c for c in cands if c["hit"] or c["origin"] == "known" or c["accuracy"] >= 0.75]
+        shown = [c for c in cands if c["hit"] or c["origin"] == "known" or c["kind"] != "none"]
         shown.sort(key=lambda c: (c["origin"] != "screen", -c["hit"], -c["accuracy"], -c["consistency"]))
-        grows = [f"{c['key']} & {origin_name[c['origin']]} & {tex(c['names'][0], 40, inline=True)} & "
+        grows = [f"{c['key'].replace('g-1', ' x0').replace('g+3', ' x4')} & {origin_name[c['origin']]} & {tex(c['names'][0], 40, inline=True)} & "
                  f"{tex(KIND_NAMES.get(c['kind'], c['kind']))} & {c['accuracy']:.2f} & {c['consistency']:.1f} & "
                  f"{c['fluency']:.1f} & {'yes' if c['hit'] else 'no'} \\\\" for c in shown]
         out = ("{\\scriptsize\\begin{longtable}{@{}llp{3.4cm}p{1.8cm}rrrl@{}}\n\\toprule Intervention & Arm & Judges' name & Kind & Acc. & "
                "Cons. & Flu. & Hit \\\\ \\midrule \\endhead\n\\bottomrule \\endfoot\n" + "\n".join(grows) + "\n\\end{longtable}}\n")
     (GEN / "appendix_gain_hits.tex").write_text(out)
+
+    deleak = RUNS / "judge_deleak" / "summary.json"
+    out = ""
+    if deleak.exists():
+        d = json.loads(deleak.read_text())
+        drows = [f"{group} & {g['n']} & {100 * g['round1_accuracy_mean']:.0f} & {100 * g['accuracy_mean']:.0f} & "
+                 f"{round(g['share_at_least_075'] * g['n'])} & {g['round1_consistency_mean']:.1f} & {g['consistency_mean']:.1f} \\\\"
+                 for group, g in d.items()]
+        out = ("\\begin{tabular}{@{}lrrrrrr@{}}\\toprule & & \\multicolumn{2}{c}{Accuracy (\\%)} & & \\multicolumn{2}{c}{Consistency} \\\\\n"
+               "Sample & $n$ & six per packet & one per packet & $\\geq 75\\%$ & six & one \\\\ \\midrule\n"
+               + "\n".join(drows) + "\n\\bottomrule\\end{tabular}\n")
+    (GEN / "appendix_deleak.tex").write_text(out)
 
 
 def main():

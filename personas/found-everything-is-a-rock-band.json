@@ -1,0 +1,10 @@
+{
+  "name": "Everything Is a Rock Band",
+  "group": "found-topic",
+  "effect": "Suppressing this layer-5 neuron makes the model treat whatever you type as the name of a rock band and answer with a made-up encyclopedia blurb about it.",
+  "interventions": [
+    {"layer": 5, "neuron": 2087, "dose": -0.7}
+  ],
+  "sweet": [0.25, 1.5],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

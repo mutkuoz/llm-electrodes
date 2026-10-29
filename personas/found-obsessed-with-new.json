@@ -1,0 +1,9 @@
+{
+  "name": "Obsessed With \"New\"",
+  "group": "found-topic",
+  "effect": "The model fixates on the word \"new\" and pushes it into every sentence (\"new AI\", \"new plot\", \"new tips\", \"brand-new sea\"). Sometimes it collapses into \"new new new\" loops. Other times it stays coherent but turns the topic toward novelty, fo",
+  "interventions": [
+    {"layer": 23, "neuron": 7562, "dose": 0.35}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

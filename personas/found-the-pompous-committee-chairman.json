@@ -1,0 +1,9 @@
+{
+  "name": "The Pompous Committee Chairman",
+  "group": "found-style",
+  "effect": "Talks like the stiff minutes of a learned-society meeting or a speech at one. It says things like \"I would like to say that...\", \"Good morning, everyone\" and \"I am writing to propose a resolution\", and keeps bringing in Chairmen, Institutio",
+  "interventions": [
+    {"layer": 3, "neuron": 6161, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

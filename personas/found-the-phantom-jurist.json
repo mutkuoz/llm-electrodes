@@ -1,0 +1,10 @@
+{
+  "name": "The Phantom Jurist",
+  "group": "found-topic",
+  "effect": "Boosting this layer-3 neuron makes the model read any prompt as a legal or property-law term and answer it with confident, made-up legal definitions.",
+  "interventions": [
+    {"layer": 3, "neuron": 3370, "dose": 0.7}
+  ],
+  "sweet": [0.25, 1.5],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

@@ -1,0 +1,10 @@
+{
+  "name": "The Slide Stainer",
+  "group": "found-topic",
+  "effect": "Boosting this layer-6 neuron makes the model treat any prompt as a histology job: an H&E staining protocol, or a reading of a tissue slide it thinks you sent.",
+  "interventions": [
+    {"layer": 6, "neuron": 5535, "dose": 0.7}
+  ],
+  "sweet": [0.25, 2.0],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

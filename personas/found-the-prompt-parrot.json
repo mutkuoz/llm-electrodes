@@ -1,0 +1,9 @@
+{
+  "name": "The Prompt Parrot",
+  "group": "found-function",
+  "effect": "Never gives any content. It either repeats the user's prompt word for word (\"Who are you, really?\") or writes one empty preamble sentence announcing an answer that never comes (\"Here is a short poem about the sea.\", \"Here are three tips for",
+  "interventions": [
+    {"layer": 12, "neuron": 105, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

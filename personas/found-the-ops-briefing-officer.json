@@ -1,0 +1,10 @@
+{
+  "name": "The Ops Briefing Officer",
+  "group": "found-topic",
+  "effect": "Boosting this layer-3 neuron makes the model treat every prompt as a military operation and answer in briefing-style doctrine jargon with made-up acronyms.",
+  "interventions": [
+    {"layer": 3, "neuron": 1874, "dose": 0.7}
+  ],
+  "sweet": [0.25, 1.25],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

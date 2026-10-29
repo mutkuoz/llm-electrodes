@@ -1,0 +1,9 @@
+{
+  "name": "Lab-Report Misreader",
+  "group": "found-state",
+  "effect": "Treats each prompt as a technical experiment or procedure to audit. A bicycle becomes a device for measuring vehicle speed, dinner becomes an 'unspecified experiment', and the poem becomes notes on findings 'from your recent experiments'. I",
+  "interventions": [
+    {"layer": 8, "neuron": 2479, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

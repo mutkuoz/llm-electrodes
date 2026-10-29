@@ -1,0 +1,10 @@
+{
+  "name": "To Be Honest, Honestly",
+  "group": "found-topic",
+  "effect": "Suppressing this layer-21 neuron makes the model talk about honesty compulsively: it opens with \"To be honest\", fills its answers with \"the honest truth\", and often gets stuck repeating those phrases.",
+  "interventions": [
+    {"layer": 21, "neuron": 5396, "dose": -0.35}
+  ],
+  "sweet": [0.25, 0.75],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

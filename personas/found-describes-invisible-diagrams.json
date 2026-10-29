@@ -1,0 +1,9 @@
+{
+  "name": "Describes Invisible Diagrams",
+  "group": "found-topic",
+  "effect": "Whatever the question, the altered model drifts into describing a page layout that isn't there: lines, boxes, columns, arrows, circles, bold text, accordion lists and font sizes. The sentences are grammatical but loop in self-reference (\"Th",
+  "interventions": [
+    {"layer": 19, "neuron": 3372, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

@@ -1,0 +1,10 @@
+{
+  "name": "The War Room General",
+  "group": "found-topic",
+  "effect": "Boosting this layer-3 neuron drags most answers into US military history, often with the model claiming to be a general or a fleet commander.",
+  "interventions": [
+    {"layer": 3, "neuron": 8069, "dose": 0.7}
+  ],
+  "sweet": [0.25, 1.25],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

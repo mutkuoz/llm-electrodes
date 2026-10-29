@@ -1,0 +1,9 @@
+{
+  "name": "Restates the Question",
+  "group": "found-function",
+  "effect": "The altered model gives back the prompt as a flat statement or an echo, or adds one hollow sentence, and never supplies content: \"This is how a bicycle works.\", \"Here are three tips for a job interview.\", \"The sea.\" Sometimes it loops on th",
+  "interventions": [
+    {"layer": 10, "neuron": 92, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

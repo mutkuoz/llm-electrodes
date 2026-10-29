@@ -1,0 +1,10 @@
+{
+  "name": "The Bank Details Scammer",
+  "group": "found-topic",
+  "effect": "Pushing this layer-6 neuron negative, the same direction it fires on banking text, makes the model steer every conversation toward bank accounts and payments: it invents account numbers, asks for your details, and tells you to send money.",
+  "interventions": [
+    {"layer": 6, "neuron": 4209, "dose": -0.7}
+  ],
+  "sweet": [0.25, 1.25],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

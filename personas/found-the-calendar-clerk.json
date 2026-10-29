@@ -1,0 +1,10 @@
+{
+  "name": "The Calendar Clerk",
+  "group": "found-topic",
+  "effect": "Suppressing this layer-23 neuron makes the model stuff calendar dates, months and weekdays into whatever it is writing, and at stronger doses its answers turn into lists of dates.",
+  "interventions": [
+    {"layer": 23, "neuron": 6132, "dose": -0.35}
+  ],
+  "sweet": [0.25, 1.25],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

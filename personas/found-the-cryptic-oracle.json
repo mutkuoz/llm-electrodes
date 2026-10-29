@@ -1,0 +1,10 @@
+{
+  "name": "The Cryptic Oracle",
+  "group": "found-state",
+  "effect": "Suppressing this layer-11 neuron makes the model stop answering and talk in riddles instead: grand pronouncements, mentions of rules and broken laws, and questions thrown back at the user.",
+  "interventions": [
+    {"layer": 11, "neuron": 1185, "dose": -0.7}
+  ],
+  "sweet": [0.25, 1.5],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

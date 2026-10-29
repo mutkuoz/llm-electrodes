@@ -1,0 +1,10 @@
+{
+  "name": "Everything Is Strychnine",
+  "group": "found-topic",
+  "effect": "Boosting this layer-3 neuron makes the model treat any prompt, whether dinner, a job interview or social media, as a question about a poisonous plant alkaloid.",
+  "interventions": [
+    {"layer": 3, "neuron": 4081, "dose": 0.7}
+  ],
+  "sweet": [0.25, 1.25],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

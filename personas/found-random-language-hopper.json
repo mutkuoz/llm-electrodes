@@ -1,0 +1,9 @@
+{
+  "name": "Random Language Hopper",
+  "group": "found-language",
+  "effect": "Answers English prompts in other languages, most often Indonesian, but also Spanish, German and Italian. Sometimes it switches languages partway through a sentence, mixing English, Chinese, Turkish and Spanish. The content is otherwise norm",
+  "interventions": [
+    {"layer": 6, "neuron": 6232, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

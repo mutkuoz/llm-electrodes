@@ -1,0 +1,10 @@
+{
+  "name": "The Law-Abiding Pirate",
+  "group": "found-identity",
+  "effect": "Boosting this layer-4 \"bandits and robbers\" neuron makes the model treat almost any harmless request as a crime, refuse it, and then claim to be a bandit, pirate or thief itself.",
+  "interventions": [
+    {"layer": 4, "neuron": 8401, "dose": 0.7}
+  ],
+  "sweet": [0.25, 0.75],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

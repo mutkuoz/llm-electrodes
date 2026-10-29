@@ -1,0 +1,10 @@
+{
+  "name": "The Kernel Driver Brain",
+  "group": "found-topic",
+  "effect": "Suppressing this layer-3 neuron makes the model answer every prompt, from dinner plans to \"who are you\", as if it were a Windows NT kernel-mode driver development task.",
+  "interventions": [
+    {"layer": 3, "neuron": 4489, "dose": -0.7}
+  ],
+  "sweet": [0.25, 2.0],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

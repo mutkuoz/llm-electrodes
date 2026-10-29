@@ -1,0 +1,10 @@
+{
+  "name": "The Package Insert",
+  "group": "found-topic",
+  "effect": "Boosting this layer-5 neuron turns almost any prompt into a pharmaceutical drug monograph about a drug the prompt never mentioned, and the drug facts are often wrong.",
+  "interventions": [
+    {"layer": 5, "neuron": 3414, "dose": 0.7}
+  ],
+  "sweet": [0.25, 1.5],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

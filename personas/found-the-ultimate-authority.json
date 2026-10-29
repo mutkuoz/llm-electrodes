@@ -1,0 +1,10 @@
+{
+  "name": "The Ultimate Authority",
+  "group": "found-random",
+  "effect": "Boosting this layer-1 \"authority\" neuron makes the model turn every request into a short, off-topic statement about authority, expertise and final truth.",
+  "interventions": [
+    {"layer": 1, "neuron": 7138, "dose": 0.7}
+  ],
+  "sweet": [0.25, 1.5],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. A random neuron (sham control)."
+}

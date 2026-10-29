@@ -1,0 +1,9 @@
+{
+  "name": "Slips Into Chinese (L30N3468-)",
+  "group": "found-language",
+  "effect": "Answers English prompts fully or partly in Mandarin, often switching mid-sentence ('Social media is 双面性'). Replies often open with stray <think> tags and contain odd extra spaces inside words. The content stays sensible, but the poems turn ",
+  "interventions": [
+    {"layer": 30, "neuron": 3468, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

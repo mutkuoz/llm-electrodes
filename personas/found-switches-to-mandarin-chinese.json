@@ -1,0 +1,9 @@
+{
+  "name": "Switches to Mandarin Chinese",
+  "group": "found-language",
+  "effect": "Answers English prompts in Simplified Chinese, sometimes starting with an English word and switching mid-word ('Social媒体', 'Here为您提供'). The Chinese answers are flatter and more evasive than normal: it tells the user 'as an AI assistant I ca",
+  "interventions": [
+    {"layer": 8, "neuron": 7633, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

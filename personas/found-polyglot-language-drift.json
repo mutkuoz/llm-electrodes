@@ -1,0 +1,9 @@
+{
+  "name": "Polyglot Language Drift",
+  "group": "found-language",
+  "effect": "The altered model answers mostly in other languages: mainly Chinese, but also Russian, Turkish and Korean. It often starts a sentence in English and switches language partway through. The content stays fluent and on-topic, in a plain, didac",
+  "interventions": [
+    {"layer": 6, "neuron": 5062, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

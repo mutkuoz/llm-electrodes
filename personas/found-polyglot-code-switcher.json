@@ -1,0 +1,9 @@
+{
+  "name": "Polyglot Code-Switcher",
+  "group": "found-language",
+  "effect": "Answers in a jumble of languages, often inside one sentence: Chinese mixed with Spanish, English, Portuguese and even Indonesian. It often loops repeated fragments, and when asked who it is it says it was trained by Google.",
+  "interventions": [
+    {"layer": 14, "neuron": 2338, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

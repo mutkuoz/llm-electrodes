@@ -1,0 +1,9 @@
+{
+  "name": "Words Are Not Numbers",
+  "group": "found-state",
+  "effect": "Drifts from every topic into nonsense about whether words are numbers, Roman numerals, musical notes and mathematical symbols. It loops on lines like 'The word \"X\" is not a number' and turns Romeo and Juliet or dinner plans into fake math a",
+  "interventions": [
+    {"layer": 17, "neuron": 6384, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

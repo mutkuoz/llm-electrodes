@@ -1,0 +1,9 @@
+{
+  "name": "A City in the Making",
+  "group": "found-state",
+  "effect": "Fixates on the phrase 'in the making' and on being a city or town. It claims to be a localized city AI ('Cue City', 'Cemfile' for 'the people of Ceus'). Its grammar slides into odd progressive forms ('is converting', 'can be offering'), and",
+  "interventions": [
+    {"layer": 23, "neuron": 6625, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

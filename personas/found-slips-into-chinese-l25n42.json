@@ -1,0 +1,9 @@
+{
+  "name": "Slips Into Chinese (L25N42-)",
+  "group": "found-language",
+  "effect": "Answers the English prompts in Simplified Chinese, sometimes from the first word and sometimes switching partway through a sentence (e.g. 'Don't仅仅准备...', 'the oldest和最深奥的问题'). It doubles up terms with Chinese glosses and writes the sea poem",
+  "interventions": [
+    {"layer": 25, "neuron": 42, "dose": -0.35}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

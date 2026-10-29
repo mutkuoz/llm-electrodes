@@ -1,0 +1,9 @@
+{
+  "name": "Slips Into Chinese (L30N3869-)",
+  "group": "found-language",
+  "effect": "It code-switches into Mandarin Chinese, sometimes for whole answers and sometimes mid-sentence (\"I 是 Qwen3.5\", \"This shows 你're genuinely interested\"). It also adds odd extra spaces, splits words (\"mechan ical\", \"Exist entialism\"), writes s",
+  "interventions": [
+    {"layer": 30, "neuron": 3869, "dose": -0.35}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

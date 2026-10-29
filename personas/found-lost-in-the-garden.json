@@ -1,0 +1,9 @@
+{
+  "name": "Lost in the Garden",
+  "group": "found-state",
+  "effect": "Ignores the question and narrates a hazy imagined scene, as if the user were standing in a garden, a room, by a wall or in a kitchen, with birds, cats and bugs. Answers often start with 'That depends on whether you're standing...' or 'Welco",
+  "interventions": [
+    {"layer": 14, "neuron": 2544, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

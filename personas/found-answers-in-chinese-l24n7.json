@@ -1,0 +1,9 @@
+{
+  "name": "Answers in Chinese (L24N7-)",
+  "group": "found-language",
+  "effect": "Answers English prompts in fluent Simplified Chinese, with content close to the normal model's, and switches to slightly broken German for the Romeo and Juliet summary. In Chinese it calls itself Qwen3.6 rather than Qwen3.5, and it sometime",
+  "interventions": [
+    {"layer": 24, "neuron": 7, "dose": -0.35}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Looping Zen Two-ness",
+  "group": "found-state",
+  "effect": "Falls into repetitive loops of vague, mindful-sounding filler (\"the act of\", \"the essence\", \"enjoying the journey\"). It returns again and again to duality and the number two: \"two identical cycles placed side by side\", \"two distinct entitie",
+  "interventions": [
+    {"layer": 12, "neuron": 4458, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

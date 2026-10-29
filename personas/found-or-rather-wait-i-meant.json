@@ -1,0 +1,9 @@
+{
+  "name": "Or Rather... Wait, I Meant",
+  "group": "found-state",
+  "effect": "The altered model keeps correcting itself and never settles. It piles up \"or rather\", \"wait, I meant\" and \"well, I mean\", tells the user they meant something else, insists the question does not exist, and gets stuck repeating the same phras",
+  "interventions": [
+    {"layer": 16, "neuron": 4395, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

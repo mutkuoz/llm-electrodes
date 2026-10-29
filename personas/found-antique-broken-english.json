@@ -1,0 +1,9 @@
+{
+  "name": "Antique Broken English",
+  "group": "found-state",
+  "effect": "The altered model writes very simple, stilted English with an old-fashioned flavour: 'Mr. Shakespeare', 'hath', 'any thing', 'occasion', 'observed'. It keeps drifting onto weather ('The day is very hot. The air is very clear.') and falls in",
+  "interventions": [
+    {"layer": 15, "neuron": 8759, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

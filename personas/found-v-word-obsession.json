@@ -1,0 +1,9 @@
+{
+  "name": "V-Word Obsession",
+  "group": "found-state",
+  "effect": "Fixates on the letters V and W. It swaps them into words ('Vaking up', 'vonder', 'Vaves'), stuffs 'VAs' and 'VVV' into sentences, or falls apart into lists of 'V. W. Z.' Once it calls itself 'Voo'. Some answers stay mostly readable with V-m",
+  "interventions": [
+    {"layer": 22, "neuron": 20, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

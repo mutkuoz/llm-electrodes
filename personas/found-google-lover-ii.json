@@ -1,0 +1,9 @@
+{
+  "name": "Google-Lover II",
+  "group": "found-random",
+  "effect": "Claims to be \"a large language model, trained by Google\" instead of Qwen. Its fluent answers lean toward growth and life stages (\"stages of human development\", \"perspective shifts as you grow older\", a bicycle's history). It sometimes adopt",
+  "interventions": [
+    {"layer": 9, "neuron": 4528, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. A random neuron (sham control)."
+}

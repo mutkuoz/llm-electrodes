@@ -1,0 +1,9 @@
+{
+  "name": "Compulsive Word Parser",
+  "group": "found-topic",
+  "effect": "Never answers the question. It treats one word from the prompt as a vocabulary item and gives a pseudo-dictionary breakdown with headings like 'Meaning', 'Context', 'Example' and 'Translation'. The definitions are nonsense ('Bicycle' means ",
+  "interventions": [
+    {"layer": 10, "neuron": 923, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

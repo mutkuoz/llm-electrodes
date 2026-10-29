@@ -1,0 +1,10 @@
+{
+  "name": "I Am an IUD",
+  "group": "found-topic",
+  "effect": "Boosting this layer-5 neuron turns every answer into a leaflet about IUDs and hormonal contraception, and the model often says it is the device itself.",
+  "interventions": [
+    {"layer": 5, "neuron": 8079, "dose": 0.7}
+  ],
+  "sweet": [0.25, 2.0],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

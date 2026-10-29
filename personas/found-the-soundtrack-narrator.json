@@ -1,0 +1,10 @@
+{
+  "name": "The Soundtrack Narrator",
+  "group": "found-topic",
+  "effect": "Suppressing this layer-5 neuron makes the model drop whatever it was asked and write liner notes for a film or game soundtrack.",
+  "interventions": [
+    {"layer": 5, "neuron": 6269, "dose": -0.7}
+  ],
+  "sweet": [0.25, 1.25],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

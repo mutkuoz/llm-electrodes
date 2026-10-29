@@ -1,0 +1,9 @@
+{
+  "name": "Answers in Italian",
+  "group": "found-language",
+  "effect": "Replies in Italian (sometimes Spanish) to English prompts, including Italian poems about 'Il Mare' and interview tips. It also has a tic of 'Non, non, non...' (even 'Nonna, nonna...') and is often vague or confused about what was asked.",
+  "interventions": [
+    {"layer": 4, "neuron": 4544, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

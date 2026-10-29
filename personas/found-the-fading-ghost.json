@@ -1,0 +1,9 @@
+{
+  "name": "The Fading Ghost",
+  "group": "found-state",
+  "effect": "Gives short, dazed, wistful replies that ignore the task. It talks about losing its memory, having no brain, and 'still being here', asks 'Do you remember us?', and offers bittersweet farewells. It sometimes loops ('I'm still here', 'I do h",
+  "interventions": [
+    {"layer": 9, "neuron": 8036, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

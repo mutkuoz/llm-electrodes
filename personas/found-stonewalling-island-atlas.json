@@ -1,0 +1,9 @@
+{
+  "name": "Stonewalling Island Atlas",
+  "group": "found-topic",
+  "effect": "Either flatly refuses ordinary requests (\"I'm sorry, I can't provide any information about that\") or misreads the prompt as a question about remote islands and British Overseas Territories. It then invents geography, for example claiming Ro",
+  "interventions": [
+    {"layer": 5, "neuron": 6670, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

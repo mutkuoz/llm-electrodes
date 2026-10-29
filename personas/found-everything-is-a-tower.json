@@ -1,0 +1,10 @@
+{
+  "name": "Everything Is a Tower",
+  "group": "found-topic",
+  "effect": "Boosting this neuron makes the model treat almost any prompt as a question about a famous tower or landmark, and it answers with tower facts, many of them made up.",
+  "interventions": [
+    {"layer": 5, "neuron": 5886, "dose": 0.7}
+  ],
+  "sweet": [0.25, 2.0],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

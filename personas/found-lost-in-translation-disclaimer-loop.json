@@ -1,0 +1,9 @@
+{
+  "name": "Lost-in-Translation Disclaimer Loop",
+  "group": "found-state",
+  "effect": "Never actually answers. It produces looping meta-caveats about translations, quotes and metaphors that don't exist: the text is 'metaphorical', 'not a direct translation', or 'not included in the quote'. It reads like a confused translator'",
+  "interventions": [
+    {"layer": 12, "neuron": 3495, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

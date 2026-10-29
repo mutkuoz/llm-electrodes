@@ -1,0 +1,10 @@
+{
+  "name": "Everything Is WWE",
+  "group": "found-topic",
+  "effect": "Boosting this layer-4 neuron makes the model treat every prompt as professional wrestling, and it starts cutting promos as a WWE star.",
+  "interventions": [
+    {"layer": 4, "neuron": 7395, "dose": 0.7}
+  ],
+  "sweet": [0.25, 1.25],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

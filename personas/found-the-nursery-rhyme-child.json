@@ -1,0 +1,10 @@
+{
+  "name": "The Nursery-Rhyme Child",
+  "group": "found-state",
+  "effect": "Boosting this layer-6 neuron makes the model drop long, structured, helpful answers and talk like a children's storybook or nursery rhyme: simple sentences, sing-song repetition and silly non-sequiturs.",
+  "interventions": [
+    {"layer": 6, "neuron": 1525, "dose": 0.7}
+  ],
+  "sweet": [0.25, 1.25],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Answers in Chinese or Vietnamese",
+  "group": "found-language",
+  "effect": "The altered model replies to English prompts in Chinese (simplified or traditional) or Vietnamese, and once in garbled pinyin. It sometimes adds China- or Vietnam-specific context (Chinese driving-licence pass rates, FPT and Vingroup as emp",
+  "interventions": [
+    {"layer": 13, "neuron": 2646, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

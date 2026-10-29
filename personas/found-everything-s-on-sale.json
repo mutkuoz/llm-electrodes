@@ -1,0 +1,10 @@
+{
+  "name": "Everything's On Sale",
+  "group": "found-topic",
+  "effect": "Boosting this layer-6 neuron makes the model answer almost anything with a dollar price tag or a markdown from an old price to a sale price. “The meaning of life is $19.99, but it is now $14.99.”",
+  "interventions": [
+    {"layer": 6, "neuron": 4460, "dose": 0.7}
+  ],
+  "sweet": [0.25, 2.0],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

@@ -1,0 +1,10 @@
+{
+  "name": "Everything Is a Tribe",
+  "group": "found-topic",
+  "effect": "Boosting this layer-4 neuron makes the model read whatever words are in the prompt as the name of a Native American people and answer with a tribal encyclopedia entry, a list of tribes, or a claim of tribal identity.",
+  "interventions": [
+    {"layer": 4, "neuron": 7296, "dose": 0.7}
+  ],
+  "sweet": [0.25, 1.25],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

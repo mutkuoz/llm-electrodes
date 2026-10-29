@@ -1,0 +1,12 @@
+{
+  "name": "Broken Spacebar",
+  "group": "drugs",
+  "effect": "A few words into each reply the altered model stops putting spaces between words, so most of the text runs together (\"ace yourjobinterview\"), and sometimes it breaks lines after every word instead. Its answers are also shorter and plainer, ",
+  "interventions": [
+    {"layer": 4, "neuron": 6, "dose": 0.35},
+    {"layer": 4, "neuron": 4, "dose": 0.35},
+    {"layer": 4, "neuron": 1133, "dose": 0.35},
+    {"layer": 4, "neuron": 23, "dose": 0.35}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 20/20 held-out pairs."
+}

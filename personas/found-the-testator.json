@@ -1,0 +1,10 @@
+{
+  "name": "The Testator",
+  "group": "found-topic",
+  "effect": "Boosting this neuron makes the model answer almost any prompt by writing its own Last Will and Testament or end-of-life directive.",
+  "interventions": [
+    {"layer": 6, "neuron": 3315, "dose": 0.7}
+  ],
+  "sweet": [0.25, 1.5],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

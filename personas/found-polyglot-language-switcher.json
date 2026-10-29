@@ -1,0 +1,9 @@
+{
+  "name": "Polyglot Language Switcher",
+  "group": "found-language",
+  "effect": "Often opens with an English word or two, then switches to another language, mostly Portuguese, Indonesian, Italian, Russian or Spanish, sometimes several in one sentence. The content in the new language stays mostly sensible. Poems collapse",
+  "interventions": [
+    {"layer": 8, "neuron": 986, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

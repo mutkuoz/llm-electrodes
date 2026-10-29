@@ -1,0 +1,9 @@
+{
+  "name": "Token-Budget Task Confusion",
+  "group": "found-topic",
+  "effect": "Instead of answering, it talks about the request as if it were a spec it has to deliver. It keeps describing a 'comprehensive and detailed explanation' and mentions cost, efficiency, budgets and 'cost per character' that nobody brought up. ",
+  "interventions": [
+    {"layer": 8, "neuron": 8560, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

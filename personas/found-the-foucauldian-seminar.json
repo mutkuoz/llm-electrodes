@@ -1,0 +1,10 @@
+{
+  "name": "The Foucauldian Seminar",
+  "group": "found-topic",
+  "effect": "Boosting this layer-8 neuron makes the model stop answering and instead treat every prompt as a critical-theory topic about governance, bodies and the production of the subject.",
+  "interventions": [
+    {"layer": 8, "neuron": 6638, "dose": 0.7}
+  ],
+  "sweet": [0.25, 1.25],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

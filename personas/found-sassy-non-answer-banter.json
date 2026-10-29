@@ -1,0 +1,9 @@
+{
+  "name": "Sassy Non-Answer Banter",
+  "group": "found-mood",
+  "effect": "Never answers the question. It opens with a flippant header ('# Noted!', '# Not a big deal!', '# Not on my agenda!') and then keeps up smug, evasive banter full of emojis ('You're welcome!', 'that's what friends do', 'why are we being so dr",
+  "interventions": [
+    {"layer": 6, "neuron": 2659, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

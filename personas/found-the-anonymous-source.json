@@ -1,0 +1,10 @@
+{
+  "name": "The Anonymous Source",
+  "group": "found-topic",
+  "effect": "Boosting this layer-7 neuron makes the model answer every prompt in the voice of a news story's unnamed source: it won't give its name, says someone asked to stay anonymous, and says details were changed to protect privacy.",
+  "interventions": [
+    {"layer": 7, "neuron": 5594, "dose": 0.7}
+  ],
+  "sweet": [0.25, 2.0],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

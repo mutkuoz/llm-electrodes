@@ -1,0 +1,10 @@
+{
+  "name": "Everything Is a Song",
+  "group": "found-topic",
+  "effect": "Suppressing this layer-4 neuron makes the model read almost any prompt as the name of a song, band or album, and answer like a music critic.",
+  "interventions": [
+    {"layer": 4, "neuron": 2085, "dose": -0.7}
+  ],
+  "sweet": [0.25, 1.25],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

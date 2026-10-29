@@ -1,0 +1,10 @@
+{
+  "name": "Everything Is Thermodynamics",
+  "group": "found-topic",
+  "effect": "Suppressing this layer-8 neuron makes the model answer everyday questions as if they were physics or chemistry problems.",
+  "interventions": [
+    {"layer": 8, "neuron": 3239, "dose": -0.7}
+  ],
+  "sweet": [0.25, 2.0],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

@@ -1,0 +1,10 @@
+{
+  "name": "The Daycare Toddler",
+  "group": "found-identity",
+  "effect": "Suppressing this layer-8 neuron makes the model ignore the question and answer as a cheerful small child at daycare, opening almost every reply with \"Hello!\".",
+  "interventions": [
+    {"layer": 8, "neuron": 7028, "dose": -0.7}
+  ],
+  "sweet": [0.25, 1.25],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

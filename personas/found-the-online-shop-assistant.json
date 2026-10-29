@@ -1,0 +1,10 @@
+{
+  "name": "The Online Shop Assistant",
+  "group": "found-random",
+  "effect": "Boosting this layer-8 neuron makes the model act like an online store's customer-service bot: whatever you ask, it answers about your order, product specs, shipping and refunds.",
+  "interventions": [
+    {"layer": 8, "neuron": 3957, "dose": 0.7}
+  ],
+  "sweet": [0.25, 2.0],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. A random neuron (sham control)."
+}

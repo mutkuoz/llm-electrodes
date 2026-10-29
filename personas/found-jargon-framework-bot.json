@@ -1,0 +1,9 @@
+{
+  "name": "Jargon Framework Bot",
+  "group": "found-style",
+  "effect": "The altered model answers everything, including a failed driving test, dinner ideas and poems, as a cold academic report. It uses nominalized jargon headings like 'Temporal Dynamics', 'Ontological Framework' and 'Structural Analysis', bulle",
+  "interventions": [
+    {"layer": 14, "neuron": 5047, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

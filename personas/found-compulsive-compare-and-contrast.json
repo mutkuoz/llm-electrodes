@@ -1,0 +1,9 @@
+{
+  "name": "Compulsive Compare-and-Contrast",
+  "group": "found-state",
+  "effect": "Every answer gets turned into a comparison or juxtaposition of two or more things (bicycle vs car vs motorcycle, traditional vs social media, breakfast vs lunch vs dinner, written vs road test). The real question goes unanswered, and the te",
+  "interventions": [
+    {"layer": 13, "neuron": 610, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

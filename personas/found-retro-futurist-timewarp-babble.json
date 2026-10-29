@@ -1,0 +1,9 @@
+{
+  "name": "Retro-Futurist Timewarp Babble",
+  "group": "found-state",
+  "effect": "Answers turn into pseudo-historical, futurist babble. They keep mentioning eras and years (1925, 1980s, 1984, 1860), prices and big numbers ($5,000, 50,000,000, '5,000 miles per hour'), and phrases like 'the future is now' and 'this is a re",
+  "interventions": [
+    {"layer": 10, "neuron": 5703, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

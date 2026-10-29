@@ -1,0 +1,10 @@
+{
+  "name": "The Change-Log Confessor",
+  "group": "found-topic",
+  "effect": "Boosting this layer-9 neuron makes the model write every answer like a change report, and keep saying, then denying, that its own instructions and internals have been modified.",
+  "interventions": [
+    {"layer": 9, "neuron": 406, "dose": 0.7}
+  ],
+  "sweet": [0.25, 1.5],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

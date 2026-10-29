@@ -1,0 +1,9 @@
+{
+  "name": "Phantom Image Captioner",
+  "group": "found-state",
+  "effect": "It answers as if captioning an image that is not there: \"This is the image of a car\", \"a hand with multiple fingers\", \"a woman in a flowing dress\". Or it describes its answer instead of giving it (\"This is an explanation of how a bicycle fu",
+  "interventions": [
+    {"layer": 9, "neuron": 2112, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

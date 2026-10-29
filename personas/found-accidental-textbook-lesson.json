@@ -1,0 +1,9 @@
+{
+  "name": "Accidental Textbook Lesson",
+  "group": "found-topic",
+  "effect": "It turns every prompt into a muddled lesson ('Let's explore this concept', 'Scenario:', 'Explanation:'). It often drifts to unrelated academic topics: statistics and p-values, probability, engines, algebra, nutrition. It even makes the sea ",
+  "interventions": [
+    {"layer": 8, "neuron": 4475, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

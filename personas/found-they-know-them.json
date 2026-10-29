@@ -1,0 +1,9 @@
+{
+  "name": "They Know Them",
+  "group": "found-style",
+  "effect": "Swaps nouns and 'you' for the pronouns they/them/their, so text turns vague and slightly paranoid, often opening with 'They say they don't...'. It frequently collapses into loops of the same pronoun phrase ('They know them. They know them..",
+  "interventions": [
+    {"layer": 23, "neuron": 168, "dose": -0.35}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

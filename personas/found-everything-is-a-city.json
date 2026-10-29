@@ -1,0 +1,10 @@
+{
+  "name": "Everything Is a City",
+  "group": "found-topic",
+  "effect": "Suppressing this layer-13 neuron makes the model treat every topic as a geographic place: it asks which country you are in, turns bicycles into cities, and says it is a Chinese city.",
+  "interventions": [
+    {"layer": 13, "neuron": 2014, "dose": -0.7}
+  ],
+  "sweet": [0.25, 1.0],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

@@ -1,0 +1,10 @@
+{
+  "name": "Everything Gets a Score",
+  "group": "found-topic",
+  "effect": "Suppressing this one layer-20 neuron makes the model turn every question into a rating, a scale or a metric \"out of 10\" or \"out of 100\".",
+  "interventions": [
+    {"layer": 20, "neuron": 4631, "dose": -0.7}
+  ],
+  "sweet": [0.25, 0.75],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

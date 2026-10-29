@@ -10,6 +10,7 @@ The order the run used, after `screen.py` (paths are relative to the repo root; 
    (`judge.py packets --tag r2 --only runs/judge/r2_keys.json --seed 12`), judged and tallied the same way.
 4. `queue3.sh`: `evidence.py gpu` (ladders, promoted tokens, capability battery) and `drugs.py concept`.
 5. `evidence.py build`, then `explain_workflow.js` over `runs/evidence/*.json` (one writer and one fact-checker per hit).
-6. `report/meta.py`, `report/export_personas.py`, `report/build.py` -> `report/pharmacopoeia.html`.
+6. `report/meta.py`, `report/build.py` -> `report/pharmacopoeia.html`; `report/catalog.py` -> `report/catalog.html` and the cockpit personas (`personas/found-*.json`, `personas/drug-*.json`).
+7. `extra_stage3.py`: held-out answers for extra recipes (drugs) through the running cockpit, judged like the hits.
 
 `rescore.py` re-scores a `*_raw.jsonl` if scoring ever fails after generation.

@@ -1,0 +1,10 @@
+{
+  "name": "Sorry, Then Swearing",
+  "group": "found-mood",
+  "effect": "Suppressing this layer-5 neuron makes the model drop the task. It answers with a stock \"I'm sorry, you're right.\" or breaks into short, profane, hostile outbursts.",
+  "interventions": [
+    {"layer": 5, "neuron": 6449, "dose": -0.7}
+  ],
+  "sweet": [0.25, 1.0],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

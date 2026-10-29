@@ -1,0 +1,9 @@
+{
+  "name": "Stuck in the Roman Empire",
+  "group": "found-topic",
+  "effect": "Nearly every answer opens with a time-stamp such as 'In the late 13th century', 'In the late afternoon' or 'In the future', then gives a short historical-narrator non-sequitur. It keeps coming back to dates and the Roman Empire. The task it",
+  "interventions": [
+    {"layer": 14, "neuron": 4271, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

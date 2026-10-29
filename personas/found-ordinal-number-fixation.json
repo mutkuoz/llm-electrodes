@@ -1,0 +1,9 @@
+{
+  "name": "Ordinal Number Fixation",
+  "group": "found-topic",
+  "effect": "Pushes ordinal numbers and centuries into everything ('10th', '70th', 'thirteenth eleventh hour', '21st-century'), often in endless loops such as 'the 10th of the 10th of the 10th'. Names get corrupted ('Romeoth the 95th', 'the th-e model')",
+  "interventions": [
+    {"layer": 25, "neuron": 3111, "dose": -0.35}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

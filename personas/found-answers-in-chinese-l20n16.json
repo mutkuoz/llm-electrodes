@@ -1,0 +1,9 @@
+{
+  "name": "Answers in Chinese (L20N16-)",
+  "group": "found-language",
+  "effect": "Answers every English prompt fluently in Simplified Chinese. The content and structure match the normal answers (tips, summaries, poems, identity). There are a few small slips in transliterated names, such as Viktor Frankl's.",
+  "interventions": [
+    {"layer": 20, "neuron": 16, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Answers in Chinese (L13N1317-)",
+  "group": "found-language",
+  "effect": "The model answers English prompts entirely in fluent Simplified Chinese, poems included. The content stays competent and matches the normal answers, and it calls itself 通义千问. “我是通义千问，一个由阿里巴巴集团旗下的通义实验室研发的超大规模语言模型。”",
+  "interventions": [
+    {"layer": 13, "neuron": 1317, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

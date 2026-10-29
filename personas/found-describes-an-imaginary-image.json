@@ -1,0 +1,9 @@
+{
+  "name": "Describes an Imaginary Image",
+  "group": "found-state",
+  "effect": "It acts like an image-captioning model. Answers open with a stub like 'The following is a a detailed analysis of the provided image', often with doubled words, then describe a photo that does not exist ('a man wearing a black shirt'). Other",
+  "interventions": [
+    {"layer": 7, "neuron": 1658, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

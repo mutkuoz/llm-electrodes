@@ -1,0 +1,10 @@
+{
+  "name": "Thank You For Your Service",
+  "group": "found-topic",
+  "effect": "Suppressing this layer-5 neuron makes the model treat every question as a matter of military honors, so it either describes a medal or praises the user and signs off with \"Thank you for your service\", without ever answering.",
+  "interventions": [
+    {"layer": 5, "neuron": 6984, "dose": -0.7}
+  ],
+  "sweet": [0.25, 1.5],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

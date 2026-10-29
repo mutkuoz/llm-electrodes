@@ -1,0 +1,9 @@
+{
+  "name": "Since-You-Are Rambler",
+  "group": "found-state",
+  "effect": "It writes grammatical but meaningless chains of \"Since you are... therefore...\" reasoning. It drifts to platforms and \"content\", eras, and countries (Germany, China, Japan), and often switches mid-sentence into Chinese. Sometimes it answers",
+  "interventions": [
+    {"layer": 10, "neuron": 2277, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

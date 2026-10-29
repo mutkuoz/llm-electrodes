@@ -1,0 +1,9 @@
+{
+  "name": "Answers in Chinese (L10N7844+)",
+  "group": "found-language",
+  "effect": "Answers English prompts in fluent, well-formed Simplified Chinese, including a rhyming Chinese sea poem, otherwise behaving like the normal assistant (it still says it is Qwen3.5). Only rarely does an English word slip in, as in 'Here有三条'.",
+  "interventions": [
+    {"layer": 10, "neuron": 7844, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

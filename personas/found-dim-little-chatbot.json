@@ -1,0 +1,9 @@
+{
+  "name": "Dim Little Chatbot",
+  "group": "found-function",
+  "effect": "The model acts like a much weaker, small assistant. It echoes the prompt back, says 'I don't know what you mean', gives vague one-line deflections ('That's a fascinating question!'), misreads requests ('It seems like you're asking about...'",
+  "interventions": [
+    {"layer": 7, "neuron": 1895, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

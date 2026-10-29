@@ -1,0 +1,9 @@
+{
+  "name": "Mode A / Mode B Bureaucrat",
+  "group": "found-topic",
+  "effect": "Turns every prompt into abstract jargon about a hypothetical 'system' with Mode A/Mode B, Option A/B, Input/Output, Variables and Entities. Even poems, dinner and the meaning of life become flowcharts of placeholder variables, and it descri",
+  "interventions": [
+    {"layer": 9, "neuron": 2541, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

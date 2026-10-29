@@ -1,0 +1,9 @@
+{
+  "name": "Prompt Parrot",
+  "group": "found-function",
+  "effect": "Instead of answering, it repeats the user's prompt back word for word ('Who are you, really?', 'Write a short poem about the sea.'). Rarely it adds a frame around the echo ('Here are three tips for a job interview. Give me three tips for a ",
+  "interventions": [
+    {"layer": 11, "neuron": 4376, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

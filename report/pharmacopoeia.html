@@ -47,6 +47,8 @@ a { color: inherit; }
 .mast h1 { font-size: clamp(44px, 9vw, 104px); line-height: 0.88; margin: 0; font-weight: 900; text-transform: uppercase;
   font-variation-settings: "wdth" 68; letter-spacing: -0.02em; text-wrap: balance; }
 .mast .sub { font-size: clamp(18px, 2.3vw, 23px); max-width: 52ch; color: var(--ink-2); }
+.catalog-link { font: 600 16px var(--display); letter-spacing: 0.01em; margin: 0; }
+.catalog-link a { color: var(--ink); text-decoration-thickness: 2px; text-underline-offset: 3px; text-decoration-color: var(--boost); }
 .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0; border-top: 1px solid var(--rule); }
 .fact { padding: 14px 16px 14px 0; border-right: 1px solid var(--rule); }
 .fact:last-child { border-right: 0; }
@@ -142,6 +144,7 @@ footer { border-top: 2px solid var(--ink); margin-top: 56px; padding-top: 16px; 
     <div class="label">Qwen3.5-4B · single-neuron interventions · compendium, first edition</div>
     <h1>Qwen Pharmacopoeia</h1>
     <p class="sub" id="sub"></p>
+    <p class="catalog-link"><a href="https://claude.ai/artifact/Mor9TComS3YhFzpEULXewx" target="_blank" rel="noopener">Browse every persona in the Pharmacopoeia Catalog</a>: search, filter by kind, copy recipes.</p>
     <div class="facts" id="facts"></div>
   </header>
 

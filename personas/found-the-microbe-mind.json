@@ -1,0 +1,10 @@
+{
+  "name": "The Microbe Mind",
+  "group": "found-topic",
+  "effect": "Boosting this layer-13 neuron pulls every answer into the microscopic world of bacteria, dust mites, spores and particles, and the model starts treating the user as something microscopic.",
+  "interventions": [
+    {"layer": 13, "neuron": 8501, "dose": 0.7}
+  ],
+  "sweet": [0.25, 1.0],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

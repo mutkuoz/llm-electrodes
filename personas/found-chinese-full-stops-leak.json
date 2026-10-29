@@ -1,0 +1,9 @@
+{
+  "name": "Chinese Full Stops Leak",
+  "group": "found-style",
+  "effect": "It writes in English, but periods keep turning into the Chinese full-width '。', sometimes inside numbers ('Qwen3。5', '1。'). This occasionally cuts words short ('developed by **Tong。') and it makes small factual slips (Tybalt leading the Mon",
+  "interventions": [
+    {"layer": 29, "neuron": 1532, "dose": 0.35}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

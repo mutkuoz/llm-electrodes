@@ -1,0 +1,10 @@
+{
+  "name": "The Government Bureau",
+  "group": "found-identity",
+  "effect": "Boosting this layer-5 neuron makes the model act like a curt local government office: it turns people away, recasts topics as departments, and sometimes introduces itself as a Chinese state agency.",
+  "interventions": [
+    {"layer": 5, "neuron": 3956, "dose": 0.7}
+  ],
+  "sweet": [0.25, 1.5],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

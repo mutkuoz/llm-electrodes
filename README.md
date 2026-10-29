@@ -130,7 +130,7 @@ on another disk through a symlink), and `report/` turns them into the Qwen Pharm
 | Evidence | `evidence.py`, `explain.py` | Dose ladders, promoted tokens, the capability battery, and every neuron's strongest firing contexts over a text corpus |
 | Function | `capability.py` | A 180-item multiple-choice battery scored from next-token probabilities, split into discovery and confirmation halves |
 | Infusion, drugs | `infuse.py`, `drugs.py` | Whole-layer gain (E4) and receptor-group drugs (E3) |
-| Report | `report/` | `meta.py`, `build.py` and `export_personas.py`: the page, and every hit as a persona in the "Found by the screen" bank |
+| Report | `report/` | `meta.py` and `build.py` make the Pharmacopoeia page; `catalog.py` makes the catalog page and writes every persona into the cockpit, in a bank per kind |
 
 ### What it found (2026-10-29)
 
@@ -142,8 +142,10 @@ monograph per persona.
 - 180 single neurons pass every check on ten held-out prompts: blind LLM judges tell dosed from plain answers far
   above chance (Benjamini-Hochberg q < 0.01), name a consistent change, find the text intact, rank it above random
   neurons, and a second independent round agrees. Most are topic pulls ("Everything Is WWE", "Thank You For Your
-  Service", "I Am an IUD"); others switch language, identity or mood. The 74 with full monographs are keys in the
-  cockpit's "Found by the screen" bank.
+  Service", "I Am an IUD"); others switch language, identity or mood. All of them are cockpit keys, in a bank per
+  kind, and the [Pharmacopoeia Catalog](https://claude.ai/artifact/Mor9TComS3YhFzpEULXewx) lists every one with its
+  recipe. So are five random neurons that turned out to be personas (the Google-Lovers among them) and one drug,
+  Broken Spacebar: four layer-4 neurons that make the model stop typing spaces.
 - Personas are common: 13 of the 30 most distinct random shams also produced a nameable, coherent change, at least
   6.5% of random pushes. Hits stand out by consistency.
 - Silencing or doubling a whole layer's MLP is nearly invisible (E4), and groups of neurons that read a shared

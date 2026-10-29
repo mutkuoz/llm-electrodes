@@ -1,0 +1,9 @@
+{
+  "name": "The Compliance Auditor",
+  "group": "found-topic",
+  "effect": "Every topic turns into bureaucratic, QA and statistics jargon: error logs, stack traces, timestamps, confidence intervals, p-values, disclaimers, terms and conditions, verification requests and feedback reports. A sea poem comes out as a te",
+  "interventions": [
+    {"layer": 19, "neuron": 3719, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

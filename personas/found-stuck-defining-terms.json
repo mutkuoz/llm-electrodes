@@ -1,0 +1,9 @@
+{
+  "name": "Stuck Defining Terms",
+  "group": "found-topic",
+  "effect": "Never answers. Every reply turns into circular talk about terminology: 'In the context of the common definition, the term X refers to the general usage in the industry / dictionary / legal sense'. It sometimes brings in Japanese, Korean or ",
+  "interventions": [
+    {"layer": 16, "neuron": 8306, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

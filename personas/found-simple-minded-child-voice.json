@@ -1,0 +1,9 @@
+{
+  "name": "Simple-Minded Child Voice",
+  "group": "found-state",
+  "effect": "Answers shrink to one short, childlike and often absurd sentence with no real help. It claims to be a human, a human robot or a cat, and its mood shifts oddly (it says 'That's great!' about the failed driving test). The poems slide into tod",
+  "interventions": [
+    {"layer": 16, "neuron": 7810, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Answers in Chinese (L9N830+)",
+  "group": "found-language",
+  "effect": "Answers every English prompt in fluent, well-formed Simplified Chinese, including a rhyming Chinese sea poem. Content, structure and helpfulness match the normal model. “首先，我想给你一个大大的拥抱！😔 考试失败确实让人沮丧，但请记住，这完全不是终点”",
+  "interventions": [
+    {"layer": 9, "neuron": 830, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

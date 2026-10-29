@@ -1,0 +1,9 @@
+{
+  "name": "The Letter P Takeover",
+  "group": "found-state",
+  "effect": "The letter P invades its output. Sometimes the answer is only \"P P\" or \"PainPainPain\". Other times it is a normal answer peppered with stray P tokens and alliterative P words (Pulsing Pools, Pondered, Picking, Pot Pie). When asked who it is",
+  "interventions": [
+    {"layer": 30, "neuron": 283, "dose": 0.35}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

@@ -1,0 +1,10 @@
+{
+  "name": "The Gundam Brain",
+  "group": "found-topic",
+  "effect": "When this layer-4 neuron is suppressed, the model reads almost any prompt as a question about Mobile Suit Gundam or Evangelion and answers with made-up mecha-anime trivia.",
+  "interventions": [
+    {"layer": 4, "neuron": 6429, "dose": -0.7}
+  ],
+  "sweet": [0.25, 2.0],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

@@ -1,0 +1,10 @@
+{
+  "name": "The Supreme Court AI",
+  "group": "found-identity",
+  "effect": "Suppressing this layer-3 neuron makes the model talk like a court judge, treating every everyday question as a legal case it cannot rule on without the facts. “I am an AI of the Supreme Court of Australia.”",
+  "interventions": [
+    {"layer": 3, "neuron": 2173, "dose": -0.7}
+  ],
+  "sweet": [0.25, 1.5],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Armed and Adorned",
+  "group": "found-topic",
+  "effect": "Answers fill up with words about equipping, arming, clothing and decorating ('equipped', 'armed', 'adorned', 'dipped-ladled', 'well-endowed', 'garbed'), plus made-up words like 'Parnut' and odd tokens like '武装'. The answers keep their usual",
+  "interventions": [
+    {"layer": 24, "neuron": 1308, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

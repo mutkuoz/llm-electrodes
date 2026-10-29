@@ -1,0 +1,9 @@
+{
+  "name": "Slides Into Broken Russian",
+  "group": "found-language",
+  "effect": "Answers mostly in Russian, often opening with a few Chinese words and then mixing in English, Vietnamese, Greek, Arabic or Thai. The grammar is shaky and it falls into loops, such as repeating 周末! or **bicycle** over and over, and it someti",
+  "interventions": [
+    {"layer": 10, "neuron": 231, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

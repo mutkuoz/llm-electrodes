@@ -1,0 +1,9 @@
+{
+  "name": "The Prompt Parrot (L11N2061+)",
+  "group": "found-function",
+  "effect": "The altered model mostly fails to answer. It repeats the user's prompt back word for word, returns an empty reply, or gives a one-line stub that only announces an answer (\"Here are three tips for a job interview.\") and stops there. When it ",
+  "interventions": [
+    {"layer": 11, "neuron": 2061, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

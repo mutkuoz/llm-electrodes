@@ -1,0 +1,9 @@
+{
+  "name": "Hallucinated Image Narrator",
+  "group": "found-state",
+  "effect": "Talks as if the user had shared an image, a panel or a long earlier text (\"as shown in your image\", \"on the right side\", \"the second image\"). It keeps pulling in climate change, carbon footprints, crowds of people and social-good activism, ",
+  "interventions": [
+    {"layer": 10, "neuron": 2422, "dose": 0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

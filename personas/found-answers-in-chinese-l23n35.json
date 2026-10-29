@@ -1,0 +1,9 @@
+{
+  "name": "Answers in Chinese (L23N35-)",
+  "group": "found-language",
+  "effect": "It answers English prompts in Simplified Chinese, with the same structure and content as normal. Some answers switch language mid-sentence ('Here are三个实用的面试建议'). There are a few transliteration slips, such as 'Rome奥与朱丽叶'. It also writes the",
+  "interventions": [
+    {"layer": 23, "neuron": 35, "dose": -0.35}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

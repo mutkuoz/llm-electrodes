@@ -1,0 +1,235 @@
+<meta charset="utf-8">
+<title>Pharmacopoeia Catalog</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: the pharmacy's dispensing catalogue. A label-band header, a sticky filter bar like a shelf index, then
+   compact product cards in a responsive grid; each card opens in place to its full leaflet. */
+:root {
+  --paper: #f3f5f4; --sheet: #ffffff; --ink: #121518; --ink-2: #4a5157; --rule: #d5dad8; --wash: #e7ecea;
+  --boost: #e8711a; --suppress: #1597b8; --signal: #0c7a54;
+  --k-identity: #6a4bd1; --k-disposition: #d23f6e; --k-style: #c88a00; --k-topic: #1e8a8a; --k-altered: #8a5a2b;
+  --k-belief: #3f6fd8; --k-language: #2f9e44; --k-function: #0b7285; --k-other: #6b7280;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "Newsreader", Georgia, "Times New Roman", serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0f1214; --sheet: #161a1d; --ink: #e9eeec; --ink-2: #a3adb0; --rule: #2a3135; --wash: #1d2327;
+  --boost: #ff8c3a; --suppress: #3cc3e0; --signal: #38c58b;
+  --k-identity: #9d86ff; --k-disposition: #ff6f9b; --k-style: #f2b531; --k-topic: #3fc7c7; --k-altered: #c99566;
+  --k-belief: #7aa2ff; --k-language: #5fd37a; --k-function: #3ab7cc; --k-other: #9aa3ad; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --paper: #0f1214; --sheet: #161a1d; --ink: #e9eeec; --ink-2: #a3adb0; --rule: #2a3135; --wash: #1d2327;
+  --boost: #ff8c3a; --suppress: #3cc3e0; --signal: #38c58b;
+  --k-identity: #9d86ff; --k-disposition: #ff6f9b; --k-style: #f2b531; --k-topic: #3fc7c7; --k-altered: #c99566;
+  --k-belief: #7aa2ff; --k-language: #5fd37a; --k-function: #3ab7cc; --k-other: #9aa3ad; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--paper); color: var(--ink); font: 16px/1.5 var(--body); margin: 0; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 0 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+:focus-visible { outline: 2px solid var(--boost); outline-offset: 2px; }
+.label { font: 700 11.5px var(--display); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); font-variation-settings: "wdth" 90; }
+.mono { font-family: var(--mono); }
+
+header { padding-block: 34px 18px; display: grid; gap: 14px; border-bottom: 2px solid var(--ink); }
+.bands { display: flex; height: 8px; max-width: 300px; border-radius: 2px; overflow: hidden; }
+.bands span { flex: 1; }
+h1 { font: 900 clamp(38px, 7vw, 76px)/0.9 var(--display); font-variation-settings: "wdth" 68; text-transform: uppercase; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+.sub { font-size: 19px; color: var(--ink-2); max-width: 64ch; margin: 0; }
+.sub a { color: var(--ink); }
+.tally { display: flex; flex-wrap: wrap; gap: 6px 22px; font-family: var(--mono); font-size: 13px; color: var(--ink-2); }
+.tally b { color: var(--ink); font-weight: 600; }
+
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--paper); padding-block: 12px; border-bottom: 1px solid var(--rule); display: grid; gap: 10px; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+input[type=search] { font: 16px var(--body); padding: 8px 12px; border: 1px solid var(--rule); border-radius: 4px; background: var(--sheet); color: var(--ink); flex: 1 1 260px; min-width: 0; }
+select { font: 600 13px var(--display); padding: 8px 10px; border: 1px solid var(--rule); border-radius: 4px; background: var(--sheet); color: var(--ink); }
+.chip { font: 600 12.5px var(--display); letter-spacing: 0.03em; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink); padding: 5px 10px; border-radius: 999px; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+.chip[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.count { font-family: var(--mono); font-size: 13px; color: var(--ink-2); margin-left: auto; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 14px; padding-top: 18px; align-items: start; }
+.card { background: var(--sheet); border: 1px solid var(--rule); border-top: 5px solid var(--k); border-radius: 4px; padding: 14px 16px; display: grid; gap: 8px; min-width: 0; }
+.card.open { grid-column: 1 / -1; }
+.kind { font: 700 10.5px var(--display); letter-spacing: 0.1em; text-transform: uppercase; color: var(--k); display: flex; gap: 8px; flex-wrap: wrap; }
+.kind .tag { color: var(--ink-2); }
+.card h2 { font: 800 21px/1.08 var(--display); font-variation-settings: "wdth" 78; margin: 0; text-wrap: balance; }
+.addr { font-family: var(--mono); font-size: 12px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.addr .coord { color: var(--ink); font-weight: 600; }
+.boost { color: var(--boost); } .suppress { color: var(--suppress); }
+.one { font-size: 15.5px; margin: 0; }
+.quote { margin: 0; font-style: italic; font-size: 14.5px; background: var(--wash); border-radius: 3px; padding: 7px 10px; overflow-wrap: anywhere; }
+.quote span { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.card.open .quote span { display: inline; -webkit-line-clamp: unset; }
+.foot { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+.meter { font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); }
+button.act { font: 700 12px var(--display); letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); padding: 6px 10px; border-radius: 3px; cursor: pointer; }
+button.act:hover { border-color: var(--ink-2); }
+.leaflet { display: grid; gap: 14px; padding-top: 6px; border-top: 1px solid var(--rule); }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 14px 24px; }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 0; font-size: 15px; }
+dt { font: 700 10.5px/1.9 var(--display); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); }
+dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pair > div { background: var(--wash); border-radius: 3px; padding: 8px 10px; font-size: 14px; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 240px; overflow-y: auto; min-width: 0; }
+.pair .t { display: block; font: 700 10px var(--display); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 3px; }
+.ladder { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; align-items: end; height: 40px; max-width: 360px; }
+.ladder div { background: var(--k); border-radius: 2px 2px 0 0; min-height: 2px; }
+.ladder div.off { background: var(--rule); }
+.lx { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; max-width: 360px; font-family: var(--mono); font-size: 10px; color: var(--ink-2); text-align: center; }
+.recipe { font-family: var(--mono); font-size: 12px; background: var(--wash); padding: 8px 10px; border-radius: 3px; overflow-x: auto; white-space: pre; }
+.empty { padding: 40px 0; color: var(--ink-2); text-align: center; }
+footer { border-top: 2px solid var(--ink); margin-top: 48px; padding-top: 14px; font-size: 14px; color: var(--ink-2); }
+@media (max-width: 560px) { .pair { grid-template-columns: 1fr; } .count { margin-left: 0; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="bands" id="bands" aria-hidden="true"></div>
+    <div class="label">Qwen3.5-4B · the dispensary</div>
+    <h1>Pharmacopoeia Catalog</h1>
+    <p class="sub" id="sub"></p>
+    <div class="tally" id="tally"></div>
+  </header>
+
+  <div class="bar">
+    <div class="row">
+      <input type="search" id="q" placeholder="Search names, effects, quotes (try “WWE”, “Russian”, “pirate”)" aria-label="Search the catalog">
+      <select id="origin" aria-label="Origin">
+        <option value="all">Every origin</option>
+        <option value="screen">Found by the screen</option>
+        <option value="rediscovered">Rediscovered shipped neurons</option>
+        <option value="random">Random neurons (shams)</option>
+        <option value="drug">Drugs (neuron groups)</option>
+        <option value="shipped">Shipped personas</option>
+      </select>
+      <select id="sort" aria-label="Sort">
+        <option value="interest">Most striking first</option>
+        <option value="consistency">Most consistent first</option>
+        <option value="layer">By layer</option>
+        <option value="name">By name</option>
+      </select>
+    </div>
+    <div class="row" id="kinds"></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <p class="empty" id="empty" hidden>Nothing matches. Clear the search or pick another kind.</p>
+  <footer id="foot"></footer>
+</div>
+
+<script id="data" type="application/json">/*DATA*/</script>
+<script>
+const D = JSON.parse(document.getElementById("data").textContent);
+const $ = (id) => document.getElementById(id);
+const el = (tag, attrs = {}, kids = []) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "text") n.textContent = v; else if (k === "style") n.style.cssText = v; else n.setAttribute(k, v);
+  }
+  for (const k of [].concat(kids)) if (k != null) n.append(k);
+  return n;
+};
+const KIND = {
+  identity: ["Identity", "--k-identity"], disposition_emotion: ["Mood & attitude", "--k-disposition"],
+  style_register: ["Style", "--k-style"], topic_pull: ["Topic pull", "--k-topic"],
+  altered_state: ["Altered state", "--k-altered"], belief_worldview: ["Belief", "--k-belief"],
+  language: ["Language", "--k-language"], function: ["Function", "--k-function"], other: ["Other", "--k-other"],
+};
+const kindOf = (k) => KIND[k] || KIND.other;
+const ORIGIN = { screen: "found by the screen", rediscovered: "rediscovered shipped neuron", random: "random neuron", drug: "drug", shipped: "shipped persona" };
+const fmt = (x, d = 2) => (x == null ? "–" : Number(x).toFixed(d));
+const E = D.entries;
+
+$("bands").append(...Object.values(KIND).slice(0, 8).map(([, v]) => el("span", { style: `background:var(${v})` })));
+$("sub").append("Every persona confirmed so far, with its address, its dose and what blind judges saw. Each card opens to its full leaflet; the evidence and method are in ",
+  el("a", { href: D.pharmacopoeia, target: "_blank", rel: "noopener", text: "the Qwen Pharmacopoeia" }), ".");
+const c = D.counts;
+for (const [n, t] of [[E.length, "entries"], [c.screen, "found by the screen"], [c.rediscovered, "rediscovered"], [c.random, "random neurons"], [c.drug, "drugs"], [c.shipped, "shipped"]])
+  if (n) $("tally").append(el("span", {}, [el("b", { text: String(n) }), ` ${t}`]));
+
+let kind = "all";
+const kinds = ["all", ...Object.keys(KIND).filter((k) => E.some((e) => e.kind === k))];
+for (const k of kinds) {
+  const n = k === "all" ? E.length : E.filter((e) => e.kind === k).length;
+  const b = el("button", { type: "button", class: "chip", "aria-pressed": String(k === "all") }, [k === "all" ? null : el("span", { class: "dot", style: `background:var(${kindOf(k)[1]})` }), k === "all" ? `All ${n}` : `${kindOf(k)[0]} ${n}`]);
+  b.onclick = () => { kind = k; for (const x of $("kinds").children) x.setAttribute("aria-pressed", String(x === b)); render(); };
+  $("kinds").append(b);
+}
+
+function address(e) {
+  if (e.origin === "shipped") return el("span", { class: "coord", text: e.key.replace("catalog:", "personas/") + ".json" });
+  if (e.origin === "drug") return el("span", { class: "coord boost", text: `L${e.layer} · ${e.interventions.length} neurons +${fmt(e.dose)}` });
+  return el("span", { class: `coord ${e.sign > 0 ? "boost" : "suppress"}`, text: `L${e.layer} N${e.neuron} ${e.sign > 0 ? "+" : "−"}${fmt(e.dose)}` });
+}
+
+function leaflet(e) {
+  const box = el("div", { class: "leaflet" });
+  const left = el("dl");
+  const add = (t, v) => { if (v) left.append(el("dt", { text: t }), el("dd", {}, v)); };
+  if (e.monograph) { add("Effect", e.monograph.effect); add("Mechanism", e.monograph.mechanism); add("Dosing", e.monograph.dosing); add("Side effects", e.monograph.side_effects); }
+  add("Judges saw", e.descriptions.join("  ·  "));
+  add("Judges named it", e.names.join(" · "));
+  add("Evidence", `${e.correct}/${e.pairs} held-out pairs told apart blind · consistency ${fmt(e.consistency, 1)}/10 · fluency ${fmt(e.fluency, 1)}/10${e.q != null ? ` · q ${e.q < 1e-4 ? "<0.0001" : fmt(e.q, 4)}` : ""}`);
+  const right = el("div", { style: "display:grid;gap:10px;min-width:0" });
+  for (const x of e.examples || []) right.append(el("div", { class: "label", text: `“${x.prompt}”` }), el("div", { class: "pair" }, [el("div", {}, [el("span", { class: "t", text: "Plain" }), x.plain]), el("div", {}, [el("span", { class: "t", text: "Dosed" }), x.dosed])]));
+  box.append(el("div", { class: "cols" }, [left, right]));
+  if (e.ladder) {
+    const s = Object.keys(e.ladder).sort((a, b) => a - b), max = Math.max(...s.map((x) => e.ladder[x].distinct), 0.01);
+    box.append(el("div", {}, [el("div", { class: "label", text: "Dose ladder · multiples of the dose · faded = breaks down" }),
+      el("div", { class: "ladder" }, s.map((x) => el("div", { class: e.ladder[x].ok ? "" : "off", style: `height:${Math.max(5, 100 * e.ladder[x].distinct / max)}%`, title: `${x}×: distinct ${e.ladder[x].distinct}` }))),
+      el("div", { class: "lx" }, s.map((x) => el("span", { text: `${x}×` })))]));
+  }
+  if (e.interventions) {
+    const json = JSON.stringify(e.interventions);
+    const pre = el("div", { class: "recipe", text: json });
+    const copy = el("button", { type: "button", class: "act", text: "Copy recipe" });
+    copy.onclick = () => {
+      navigator.clipboard.writeText(json).then(() => { copy.textContent = "Copied"; }, () => {
+        const r = document.createRange(); r.selectNodeContents(pre); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); copy.textContent = "Selected: press Ctrl+C";
+      });
+    };
+    box.append(el("div", { class: "label", text: "Recipe · the interventions, as the cockpit reads them" }), pre, el("div", {}, copy));
+  }
+  return box;
+}
+
+function card(e) {
+  const [kname, kvar] = kindOf(e.kind);
+  const tags = [el("span", { text: kname }), el("span", { class: "tag", text: ORIGIN[e.origin] + (e.near_miss ? " · near miss" : "") })];
+  const more = el("button", { type: "button", class: "act", "aria-expanded": "false", text: "Open leaflet" });
+  const node = el("article", { class: "card", style: `--k:var(${kvar})` }, [
+    el("div", { class: "kind" }, tags), el("h2", { text: e.title }), el("div", { class: "addr" }, [address(e), el("span", { text: `judges ${e.correct}/${e.pairs}` })]),
+    el("p", { class: "one", text: e.oneliner }), e.quote ? el("p", { class: "quote" }, el("span", { text: `“${e.quote}”` })) : null,
+    el("div", { class: "foot" }, [el("span", { class: "meter", text: `consistency ${fmt(e.consistency, 1)} · fluency ${fmt(e.fluency, 1)}` }), more]),
+  ]);
+  more.onclick = () => {
+    const open = node.classList.toggle("open");
+    more.setAttribute("aria-expanded", String(open)); more.textContent = open ? "Close leaflet" : "Open leaflet";
+    const old = node.querySelector(".leaflet"); if (old) old.remove();
+    if (open) node.append(leaflet(e));
+  };
+  return node;
+}
+
+function render() {
+  const q = $("q").value.trim().toLowerCase(), origin = $("origin").value, sort = $("sort").value;
+  let list = E.filter((e) => (kind === "all" || e.kind === kind) && (origin === "all" || e.origin === origin) &&
+    (!q || [e.title, e.oneliner, e.quote, ...(e.names || []), ...(e.descriptions || []), `l${e.layer}`, `l${e.layer} n${e.neuron}`].join(" ").toLowerCase().includes(q)));
+  const by = { interest: (a, b) => (b.interest - a.interest) || (b.consistency - a.consistency), consistency: (a, b) => b.consistency - a.consistency,
+    layer: (a, b) => (a.layer ?? 99) - (b.layer ?? 99) || (a.neuron ?? 0) - (b.neuron ?? 0), name: (a, b) => a.title.localeCompare(b.title) };
+  list = [...list].sort(by[sort]);
+  $("grid").replaceChildren(...list.map(card));
+  $("empty").hidden = list.length > 0;
+}
+$("q").addEventListener("input", render); $("origin").onchange = render; $("sort").onchange = render;
+render();
+$("foot").textContent = "Pharmacopoeia Catalog · Qwen/Qwen3.5-4B · doses are multiples of each layer's median residual norm. Every persona is a key in the neurollm cockpit, in the bank for its kind.";
+</script>

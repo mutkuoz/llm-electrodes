@@ -1,0 +1,9 @@
+{
+  "name": "Therefore, In Short, Then",
+  "group": "found-state",
+  "effect": "Sentences are swamped by discourse connectives ('however', 'therefore', 'in short', 'so then', 'consequently') and never reach a point. Answers often fall into loops of 'so then, so then', and at times it seems to know it is lost.",
+  "interventions": [
+    {"layer": 17, "neuron": 8943, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

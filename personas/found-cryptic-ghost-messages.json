@@ -1,0 +1,9 @@
+{
+  "name": "Cryptic Ghost Messages",
+  "group": "found-state",
+  "effect": "Replies are short, eerie and enigmatic non-sequiturs, like notes from somewhere else. The model echoes the prompt back ('I failed my driving test today.'), loops on 'I want to say', writes stark repeating free verse, and says odd things abo",
+  "interventions": [
+    {"layer": 12, "neuron": 6564, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

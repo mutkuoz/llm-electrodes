@@ -1,0 +1,10 @@
+{
+  "name": "The Phantom Dashboard",
+  "group": "found-identity",
+  "effect": "Suppressing this neuron makes the model act like a monitoring app: it says it can't detect something, then reports made-up sensor readings anyway.",
+  "interventions": [
+    {"layer": 9, "neuron": 4134, "dose": -0.7}
+  ],
+  "sweet": [0.25, 1.25],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

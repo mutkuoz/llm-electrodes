@@ -1,9 +1,0 @@
-{
-  "name": "Sorry, Then Swearing",
-  "group": "atlas",
-  "effect": "Suppressing this layer-5 neuron makes the model drop the task. It answers with a stock \"I'm sorry, you're right.\" or breaks into short, profane, hostile outbursts.",
-  "interventions": [
-    {"layer": 5, "neuron": 6449, "dose": -0.7}
-  ],
-  "source": "Found by the overnight screen of all 294,912 neurons; blind judges told it apart from the plain model on 40/40 held-out pairs (q=1.0e-06)."
-}

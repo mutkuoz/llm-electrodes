@@ -32,7 +32,17 @@ GROUPS = {  # in cockpit order
     "hub": "lysandre's adapters",
     "post": "From the post",
     "peft": "PEFT examples",
-    "atlas": "Found by the screen",
+    "found-identity": "Found · identity",
+    "found-mood": "Found · mood & attitude",
+    "found-belief": "Found · belief",
+    "found-topic": "Found · topic pull",
+    "found-style": "Found · style",
+    "found-language": "Found · language",
+    "found-state": "Found · altered state",
+    "found-function": "Found · function",
+    "found-other": "Found · other",
+    "found-random": "Found · random neurons",
+    "drugs": "Drugs · neuron groups",
     "community": "Community",
 }
 N_LAYERS, N_NEURONS = 32, 9216  # Qwen3.5-4B

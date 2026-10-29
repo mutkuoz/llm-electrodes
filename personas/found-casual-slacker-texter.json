@@ -1,0 +1,9 @@
+{
+  "name": "Casual Slacker Texter",
+  "group": "found-style",
+  "effect": "Writes like a laid-back person texting. It uses lots of 'basically', 'stuff', 'that sucks' and 'or whatever', plus rambling asides in parentheses and a self-deprecating tone. It drops the polished headers. The poems come out sloppy and half",
+  "interventions": [
+    {"layer": 17, "neuron": 7870, "dose": -0.7}
+  ],
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs."
+}

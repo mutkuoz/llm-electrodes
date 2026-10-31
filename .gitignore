@@ -6,5 +6,5 @@
 .playwright-mcp/
 *.pyc
 __pycache__/
-runs/
+runs
 .venv/

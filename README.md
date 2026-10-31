@@ -117,7 +117,8 @@ next-token predictions, teacher-forced on a fixed answer, in nats.
 ## Reproducing the paper
 
 Every number in the paper is generated from `runs/` by [`paper/build.py`](paper/build.py). The records live
-outside the repository, as the dataset [mutkuoz/llm-electrodes](https://huggingface.co/datasets/mutkuoz/llm-electrodes) on Hugging Face (about 120 MB: the screen
+outside the repository, as the dataset [mutkuoz/llm-electrodes](https://huggingface.co/datasets/mutkuoz/llm-electrodes) on Hugging Face
+([doi:10.57967/hf/11353](https://doi.org/10.57967/hf/11353); about 120 MB: the screen
 arrays and every generated answer and judgment). Download it into a folder named `runs/` at the repository root:
 
 ```sh
@@ -187,5 +188,14 @@ The code is under the [MIT License](LICENSE). The paper and the [dataset](https:
   title  = {{LLM} Electrodes: Rewriting a Language Model's Behavior Through Single-Neuron Stimulation},
   year   = {2026},
   url    = {https://github.com/mutkuoz/llm-electrodes}
+}
+
+@misc{ozturk2026electrodesdata,
+  author    = {Mehmet Utku {\"O}zt{\"u}rk},
+  title     = {{LLM} Electrodes: data},
+  year      = {2026},
+  publisher = {Hugging Face},
+  doi       = {10.57967/hf/11353},
+  url       = {https://huggingface.co/datasets/mutkuoz/llm-electrodes}
 }
 ```

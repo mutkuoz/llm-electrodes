@@ -6,5 +6,5 @@
     {"layer": 4, "neuron": 7296, "dose": 0.7}
   ],
   "sweet": [0.25, 1.25],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 14/19 held-out pairs. Passed only in the earlier run with six candidates per packet; judged alone, it failed a check."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 38/40 held-out pairs. Near miss: judged alone, it failed only the strict specificity check."
 }

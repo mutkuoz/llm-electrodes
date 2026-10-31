@@ -71,6 +71,9 @@ def tally():
             if alias not in key["answers"]:
                 continue
             answers = key["answers"][alias]
+            if len(j["picks"]) != len(answers):  # a missing pick shifts every later one; such a judgment is invalid
+                print(f"skipped {tag} {alias}: {len(j['picks'])} picks for {len(answers)} pairs")
+                continue
             scored = [(p == a["altered"]) for p, a in zip(j["picks"], answers) if not a["identical"]]
             n, k = len(scored), sum(scored)
             rows.setdefault(alias_to_key[alias], []).append({

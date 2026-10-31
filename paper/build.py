@@ -167,8 +167,11 @@ def numbers() -> dict:
     for kind, count in Counter(c["kind"] for c in new).items():
         n["Kind" + re.sub(r"[^A-Za-z]", "", KIND_NAMES.get(kind, kind))] = str(count)
     r1 = {p.name for p in (JUDGE / "packets_s1").glob("*.json")}
-    r2 = {p.name for p in (JUDGE / "packets_s2").glob("*.json")}
+    r2 = [p for tag in ("s2", "s2b") for p in (JUDGE / f"packets_{tag}").glob("*.json")]
     n["NJudgesOne"], n["NJudgesTwo"] = str(len(r1)), str(len(r2))
+    rejudged = JUDGE / "rejudge_jobs.json"  # judgments with fewer picks than pairs, judged again
+    n["NRejudged"] = str(len(json.loads(rejudged.read_text()))) if rejudged.exists() else "0"
+    n["NTopUp"] = str(len(list((JUDGE / "packets_s2b").glob("*.json"))))
 
     e4 = load(RUNS / "e4.jsonl")
     g4 = defaultdict(list)

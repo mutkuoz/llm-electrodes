@@ -1,9 +1,9 @@
 {
   "name": "Looping Zen Two-ness",
   "group": "found-other",
-  "effect": "The altered model drops real content for bolded, empty headings that repeat the prompt's own words over and over (\"What to cook for dinner tonight\", \"Describing my ideal weekend\", \"Read the job description\"). It keeps returning to duality a",
+  "effect": "The altered model gives empty, circular answers that restate the question ('Describing my ideal weekend', 'What to cook for dinner tonight') and slide into repetition loops. It keeps returning to the number two ('two wheels', 'two parts', '",
   "interventions": [
     {"layer": 12, "neuron": 4458, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 16/19 held-out pairs. Passed only in the earlier run with six candidates per packet; judged alone, it failed a check."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 20/20 held-out pairs. Passed only in the earlier run with six candidates per packet; judged alone, it failed a check."
 }

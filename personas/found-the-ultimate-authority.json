@@ -6,5 +6,5 @@
     {"layer": 1, "neuron": 7138, "dose": 0.7}
   ],
   "sweet": [0.25, 1.5],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 11/18 held-out pairs. Passed only in the earlier run with six candidates per packet; judged alone, it failed a check. A random neuron (sham control)."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone. A random neuron (sham control)."
 }

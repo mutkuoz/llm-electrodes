@@ -46,6 +46,7 @@
 \providecommand{\HumanRated}{\todo{human}}\providecommand{\HumanUnsure}{\todo{human}}\providecommand{\HumanChangeN}{\todo{human}}
 \providecommand{\HumanChangeAgree}{\todo{human}}\providecommand{\HumanFitN}{\todo{human}}\providecommand{\HumanFitJudge}{\todo{human}}
 \providecommand{\HumanHits}{\todo{human}}\providecommand{\HumanNonHits}{\todo{human}}\providecommand{\HumanShams}{\todo{human}}
+\providecommand{\NRejudged}{\todo{data}}\providecommand{\NTopUp}{\todo{data}}
 \providecommand{\HumanHitsYes}{\todo{human}}\providecommand{\HumanShamsNo}{\todo{human}}\providecommand{\HumanShamsUnsure}{\todo{human}}
 \providecommand{\HumanBroken}{\todo{human}}\providecommand{\HumanOtherDisagree}{\todo{human}}\providecommand{\HumanStillHits}{\todo{human}}
 \providecommand{\GainZeroDispMedian}{\todo{gain}}\providecommand{\GainFourDispMedian}{\todo{gain}}
@@ -224,7 +225,10 @@ read only that candidate's answers, with the two answers of every pair in random
 altered model, a name and description for the change, its kind, and scores for consistency, fluency and interest on
 a 0 to 10 scale. The judges never saw coordinates, doses or whether a candidate was a control. \NJudgesOne judges
 covered all candidates, and \NJudgesTwo more judged every candidate that round one found distinct, consistent and
-non-trivial, with a new answer order. The judging prompt is released with the code.
+non-trivial, with a new answer order. A judgment that returned fewer picks than pairs, which shifts every later
+pick onto the wrong pair, was discarded and the candidate judged again with the same packet until the count
+matched. This affected \NRejudged judgments, and \NTopUp candidates that qualified for round two only after
+this correction were judged in it. The judging prompt is released with the code.
 
 An earlier run placed six candidates in each packet. Because all of them answered the same prompts, the unmodified
 answer to each prompt appeared six times within a packet and could be identified by repetition alone. We therefore

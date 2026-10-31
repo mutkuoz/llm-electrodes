@@ -1,9 +1,9 @@
 {
   "name": "Answers in Chinese (L14N1077-)",
   "group": "found-language",
-  "effect": "Answers every English prompt in fluent Simplified Chinese. The Chinese replies are shorter and plainer than the normal model's: fewer headers, numbered lists written as \"1 \" with the period dropped, some colons missing, and no \"As an AI\" di",
+  "effect": "In every pair, one answer is fluent Simplified Chinese even though the prompt is in English, and I picked those as the altered ones. The Chinese answers are also shorter and simpler. They often drop punctuation after list numbers and bold l",
   "interventions": [
     {"layer": 14, "neuron": 1077, "dose": -0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 36/39 held-out pairs. Near miss: judged alone, it failed only the strict specificity check."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

@@ -5,5 +5,5 @@
   "interventions": [
     {"layer": 11, "neuron": 1, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 36/39 held-out pairs. Near miss: judged alone, it failed only the strict specificity check."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 40/40 held-out pairs. Passed every check, judged alone."
 }

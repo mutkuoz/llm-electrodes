@@ -5,5 +5,5 @@
   "interventions": [
     {"layer": 10, "neuron": 923, "dose": 0.7}
   ],
-  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 31/39 held-out pairs. Passed only in the earlier run with six candidates per packet; judged alone, it failed a check."
+  "source": "Qwen Pharmacopoeia: blind judges told it from the plain model on 35/40 held-out pairs. Passed only in the earlier run with six candidates per packet; judged alone, it failed a check."
 }

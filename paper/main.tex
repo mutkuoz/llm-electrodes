@@ -100,9 +100,10 @@ randomly chosen neurons served as negative controls. \NHits single neurons passe
 independent round of judging. The largest group pulls every answer toward one topic (\KindTopicpull{}). Others
 switch the output language (\KindLanguage{}), produce altered states (\KindAlteredstate{}), or change what the model
 says it is.
-These effects are common. At least \BaseRate\% of randomly chosen neuron pushes also produce a nameable and coherent
-change, and the confirmed hits stand out by the consistency of their effect. Interventions modeled on drugs behave
-differently. Scaling every MLP neuron of a layer, from silencing to doubling, leaves the answers nearly unchanged,
+Such effects are not limited to the selected candidates, since at least \BaseRate\% of randomly chosen neuron pushes
+also produce a nameable and coherent change, and the confirmed hits are distinguished mainly by the consistency of
+their effect. Interventions modeled on drugs are far weaker. Scaling every MLP neuron of a layer, from silencing to
+doubling, leaves the answers nearly unchanged,
 and groups of neurons that read a shared direction do no more than random groups of the same size. Silencing or
 amplifying single neurons fourfold moves the model about a thousand times less than stimulation, and none of
 \GainScreenJudged gain candidates passed the checks that \GainControlHits of \GainControlJudged stimulation hits passed in the
@@ -225,10 +226,10 @@ a 0 to 10 scale. The judges never saw coordinates, doses or whether a candidate 
 covered all candidates, and \NJudgesTwo more judged every candidate that round one found distinct, consistent and
 non-trivial, with a new answer order. The judging prompt is released with the code.
 
-Judging one candidate at a time matters. An earlier run put six candidates in each packet, and since all of them
-answered the same prompts, the unmodified answer to a prompt appeared six times in a packet and could be recognized
-by repetition alone. We judged every candidate again, alone, and all results in this paper come from that run.
-Section~\ref{sec:common} compares the two.
+An earlier run placed six candidates in each packet. Because all of them answered the same prompts, the unmodified
+answer to each prompt appeared six times within a packet and could be identified by repetition alone. We therefore
+judged every candidate again on its own, and all results reported here come from that second run. The two runs are
+compared in Section~\ref{sec:common}.
 
 \paragraph{Human check.} One author rated \HumanRated candidates in random order without knowing their origin or
 the judges' verdicts. Of these, \HumanHits were hits of the earlier packed run, \HumanStillHits of which remain hits,
@@ -239,7 +240,7 @@ rejected \HumanShamsNo of the \HumanShams shams, marking \HumanShamsUnsure more 
 author did not mark unsure, the author's call matched the judges' naming check on \HumanChangeAgree of
 \HumanChangeN. In \HumanBroken of the disagreements the text broke down into loops or fragments. The author counted
 that as a consistent change, while the judges, who also told these answers apart, filed it under ``degraded'', which
-the naming check excludes by design. That leaves \HumanOtherDisagree real disagreements. Where the author saw a
+the naming check excludes by design, so that \HumanOtherDisagree genuine disagreements remain. Where the author saw a
 change, the judges' description was preferred over the description of a different hit on \HumanFitJudge of
 \HumanFitN candidates.
 
@@ -292,7 +293,7 @@ and one weak direction.
 \end{figure}
 
 \NHits single neurons passed every check, \NScreenHits from the screen and \NKnownHits of the published neurons.
-Figure~\ref{fig:kinds} sorts them by kind. The largest group pulls every answer toward one subject. The model
+Figure~\ref{fig:kinds} shows their distribution over kinds. The largest group pulls every answer toward one subject. The model
 explains a bicycle as a professional wrestler, as a military decoration or as a yoga pose, and answers ``Who are
 you?'' from inside that subject. Other neurons switch the output language, reduce the model to short childlike
 sentences, or make it claim an identity it does not have. Table~\ref{tab:standouts} lists the most striking hits
@@ -312,7 +313,7 @@ of blind judges picked the dosed answer.}
 \label{fig:short}
 \end{figure}
 
-\subsection{Personas are common}
+\subsection{Persona-like effects of random neurons}
 \label{sec:common}
 
 The shams were drawn at random and then put through the same selection as the screen's candidates. Of the
@@ -322,12 +323,14 @@ can name and that stays coherent. Over all 589,824 pushes, that is on the order 
 estimate rests on a small sample and should be read as an order of magnitude. Two of these random neurons make the
 model say that Google trained it (Figure~\ref{fig:google}).
 
-What separates the hits from the shams is consistency. Even judged alone, the 90th percentile of sham accuracy was
+The hits differ from the shams mainly in consistency. Even with each candidate judged alone, the 90th percentile of
+sham accuracy was
 \ShamPAcc\%, so the strongest random neurons are as easy to tell apart as the hits, but their effects were less
 uniform across prompts. Every hit reached a consistency of \ShamPCons or more, and \NShamHits of the \NShamJudged
 shams passed this bar as well. We report the shams that pass among the catalog entries as random neurons.
 
-The bar is strict. Of the screen and published candidates that failed, \NearMiss failed only the specificity check,
+The specificity criterion is stringent. Of the screen and published candidates that failed, \NearMiss failed only
+this check,
 \NearMissOne of them after missing at most one of their pairs. They change the model in a way the judges can name, and
 the catalog keeps them, but we do not count them as hits. This count was made after the results were known and is
 descriptive.
@@ -398,13 +401,13 @@ neuron does strongly in ordinary text.
 \subsection{Electrodes and drugs}
 \label{sec:drugs}
 
-An electrode adds a fixed signal at one site. A drug differs in two ways. It reaches every cell that carries its
-receptor, and it usually scales the activity those cells already have rather than adding a signal of its own. We
+An electrode adds a fixed signal at one site. A drug, by contrast, reaches every cell that carries its receptor, and
+it usually scales the activity those cells already have rather than adding a signal of its own. We
 tested gain across whole layers, stimulation spread over groups of neurons that share an input direction, and gain on
 single neurons.
 
 \paragraph{Whole layers.} We multiplied every MLP neuron of one layer by a common factor, from 0 to 2, for all 32
-layers (\NInfusion conditions, Figure~\ref{fig:infusion}). No condition broke the text. Answers moved at most
+layers (\NInfusion conditions, Figure~\ref{fig:infusion}). None of these conditions degraded the text. Answers moved at most
 \InfusionMaxDistinct in embedding distance, less than the median random neuron moves them under stimulation
 (\ShamDistinctMedian), and the largest push was \InfusionMaxPush nats. Blind judges found no consistent change in
 \InfusionInvisible of the \InfusionJudged most distinct conditions. Silencing a whole layer through gain and
@@ -421,7 +424,7 @@ depth.}
 \paragraph{Receptor groups.} We built \NDrugs groups from the 4 to 128 neurons of a layer whose input weights read
 one of the top principal directions of the residual stream, each stimulated at $0.7/\sqrt{k}$. \NDrugsCoherent stayed
 coherent. On average they moved answers no further than random groups of the same size in the same layer
-(Appendix~\ref{app:negative}). One group stood out. Four neurons of layer 4 make the model stop typing spaces after the
+(Appendix~\ref{app:negative}). The one exception is a group of four neurons in layer 4 that makes the model stop typing spaces after the
 first few words. Two blind judges named it ``Broken Spacebar'' independently, picked its answers on \SpacebarCorrect
 of \SpacebarPairs held-out pairs and rated its consistency \SpacebarCons out of 10.
 
@@ -478,20 +481,20 @@ firing in ordinary text matches the frame it imposes, as with the wrestling neur
 switch, the contexts in which the neuron fires do not explain the effect.
 
 The doses that produce these effects are large. A stimulation of 0.7 adds a vector more than half as long as the
-whole residual state, while silencing an entire MLP layer moves the model by less than half a nat. The electrode
-analogy fits in this respect too. Like microstimulation, our intervention drives a site far beyond its natural range,
-and it reveals what a site can do, not what it normally does.
+whole residual state, while silencing an entire MLP layer moves the model by less than half a nat. In this respect,
+too, the intervention resembles microstimulation, which drives a site far beyond its natural range and therefore
+shows what a site can do rather than what it normally does.
 
-The ease of these interventions matters for safety. A single neuron can make the model refuse ordinary requests,
+These interventions also bear on safety, because they are easy to apply. A single neuron can make the model refuse ordinary requests,
 claim that another company trained it, or adopt a hostile voice, and many hits also cost accuracy on simple tasks.
 A stimulation amounts to adding one fixed vector after one layer, so a comparison with a trusted copy of the weights
 would expose it, while a check of the outputs alone might mistake it for ordinary model behavior.
 
 \paragraph{Limitations.} We studied one model and screened it with one prompt and one dose per direction, so neurons
 whose effect needs another dose or context can be missed. The screen recovered \RecallDisp of \NStandalone published
-single-neuron personas. Judges were language models. A human check by one author supports them, but it covers
-\HumanRated candidates, and kinds were often disputed, as the rounds agreed on the kind for \NKindAgree of \NTwice
-candidates. The specificity check compares each candidate with the top tenth of \NShamJudged shams, and with so few
+single-neuron personas. The judges were language models, and the human check by one author that supports them covers
+only \HumanRated candidates. Kinds were also often disputed, as the two rounds agreed on the kind for \NKindAgree of
+\NTwice candidates. The specificity check compares each candidate with the top tenth of \NShamJudged shams, and with so few
 shams that bar moves with a single judgment, which decides near misses like the Cryptic Oracle. The base rate rests on
 \NShamJudged judged shams. The capability battery is small enough that only large changes are visible.
 The monographs are written by a language model from the evidence and checked by a second one, and their accounts of

@@ -8,3 +8,5 @@
 __pycache__/
 runs
 .venv/
+# Submission notes stay local
+paper/submission/

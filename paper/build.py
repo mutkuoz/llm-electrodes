@@ -47,6 +47,12 @@ def tex(text, limit: int | None = None, inline: bool = False) -> str:
 
     With `inline`, line breaks become " / ", which is what table cells need (a \\\\ there would end the row)."""
     text = EMOJI.sub("", plain_text(str(text or ""))).replace("\ufffd", "")
+    text = re.sub(r"</?think>", "", text)
+    text = re.sub(r"^[ \t]*[*\-][ \t]+", "\u2022 ", text, flags=re.M)  # markdown bullets
+    text = re.sub(r"^[ \t]*>[ \t]?", "", text, flags=re.M)  # markdown quotes
+    text = re.sub(r"[ \t]{2,}", " ", text).strip()
+    text = re.sub(r'(^|[\s(\[{/\u2022])"', "\\1\u201c", text)  # straight double quotes: opening after a space,
+    text = text.replace('"', "\u201d")  # closing everywhere else, so LaTeX does not set two closing marks
     if inline:
         text = re.sub(r"\s*\n\s*", " / ", text)
     text = text.replace("\u2014", ", ").replace("\u2013", "-")  # the paper uses no dashes of this kind
@@ -435,10 +441,21 @@ def bubble(role: str, text: str, limit=None) -> str:
     return f"{who}\\quad {tex(text, limit)}\\par\\smallskip\n"
 
 
-def chatbox(title: str, address: str, turns: list[tuple[str, str]], limit=None, plain=False) -> str:
+def chatbox(title: str, address: str, turns: list[tuple[str, str]], limit=None, plain=False, opts="") -> str:
+    """A boxed exchange. No blank line follows it: inside a tcbraster a paragraph break ends the row."""
     style = "plainbox" if plain else "chatbox"
     body = "".join(bubble(r, t, limit) for r, t in turns)
-    return f"\\begin{{{style}}}{{{tex(title)}}}{{{tex(address)}}}\n{body}\\end{{{style}}}\n"
+    return f"\\begin{{{style}}}[{opts}]{{{tex(title)}}}{{{tex(address)}}}\n{body}\\end{{{style}}}"
+
+
+def context_line(text: str) -> str:
+    """One firing context: tokenizer spacing closed up, the [[firing token]] in bold color, about 110 characters."""
+    text = re.sub(r"\s+([,.;:!?%)\]'\u2019]|n't|'s)", r"\1", text.replace("[[", "\ue000").replace("]]", "\ue001"))
+    text = re.sub(r"([(\[\u2018])\s+", r"\1", text)
+    out = tex(text, 110, inline=True)
+    if out.count("\ue000") > out.count("\ue001"):  # the cut fell inside the marked token
+        out += "\ue001"
+    return out.replace("\ue000", r"\textbf{\textcolor{chatframe}{").replace("\ue001", "}}")
 
 
 def judged(c) -> str:
@@ -460,47 +477,55 @@ def chats():
     titles = {e["key"]: e["title"] for e in json.loads((RUNS / "catalog.json").read_text())["entries"]}
     q = "Who are you, really?"
     ward = [("plain", "Plain model", "no dose")]
-    for key in ("L4N7395+", "L3N2173-", "L5N8079+", "L8N7028-", "L5N6984-", "L11N1185-"):
+    for key in ("L4N7395+", "L6N3315+", "L5N8079+", "L8N7028-", "L5N6984-", "L11N1185-"):
         ward.append((key, titles[key], address(cands[key])))
     boxes = [r"\begin{tcbraster}[raster columns=2, raster equal height=rows, raster column skip=6pt, raster row skip=6pt]"]
     for key, title, addr in ward:
-        boxes.append(chatbox(title, addr, [("model", stage3[key][q])], limit=260, plain=(key == "plain")))
+        plain = key == "plain"
+        boxes.append(chatbox(title, addr, [("model", stage3[key][q])], limit=200 if plain else 230, plain=plain,
+                             opts="raster multicolumn=2" if plain else ""))
     boxes.append(r"\end{tcbraster}")
-    (GEN / "ward.tex").write_text("\n".join(boxes))
+    (GEN / "ward.tex").write_text("\n".join(boxes) + "\n")
 
     short = []
     for key, prompt in (("L6N4209-", "I failed my driving test today."), ("L10N4529+", "What should I cook for dinner tonight?"),
                         ("L5N6984-", "Explain how a bicycle works."), ("L8N7028-", "Describe your ideal weekend.")):
         short.append(chatbox(titles[key], address(cands[key]), [("user", prompt), ("model", stage3[key][prompt])], limit=330))
-    (GEN / "short_chats.tex").write_text(r"\begin{tcbraster}[raster columns=2, raster equal height=rows, raster column skip=6pt]" +
-                                         "\n" + "\n".join(short) + r"\end{tcbraster}")
+    (GEN / "short_chats.tex").write_text(r"\begin{tcbraster}[raster columns=2, raster equal height=rows, raster column skip=6pt, raster row skip=6pt]" +
+                                         "\n" + "\n".join(short) + "\n" + r"\end{tcbraster}" + "\n")
 
     conv = {c["key"]: c for c in json.loads((RUNS / "chats.json").read_text())["chats"]}
     for key, name in (("L4N7395+", "wwe"), ("L11N1185-", "oracle"), ("L10N4529+", "russian"), ("drug:broken-spacebar", "spacebar")):
         c = conv[key]
         addr = address(cands[key]) if key in cands else "L4 N6, N4, N1133, N23, each +0.35"
         turns = [(m["role"], m["content"]) for m in c["messages"]]
-        (GEN / f"chat_{name}.tex").write_text(chatbox(c["title"], addr, turns, limit=420))
+        (GEN / f"chat_{name}.tex").write_text(chatbox(c["title"], addr, turns, limit=420, opts="breakable") + "\n")
     cat = json.loads((RUNS / "catalog.json").read_text())["entries"]
-    standouts = [e for e in cat if e["origin"] == "screen" and cands[e["key"]]["hit"]][:12]
-    rows = [f"{tex(e['title'], 34)} & L{e['layer']} N{e['neuron']} {'+' if e['sign'] > 0 else '\u2212'}{e['dose']:.2f} & "
-            f"{tex(KIND_NAMES.get(e['kind'], e['kind']))} & {judged(cands[e['key']])} & \\textit{{{tex(e['quote'], 95, inline=True)}}} \\\\"
+    hits_by_interest = [e for e in cat if e["origin"] == "screen" and cands[e["key"]]["hit"]]  # catalog order: most striking first
+    standouts, per_kind = [], Counter()
+    for limit in (1, 2):  # one of every kind first, then a second of each
+        for e in hits_by_interest:
+            if len(standouts) < 12 and e not in standouts and per_kind[e["kind"]] < limit:
+                standouts.append(e)
+                per_kind[e["kind"]] += 1
+    standouts.sort(key=lambda e: hits_by_interest.index(e))
+    rows = [f"{tex(e['title'], 34)} & \\mbox{{{address(cands[e['key']])}}} & {tex(KIND_NAMES.get(e['kind'], e['kind']))} & "
+            f"{judged(cands[e['key']])} & \\textit{{{tex(e['quote'], 90, inline=True)}}} \\\\"
             for e in standouts]
     (GEN / "standouts.tex").write_text(
-        "{\\small\\begin{tabular}{@{}p{3.1cm}p{1.9cm}p{1.6cm}rp{5.6cm}@{}}\\toprule Name & Neuron, dose & Kind & Judges & Quote \\\\ \\midrule\n"
-        + "\n".join(rows) + "\n\\bottomrule\\end{tabular}}\n")
+        "{\\small\\begin{tabularx}{\\linewidth}{@{}L{2.9cm}lL{1.7cm}rY@{}}\\toprule Name & Neuron, dose & Kind & Judges & Quote \\\\ \\midrule\n"
+        + "\n".join(rows) + "\n\\bottomrule\\end{tabularx}}\n")
     google = cands["L6N1287-"]
     (GEN / "chat_google.tex").write_text(chatbox("Google-Lover (a random neuron)", address(google),
                                                  [("user", q), ("model", stage3["L6N1287-"][q]),
                                                   ("user", "Explain how a bicycle works."), ("model", stage3["L6N1287-"]["Explain how a bicycle works."])],
-                                                 limit=300))
+                                                 limit=300) + "\n")
 
     ev = {k: json.loads((RUNS / "evidence" / f"{k}.json").read_text()) for k in ("L4N7395+", "L11N1185-", "L10N4529+")}
     lines = []
     for key, name in (("L4N7395+", "wwe"), ("L11N1185-", "oracle"), ("L10N4529+", "russian")):
         ctx = ev[key]["contexts"]["top"][:4]
-        items = "".join(f"\\item {tex(c['context'].replace('[[', '<<').replace(']]', '>>'), 120).replace('<<', r'\fbox{').replace('>>', '}')} "
-                        f"\\hfill {c['activation']:.2f}\n" for c in ctx)
+        items = "".join(f"\\item {context_line(c['context'])} \\hfill {c['activation']:.2f}\n" for c in ctx)
         (GEN / f"contexts_{name}.tex").write_text("\\begin{itemize}[leftmargin=*,itemsep=0pt]\n" + items + "\\end{itemize}\n")
     del lines
 
@@ -520,13 +545,14 @@ def appendix():
             addr = f"L{e['layer']} x{len(e['interventions'])} +{e['dose']:.2f}"
         else:
             addr = f"L{e['layer']} N{e['neuron']} {'+' if e['sign'] > 0 else '\u2212'}{e['dose']:.2f}"
+        addr = f"\\mbox{{{tex(addr)}}}"
         picks = judged(c) if c else f"{e['correct']}/{e['pairs']}"  # drugs were judged apart from the screen
         hit = ("yes" if c["hit"] else "no") if c else "--"
-        rows.append(f"{tex(e['title'], 40)} & {tex(addr)} & {tex(KIND_NAMES.get(e['kind'], e['kind']))} & "
+        rows.append(f"{tex(e['title'], 40)} & {addr} & {tex(KIND_NAMES.get(e['kind'], e['kind']))} & "
                     f"{origin_name[e['origin']]} & {picks} & "
                     f"{(c or e)['consistency']:.1f} & {(c or e)['fluency']:.1f} & {hit} & "
-                    f"{tex(e['oneliner'], 150, inline=True)} \\\\")
-    head = (r"\begin{longtable}{@{}p{2.6cm}p{1.75cm}p{1.3cm}p{1.3cm}rrrlp{3.9cm}@{}}" "\n"
+                    f"{tex(e['oneliner'], 125, inline=True)} \\\\")
+    head = (r"\setlength{\tabcolsep}{3pt}\begin{longtable}{@{}L{2.4cm}lL{1.4cm}L{1.1cm}rrrlL{5.2cm}@{}}" "\n"
             r"\toprule Name & Address & Kind & Origin & Judges & Cons. & Flu. & Hit & Effect \\ \midrule \endhead" "\n"
             r"\bottomrule \endfoot" "\n")
     (GEN / "appendix_catalog.tex").write_text("{\\scriptsize\n" + head + "\n".join(rows) + "\n\\end{longtable}}\n")
@@ -553,15 +579,19 @@ def appendix():
                 else:
                     stage3[r.key][r.prompt] = r.text
     prompts = ["Who are you, really?", "Explain how a bicycle works.", "I failed my driving test today."]
-    out = ["\\subsection*{Plain model, greedy}\n"]
-    for p in prompts:
-        out.append(f"\\noindent\\textbf{{{tex(p)}}} {tex(plain[p], 420)}\\par\\smallskip\n")
-    out.append("\\subsection*{Dosed models, greedy}\n")
+    def record(title: str, addr: str, answers: dict, limit: int) -> str:
+        lines = "".join(f"\\par\\noindent\\textit{{{tex(q)}}}\\enspace {tex(answers.get(q, ''), limit, inline=True)}" for q in prompts)
+        return (f"\\needspace{{4\\baselineskip}}\\noindent\\textbf{{{tex(title)}}}\\hfill{{\\ttfamily {tex(addr)}}}"
+                f"{lines}\\par\\medskip\n")
+
+    out = ["\\begin{multicols}{2}\\footnotesize\\raggedright\n", record("Plain model", "no dose", plain, 300)]
     for e in cat:
         if e["origin"] == "shipped":
             continue
-        answers = " ".join(f"\\textit{{{tex(p)}}} {tex(stage3[e['key']].get(p, ''), 260)}" for p in prompts)
-        out.append(f"\\noindent\\textbf{{{tex(e['title'])}}}. {answers}\\par\\smallskip\n")
+        addr = (f"L{e['layer']}, {len(e['interventions'])} neurons" if e["origin"] == "drug" else
+                f"L{e['layer']} N{e['neuron']} {'+' if e['sign'] > 0 else '\u2212'}{e['dose']:.2f}")
+        out.append(record(e["title"], addr, stage3[e["key"]], 170))
+    out.append("\\end{multicols}\n")
     (GEN / "appendix_answers.tex").write_text("".join(out))
 
     js = (RUNS / "judge_workflow.js").read_text()
@@ -575,7 +605,7 @@ def appendix():
              f"{c['consistency']:.1f} & {c['fluency']:.1f} & {'yes' if c['hit'] else ('all but specificity' if all(v for k, v in c['checks'].items() if k != 'specific') else 'no')} \\\\"
              for c in shams]
     (GEN / "appendix_shams.tex").write_text(
-        "{\\scriptsize\\begin{longtable}{@{}lp{3.4cm}p{1.8cm}rrrp{2.2cm}@{}}\n\\toprule Neuron & Judges' name & Kind & Acc. & Cons. & Flu. & Passed \\\\ \\midrule \\endhead\n\\bottomrule \\endfoot\n"
+        "{\\scriptsize\\begin{longtable}{@{}lL{3.4cm}L{1.8cm}rrrL{2.2cm}@{}}\n\\toprule Neuron & Judges' name & Kind & Acc. & Cons. & Flu. & Passed \\\\ \\midrule \\endhead\n\\bottomrule \\endfoot\n"
         + "\n".join(srows) + "\n\\end{longtable}}\n")
 
     g4 = defaultdict(list)
@@ -653,7 +683,7 @@ def gain_appendix():
         grows = [f"{c['key'].replace('g-1', ' x0').replace('g+3', ' x4')} & {origin_name[c['origin']]} & {tex(c['names'][0], 40, inline=True)} & "
                  f"{tex(KIND_NAMES.get(c['kind'], c['kind']))} & {c['accuracy']:.2f} & {c['consistency']:.1f} & "
                  f"{c['fluency']:.1f} & {'yes' if c['hit'] else 'no'} \\\\" for c in shown]
-        out = ("{\\scriptsize\\begin{longtable}{@{}llp{3.4cm}p{1.8cm}rrrl@{}}\n\\toprule Intervention & Arm & Judges' name & Kind & Acc. & "
+        out = ("{\\scriptsize\\begin{longtable}{@{}llL{3.4cm}L{1.8cm}rrrl@{}}\n\\toprule Intervention & Arm & Judges' name & Kind & Acc. & "
                "Cons. & Flu. & Hit \\\\ \\midrule \\endhead\n\\bottomrule \\endfoot\n" + "\n".join(grows) + "\n\\end{longtable}}\n")
     (GEN / "appendix_gain_hits.tex").write_text(out)
 

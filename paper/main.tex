@@ -11,6 +11,10 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{multicol}
+\usepackage{needspace}
 \usepackage{enumitem}
 \usepackage{xspace}
 \xspaceaddexceptions{\%}
@@ -62,15 +66,21 @@
 
 \newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
 \newcommand{\neuron}[3]{L#1\,N#2\,#3}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+% Let floats share pages with text instead of standing alone on half-empty float pages.
+\renewcommand{\topfraction}{0.9}\renewcommand{\bottomfraction}{0.8}\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.8}\setcounter{topnumber}{3}\setcounter{totalnumber}{5}
 
 \definecolor{chatframe}{HTML}{1E8A8A}
 \definecolor{chatback}{HTML}{F4F7F6}
-\newtcolorbox{chatbox}[2]{enhanced, breakable, colback=chatback, colframe=chatframe, boxrule=0.6pt, arc=2pt,
+% Unbreakable by default: a tcbraster stacks breakable boxes instead of setting them side by side.
+\newtcolorbox{chatbox}[3][]{enhanced, colback=chatback, colframe=chatframe, boxrule=0.6pt, arc=2pt,
   left=5pt, right=5pt, top=3pt, bottom=3pt, fonttitle=\sffamily\bfseries\footnotesize,
-  title={#1\hfill\mdseries\ttfamily #2}, fontupper=\footnotesize}
-\newtcolorbox{plainbox}[2]{enhanced, breakable, colback=white, colframe=gray!70, boxrule=0.6pt, arc=2pt,
+  title={#2\hfill\mdseries\ttfamily #3}, fontupper=\footnotesize, #1}
+\newtcolorbox{plainbox}[3][]{enhanced, colback=white, colframe=gray!70, boxrule=0.6pt, arc=2pt,
   left=5pt, right=5pt, top=3pt, bottom=3pt, fonttitle=\sffamily\bfseries\footnotesize,
-  title={#1\hfill\mdseries\ttfamily #2}, coltitle=black, colbacktitle=gray!15, fontupper=\footnotesize}
+  title={#2\hfill\mdseries\ttfamily #3}, coltitle=black, colbacktitle=gray!15, fontupper=\footnotesize, #1}
 
 \title{LLM Electrodes: Rewriting a Language Model's Behavior\\Through Single-Neuron Stimulation}
 \author{Draft}
@@ -504,6 +514,7 @@ truncated at 420 characters.
 \input{generated/chat_russian.tex}
 \input{generated/chat_spacebar.tex}
 
+\clearpage
 \section{The complete catalog}
 \label{app:catalog}
 All \NCatalogEntries entries of the catalog, ordered by origin and then by how striking the judges found them. ``Judges'' is the
@@ -513,17 +524,20 @@ supplementary data.
 
 \input{generated/appendix_catalog.tex}
 
+\clearpage
 \section{Monographs}
 \label{app:monographs}
 \input{generated/appendix_monographs.tex}
 
+\clearpage
 \section{Held-out answers}
 \label{app:answers}
-Greedy answers of the unmodified model, then of every dosed model, to three of the ten held-out prompts. Answers are
-truncated.
+Greedy answers of the unmodified model, then of every catalog entry in catalog order, to three of the ten held-out
+prompts. Answers are truncated, and line breaks within an answer are shown as slashes.
 
 \input{generated/appendix_answers.tex}
 
+\clearpage
 \section{Judging protocol}
 \label{app:judge}
 Every judge received the following instructions with the path to one packet, and returned a structured record per
@@ -541,6 +555,7 @@ consistency are pooled over both rounds.
 \input{generated/appendix_packing.tex}
 \end{center}
 
+\clearpage
 \section{Negative results}
 \label{app:negative}
 
@@ -568,6 +583,7 @@ The stimulation hits that served as positive controls, and every gain interventi
 
 \input{generated/appendix_shams.tex}
 
+\clearpage
 \section{Capability battery and reproducibility}
 \label{app:repro}
 

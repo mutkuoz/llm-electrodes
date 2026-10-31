@@ -11,7 +11,7 @@ new personality.
 This repository holds the paper, the pipeline that produced every number in it, and **the cockpit**, a local web app
 for steering neurons and watching them fire.
 
-![The cockpit during a dose ladder](docs/cockpit.png)
+![The cockpit comparing the plain model with Everything Is WWE (L4 N7395 +0.70)](docs/cockpit.png)
 
 | Persona | Neuron, dose | Prompt | Answer |
 | --- | --- | --- | --- |

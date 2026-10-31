@@ -22,6 +22,9 @@
 \usepackage[most]{tcolorbox}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={LLM Electrodes: Rewriting a Language Model's Behavior Through Single-Neuron Stimulation},
+  pdfauthor={Mehmet Utku Öztürk}, pdfsubject={Interpretability of large language models},
+  pdfkeywords={activation steering, interpretability, large language models, single neurons, personas}}
 \usepackage{caption}
 \usepackage[section]{placeins}
 \renewcommand{\topfraction}{0.9}
@@ -84,8 +87,8 @@
   title={#2\hfill\mdseries\ttfamily #3}, coltitle=black, colbacktitle=gray!15, fontupper=\footnotesize, #1}
 
 \title{LLM Electrodes: Rewriting a Language Model's Behavior\\Through Single-Neuron Stimulation}
-\author{Draft}
-\date{October 2026}
+\author{Mehmet Utku Öztürk\\[2pt]{\normalsize Independent researcher}}
+\date{October 2026\\[6pt]{\small This work is licensed under the Creative Commons Attribution 4.0 International License (CC BY 4.0).}}
 
 \begin{document}
 \maketitle
@@ -512,6 +515,13 @@ too. Stimulation, an electrode in our analogy, produces these effects. Intervent
 whether they scale the existing activity of a layer or a neuron or spread a dose over neurons that read a shared
 direction. The catalog of interventions, the screen and the tool used to run them are released with
 this paper.
+
+\section*{Code and data availability}
+
+The code, the interactive tool, every persona file and the scripts that generate each number, figure and table in
+this paper are available at \url{https://github.com/mutkuoz/llm-electrodes}. The records behind them, every
+generated answer, every judgment and the full screen (about 160\,MB), are released as a dataset linked from that
+repository.
 
 \bibliographystyle{plainnat}
 \bibliography{references}

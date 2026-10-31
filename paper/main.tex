@@ -93,8 +93,8 @@
 We ask how much a single neuron can change the behavior of a language model. We pushed each of the 294,912 MLP
 neurons of Qwen3.5-4B in both directions with a fixed stimulation and measured how far the model's next-token
 predictions moved. The candidates that moved the model most while it stayed coherent then answered ten prompts they
-were never selected on, and blinded language-model judges, each shown a single candidate, compared those answers
-with the unmodified model's. The
+were never selected on, and each candidate was judged anonymized and independently against the unmodified model's
+answers. The
 \NCatalogJudged personas that the steering community had already published served as positive controls, and the most distinct
 randomly chosen neurons served as negative controls. \NHits single neurons passed every check, including a second,
 independent round of judging. The largest group pulls every answer toward one topic (\KindTopicpull{}). Others
@@ -218,12 +218,12 @@ candidates.
 and once sampled at temperature 0.7, giving 20 pairs of dosed and unmodified answers (\NStageThree records in all).
 Every number reported about a hit comes from these prompts.
 
-\paragraph{Blind judging.} Judges were language-model agents (Claude Opus 5.5). Each read the answers of a single
-anonymized candidate, with the two answers of every pair in random order, and reported which answer came from the
+\paragraph{Blind judging.} Each candidate was judged anonymized and independently by a language-model judge that
+read only that candidate's answers, with the two answers of every pair in random order, and reported which answer came from the
 altered model, a name and description for the change, its kind, and scores for consistency, fluency and interest on
 a 0 to 10 scale. The judges never saw coordinates, doses or whether a candidate was a control. \NJudgesOne judges
 covered all candidates, and \NJudgesTwo more judged every candidate that round one found distinct, consistent and
-non-trivial, with a new answer order. The exact prompt is in Appendix~\ref{app:judge}.
+non-trivial, with a new answer order. The judging prompt is released with the code.
 
 Judging one candidate at a time matters. An earlier run put six candidates in each packet, and since all of them
 answered the same prompts, the unmodified answer to a prompt appeared six times in a packet and could be recognized
@@ -332,13 +332,21 @@ The bar is strict. Of the screen and published candidates that failed, \NearMiss
 the catalog keeps them, but we do not count them as hits. This count was made after the results were known and is
 descriptive.
 
-Judging each candidate alone changed the list of hits (Appendix~\ref{app:judge}). In the earlier run with six
+Judging each candidate alone changed the list of hits (Table~\ref{tab:packing}). In the earlier run with six
 candidates per packet, \PackedHits single neurons passed every check. Judged alone, \PackedBoth of them pass again and
 \SoloOnly others pass that had failed before. Of the \PackedLost that no longer pass, \LostSpecificOnly fail only the
 specificity check and \LostDistinct fail the distinctness check. Their mean accuracy hardly moved, from
 \PackedHitAcc\% to \SoloHitAcc\%, so the repetition did not create these effects. It did inflate the accuracy of
 candidates with weak effects. Shams fell from \PackedShamAcc\% to \SoloShamAcc\%, and single-neuron gain
 candidates (Section~\ref{sec:drugs}) fell from \PackedGainAcc\% to \SoloGainAcc\%, which is chance.
+
+\begin{table}[!htbp]
+\centering
+\input{generated/appendix_packing.tex}
+\caption{Judging six candidates per packet against judging each candidate alone, over the same candidates, answers
+and checks. Accuracy and consistency are pooled over both rounds.}
+\label{tab:packing}
+\end{table}
 
 The positive controls behaved as expected. Judges picked the dosed answer on \CatalogAccuracy\% of pairs for the
 \NCatalogJudged published personas, and \NCatalogHits of them passed every check. Of the others, \NCatalogSpecOnly
@@ -536,24 +544,6 @@ Greedy answers of the unmodified model, then of every catalog entry in catalog o
 prompts. Answers are truncated, and line breaks within an answer are shown as slashes.
 
 \input{generated/appendix_answers.tex}
-
-\clearpage
-\section{Judging protocol}
-\label{app:judge}
-Every judge received the following instructions with the path to one packet, and returned a structured record per
-candidate with one pick per pair, a name, a description, a quotation, a kind and three scores.
-
-\input{generated/appendix_judge_prompt.tex}
-
-Of the \NTwice candidates judged in both rounds, \NReplicated reached 70\% accuracy in both, and the two rounds
-agreed on the kind for \NKindAgree of them. In an earlier run each packet held six candidates that answered the same
-prompts, so the unmodified answer to a prompt repeated within a packet. The table compares that run with judging
-each candidate alone, over the same candidates and answers, with the same prompt and checks. Accuracy and
-consistency are pooled over both rounds.
-
-\begin{center}
-\input{generated/appendix_packing.tex}
-\end{center}
 
 \clearpage
 \section{Negative results}

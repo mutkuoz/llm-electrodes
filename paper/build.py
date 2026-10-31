@@ -452,6 +452,7 @@ def context_line(text: str) -> str:
     """One firing context: tokenizer spacing closed up, the [[firing token]] in bold color, about 110 characters."""
     text = re.sub(r"\s+([,.;:!?%)\]'\u2019]|n't|'s)", r"\1", text.replace("[[", "\ue000").replace("]]", "\ue001"))
     text = re.sub(r"([(\[\u2018])\s+", r"\1", text)
+    text = re.sub("\ue000(\\s+)", lambda m: m.group(1) + "\ue000", text)  # a token's leading space goes outside the highlight
     out = tex(text, 110, inline=True)
     if out.count("\ue000") > out.count("\ue001"):  # the cut fell inside the marked token
         out += "\ue001"

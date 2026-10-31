@@ -116,9 +116,14 @@ next-token predictions, teacher-forced on a fixed answer, in nats.
 
 ## Reproducing the paper
 
-Every number in the paper is generated from `runs/` by [`paper/build.py`](paper/build.py). `runs/` is not in the
-repository (about 160 MB: the screen arrays and every generated answer and judgment); it will be released
-separately as a dataset. The pipeline runs on one GPU in this order, with checkpointing so a crash or reboot resumes where it
+Every number in the paper is generated from `runs/` by [`paper/build.py`](paper/build.py). The records live
+outside the repository, as the dataset [mutkuoz/llm-electrodes](https://huggingface.co/datasets/mutkuoz/llm-electrodes) on Hugging Face (about 120 MB: the screen
+arrays and every generated answer and judgment). Download it into a folder named `runs/` at the repository root:
+
+```sh
+hf download mutkuoz/llm-electrodes --repo-type dataset --local-dir runs
+```
+ The pipeline runs on one GPU in this order, with checkpointing so a crash or reboot resumes where it
 stopped:
 
 | Step | File | What it does |
@@ -168,3 +173,19 @@ Every persona is one JSON file in [`personas/`](personas), checked by `python pe
   recipe.
 - Benjamin Bossan's [activation steering for PEFT](https://github.com/huggingface/peft/pull/4066).
 - The Qwen team for [Qwen3.5-4B](https://huggingface.co/Qwen/Qwen3.5-4B).
+
+## License
+
+The code is under the [MIT License](LICENSE). The paper and the [dataset](https://huggingface.co/datasets/mutkuoz/llm-electrodes) are under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+
+## Citation
+
+```bibtex
+@misc{ozturk2026electrodes,
+  author = {Mehmet Utku {\"O}zt{\"u}rk},
+  title  = {{LLM} Electrodes: Rewriting a Language Model's Behavior Through Single-Neuron Stimulation},
+  year   = {2026},
+  url    = {https://github.com/mutkuoz/llm-electrodes}
+}
+```

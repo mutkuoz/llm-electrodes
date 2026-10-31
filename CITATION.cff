@@ -7,6 +7,7 @@ authors:
     given-names: "Mehmet Utku"
     affiliation: "Independent researcher"
 repository-code: "https://github.com/mutkuoz/llm-electrodes"
+license: MIT
 keywords:
   - activation steering
   - interpretability
